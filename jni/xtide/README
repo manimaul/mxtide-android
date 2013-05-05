@@ -1,0 +1,1689 @@
+    XTide  Harmonic tide clock and tide predictor
+    Version 1.6.2  1997-08-28
+
+    Copyright (C) 1997  David Flater.
+    Also starring:  Jef Poskanzer; Jack Greenbaum; Rob Miracle;
+    Geoff Kuenning; Dale DePriest; Stan Uno; Dean Pentcheff;
+    Jeff Dairiki; Eric Rosen.
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+
+    The tide prediction algorithm used in this program was developed
+    with United States Government funding, so no proprietary rights
+    can be attached to it.  For more information, refer to the
+    following publications:
+
+    Manual of Harmonic Analysis and Prediction of Tides.  Special
+    Publication No. 98, Revised (1940) Edition.  United States
+    Government Printing Office, 1941.
+
+    Computer Applications to Tides in the National Ocean Survey.
+    Supplement to Manual of Harmonic Analysis and Prediction of Tides
+    (Special Publication No. 98).  National Ocean Service, National
+    Oceanic and Atmospheric Administration, U.S. Department of
+    Commerce, January 1982.
+
+
+THIS PACKAGE IS AVAILABLE FROM:
+http://www.universe.digex.net/~dave/files/
+
+An illustrated, HTML-ized version of this README is available at:
+http://www.universe.digex.net/~dave/xtide/xtide.html
+
+
+Introduction
+------------
+
+XTide is a program that provides tide predictions in a wide variety of
+formats.  By default, it is a simple tide clock, but it has command
+line switches to generate graphs, listings, calendars, and all kinds
+of good stuff.
+
+In order to avoid information overload, this README begins with a
+simple overview of the different modes that XTide supports and the
+basic switches, then proceeds into a discussion of all the hairy
+options for each mode.  Following that discussion is an explanation of
+harmonic constants, the installation instructions, the list of known
+bugs, and the FAQ.  As usual, you can page down to the installation
+instructions, run the program, and see what happens.  But it won't be
+much use if you don't understand how to turn on the hairy options.
+
+The major modes and sub-modes are as follows:
+
+   1.  Clock (X11)
+      A.  Normal tide clock
+      B.  Hairy tide clock
+   2.  Graph (X11)
+   3.  TTY (ASCII text)
+      A.  Simple listing
+      B.  ASCII graph
+      C.  Calendar
+      D.  Banner
+      E.  Stats
+      F.  Raw output
+   4.  PPM
+   5.  GIF
+   6.  PostScript
+   7.  Java
+      A.  Text
+      B.  Graph
+
+
+Hardware and operating system requirements
+------------------------------------------
+
+XTide is Unix software.  Any flavor of Unix should work.  XTide has
+been ported to a variety of other operating systems with differing
+levels of success.  Please see the FAQ for more information on those
+ports, and contact their maintainers (not me) if you have trouble with
+them.
+
+XTide can be compiled with or without X11 support.  If it is compiled
+with X11 support, the binary is called xtide and supports all modes.
+If it is compiled without X11 support, the binary is called tide and
+does not support the X11 modes.
+
+You are expected to have floating point hardware.  You can run XTide
+on an old PC with emulated floating point, but it's intolerably slow.
+
+
+Overview of Major Modes
+-----------------------
+
+The default mode is clock mode.  You get a small window that shows the
+current water level and the predicted times of the next high and low
+tides.  It updates once per minute to keep showing the current water
+level.
+
+Graph mode gives you a plot of the water level versus time.  The PPM
+and PostScript modes are just alternate output formats for tide
+graphs.
+
+There are many options for producing ASCII output.  Normally you will
+just get a simple listing of the high and low tides.  However, you can
+also get an ASCII rendering of the tide graph, a banner that shows the
+tide graph sideways, a tide calendar, tide statistics, or raw
+numerical output.
+
+The Java modes are most useful to people running Web servers that
+provide tide predictions.  Java applets to produce tide graphs and
+simple listings are provided separately.  By using the Java feature,
+you can distribute the CPU-intensive work to the client machines and
+avoid bogging down your Web server.
+
+XTide has switches to produce other kinds of output that may be
+useful, such as a listing of all locations in the harmonics file.
+
+
+Basic Switches
+--------------
+
+The most commonly needed switches are these:
+
+   -hfile           Specify the name of the harmonics file.
+   -location        Specify the location to predict tides for.
+   -gstart          Specify the starting time for graphs and listings.
+   -loctz           Use their time zone, not mine.
+   -24              Use 24-hour time instead of AM/PM.
+   -uutc            -gstart is in UTC.
+
+Since version 1.1, the matching of location names specified with
+-location is case-insensitive, and you only have to specify enough
+letters to uniquely identify the location that you want.  But be sure
+to put double quotes around it if it's more than one word ("San
+Francisco").
+
+-location random will cause XTide to choose a location at random.
+
+The format for the time stamps given to -gstart is YYYY:MM:DD:HH:MM.
+Half past midnight, June 1, 1995, would be 1995:06:01:00:30.
+
+By default, all timestamps are displayed in your local time zone.  The
+exact appearance of timestamps on the screen will vary depending on
+the mode.  You can use the -utc switch to change the time zone to UTC,
+or specify an offset from UTC with the -tz switch.
+
+The -loctz switch will try to get the time zone of the location being
+displayed.  Although this is what most people want, it's not the
+default because it's not reliable on all platforms.  Certain platforms
+just don't have good enough time zone support.
+
+The -gstart time spec is in your local time zone unless you specify
+-uutc.  -utc, -tz, and -loctz only affect the time zone for output;
+they do not affect -gstart.
+
+Many countries have phased out the AM/PM custom, or never had it in
+the first place.  Use the -24 switch to get rid of AM/PM in favor of
+24-hour time.
+
+Clock mode is the default.  The basic switches for selecting other
+major modes are these:
+
+   -text            Text output.
+   -graph           Graph output.
+   -ppm             PPM output.
+   -gif             GIF output.
+   -ps              PostScript output.
+   -java            HTML output.
+
+The ways of invoking the minor modes are described in the following
+sections on each major mode.
+
+
+Clock Mode
+----------
+
+The tide clock shows the current water level and the predicted times
+of the next high and low tides.  The water is blue if it is flooding,
+green if it is ebbing.  You can change the colors with command line
+switches (-fgrise, -fgfall).
+
+Many people prefer "hairy" tide clock mode.  The -hairy option causes
+the tide clock to track the tide curve instead of simply showing the
+current water level.  The -gstretch option can be used with -hairy to
+control the aspect ratio of the graphing.  Values greater than 1
+stretch it out, while values between 0 and 1 scrunch it up.
+
+The window can be made more narrow by abbreviating the timestamps that
+it contains.  The extreme is to use the -skinny switch, which
+abbreviates timestamps to four digits, in 24-hour time.  "7:28 PM EDT"
+becomes simply "1928".  Less radical is -thin, which only removes the
+time zone specifier.  The -24 switch will save additional space by
+removing the AM/PM designator and switching to 24-hour time.
+
+If you don't specify -calib or -tinc, the hour marks in the hairy tide
+clock will be calibrated with the current time (marking one hour from
+now, one hour ago, etc.).  -calib causes the hour marks to be
+calibrated with the top of the hour.  -tinc causes the hour marks to
+be calibrated and also labels them.  If you don't specify an
+increment, every hour is labeled.
+
+The -now option causes the current time to be displayed in the tide
+clock.  This is handy if the tide clock is set to a different time
+zone and you want to know what time it is over there.  It may also
+alleviate the need for a separate xclock.
+
+-hinc causes the depth marks to be labeled.  If you don't specify an
+increment, XTide will choose one that is reasonable.
+
+-nolines disables all tick marks.
+
+-mark, -middle, and -mllw draw lines at various depth levels that may
+be of interest to you.
+
+The -nofill switch causes the hairy tide clock to be a line graph.
+
+
+Graph Mode
+----------
+
+Tide graphs come with time on the horizontal axis and tide height on
+the vertical axis.  The tick marks are one hour apart or one unit of
+depth apart respectively.
+
+By default, the -graph switch draws a graph of the water level for the
+next two days and labels the high and low tides.  Close the window or
+kill the program to get rid of the graph.  By using -gstart with
+-graph, you can predict tides far into the future.
+
+The -gstretch option lets you adjust how stretched out or crowded the
+graph is.  -gstretch 2.0 means that graph mode will stretch one day
+across the screen instead of two.  -gstretch 0.5 crowds four days in
+the same amount of space.
+
+The -gstretch option may help you to read the high and low tide
+predictions if they were too close together on the graph.  You can
+also use -skinny or -thin along with -graph to get abbreviated
+timestamps that won't overlap as much.  If all else fails, use text
+mode.
+
+The -mark switch, in addition to drawing a horizontal line at the
+water level you specify, causes the times of rising and falling
+transitions of that line to be displayed.
+
+The -now switch causes a cross to be drawn on the graph to indicate
+the current time, and the graph to be centered around the current time
+if not overridden by -gstart.  Normally the graph only shows from the
+current time onward.
+
+-tinc is still used to label the hour ticks in graph mode as it was in
+clock mode.  However, -calib is not needed in graph mode (the hour
+ticks are always calibrated with the top of the hour).  -hinc is
+enabled by default for graphs, but you can still use -hinc to change
+the increment used for labeling the depth marks.
+
+-nolines disables the depth lines and tick marks.  -toplines puts the
+depth lines on top of the graph.
+
+-nofill draws a line graph.
+
+-hairy causes the graph to be drawn in two colors as it is in the
+hairy tide clock.
+
+
+Text
+----
+
+Text mode, invoked with the -text switch, causes high and low tides,
+and rising and falling transitions of the -mark level if one is
+specified, to be listed to standard output:
+
+          Baltimore (Fort McHenry)
+          Units are feet
+          Mark level:  2.000000
+               Rising:  1995-09-06  4:41 AM EDT  2.00
+            High Tide:  1995-09-06  5:16 AM EDT  2.03
+              Falling:  1995-09-06  5:52 AM EDT  2.00
+             Low Tide:  1995-09-06 11:51 AM EDT  0.68
+            High Tide:  1995-09-06  5:26 PM EDT  1.50
+
+The floating point number at the end of the line is the tide height at
+the time of the high or low tide.  The -text switch takes an optional
+numeric argument to specify how many lines of output to generate, not
+including the header stuff.
+
+As always, you can affect the style of the timestamps with various
+switches (-skinny, -thin, -24, etc.).
+
+If you specify -graph with -text, you will get ASCII graph mode.  This
+produces a best-effort rendition of the tide graph for a TTY:
+
+Baltimore (Fort McHenry), Maryland
+Units are feet   Initial TZ is EDT
+[10-19        10-20       10-20       |10-21        10-21     | 10-22     ]
+[1238         0136        1353        |0239         1507      | 0340      ]
+[             |                       |                       |           ]2.7
+[             |                       |                       |           ]2.3
+[             |                       |                       |           ]1.9
+[             |****                   | ****                  |  ****     ]1.6
+[ ****        *******      ****       |*******      *****     | ******    ]1.2
+[*******    **********   ********    **********   *********   **********  ]0.8
+[*************************************************************************]0.4
+[*************************************************************************]0.1
+[*************************************************************************]-0.3
+[*************************************************************************]-0.7
+[      10-19  |      10-20      10-20 |       10-21       10-21        10-]
+[      1837   |      0818       1950  |       0917        2106|        101]
+
+-gstart and -gstretch work as described for graph mode.
+
+The -calen switch causes one month of tides to be formatted like a
+calendar.  Here is what one week looks like:
+
+    Sunday Monday Tuesda Wednes Thursd Friday Saturday
+
+    10-01  10-02  10-03  10-04  10-05  10-06  10-07
+
+    H0045  H0149  H0254  H0356  H0453  H0545  L0024
+    1.92   1.89   1.85   1.81   1.76   1.70   0.47
+    L0724  L0831  L0934  L1030  L1119  L1203  H0631
+    0.73   0.71   0.66   0.59   0.53   0.46   1.63
+    H1234  H1349  H1506  H1617  H1719  H1814  L1243
+    1.29   1.28   1.33   1.42   1.53   1.64   0.41
+    L1841  L1952  L2106  L2218  L2324         H1903
+    0.40   0.44   0.47   0.48   0.47          1.73
+
+"High Tide" and "Low Tide" are abbreviated to the single letters "H"
+and "L" prefixed to the timestamps.
+
+The -banner switch produces a sideways ASCII tide graph, which is
+mainly for sending to dot matrix printers that use continuous printer
+paper.  The length of the output is controlled by -text, and the
+aspect ratio is controlled by -gstretch.
+
+The -stats switch gets you some simple statistics.  You provide the
+starting time with -gstart and the stopping time with -stats, and you
+get output like the following:
+
+   Baltimore (Fort McHenry), Maryland
+   Units are feet
+   Stats from 1996-10-31 12:00 AM EST to 1996-11-30 12:00 AM EST
+   Minimum tide level was -0.125644 at 1996-11-25 12:23 PM EST
+   Maximum tide level was 1.692732 at 1996-11-13 8:39 PM EST
+   Mean tide level was 0.743701
+
+The -raw switch produces output which is only legible by other
+computer programs.  You provide the starting time with -gstart and the
+stopping time with -raw, and you get output like the following:
+
+   831328598 0.343402
+   831332198 0.512449
+   831335798 0.747823
+   831339398 0.976178
+   831342998 1.129068
+   831346598 1.160846
+   831350198 1.060552
+   831353798 0.854795
+
+-raw takes an optional second argument of the form HH:MM, which is the
+time interval to use as a step value.
+
+
+PPM
+---
+
+The -ppm switch invokes an alternative graph mode that sends output to
+a PPM file instead of the X server.  You do not need to specify both
+-ppm and -graph.  Otherwise, all of the same switches that work with
+-graph will work with -ppm.
+
+The output from -ppm will look better than the output of -graph if you
+don't have a true color display; however, the switches for changing
+the colors require you to use the syntax rgb:hh/hh/hh (where hh is a
+2-digit hexadecimal number).  The dimensions can be specified with
+-geometry NxN.  (Previously it was necessary to use -ppmgeom instead
+of -geometry; -ppmgeom is still supported for compatibility.)
+
+
+GIF
+---
+
+This option is only available if XTide was compiled with the DEANGIF
+option enabled in config.h.  It is similar to the -ppm option, but
+produces faster, lower quality output in GIF format.  Better (but
+slower) results can be obtained by doing xtide -ppm - | ppmquant 256 |
+ppmtogif.
+
+Please be aware that GIF is an obsolete format.  You should be using
+PNG instead.  Refer to the PNG home page http://www.wco.com/~png/ for
+more information and to get pnmtopng (so you can do xtide -ppm - |
+pnmtopng).
+
+
+PostScript
+----------
+
+The -ps switch will produce a page of PostScript to draw a tide graph.
+Implementation of PostScript mode was never fully completed, so what
+you see is what you get.  Printable tide graphs can also be produced
+by running the output of xtide -ppm - -nofill through pnmtops,
+possibly with -bg white -fgrise black and a pass through ppmtopgm for
+a black and white printer.
+
+
+Java
+----
+
+-java generates a page of HTML that works in conjunction with the tide
+predicting applets to produce tide graphs and simple tide listings.
+The applets and the documentation on using them are provided separately
+in http://www.universe.digex.net/~dave/files.
+
+A change was made to the Java interface for version 1.5 of XTide.  If
+you are using an earlier version of XTide, you must use the applets
+bundled with that distribution.  The unbundled applets are for XTide
+version 1.5 or newer only.
+
+
+What About Currents?
+--------------------
+
+XTide can do simple reversing currents, because the math required to
+do them is identical to the math for predicting tides.  If a location
+in the harmonics file has the word "Current" in its name, then XTide
+assumes that it is a data set for predicting currents instead of
+tides, and tries to generate output that is more appropriate to
+currents.  The following things are different for currents:
+
+1.  Units change from length to velocity.
+2.  MLLW is replaced by the velocity of the permanent current.
+3.  The -mark mechanism is hardwired to find Slack Water (0 current).
+4.  Captions change from "High Tide" to "Max Flood," etc.
+5.  Graphical output is modified to show values as being above and
+below Slack Water instead of originating from the bottom of the
+window.
+6.  Many tide-specific switches will generate meaningless results.
+
+
+What About Offsets?
+-------------------
+
+XTide has limited support for offsets.  You can use the -htoff,
+-hloff, -ltoff, and -lloff switches to apply offsets to the time of
+high tide, level of high tide, time of low tide, and level of low tide
+respectively.  In plain text mode the application of the offsets is
+relatively clean and trouble-free.  In all other modes, it is
+necessary to perform some hairy interpolation in order to generate the
+tide heights.  This can give wildly inaccurate results.  XTide prints
+a warning message when you do this.
+
+Unequal offsets for high and low tides cannot be used in PostScript,
+Java, or stats modes, and cannot be used with -mark.
+
+
+Something for Everyone
+----------------------
+
+Additional command line switches are shown in the usage info.  These
+include switches to change the colors of everything, to include the
+day of the week in printed dates, to use a config file, to set the X
+display and geometry, and to do various other things.  You can get
+usage by typing xtide -help.
+
+
+Usage:  xtide [-24]                  Use 24-hour time, not AM / PM
+              [-banner]              Sideways ASCII tide graph
+              [-bg ...]              Background color
+              [-calen]               Make 1 month tide calendar
+              [-calib]               (Hairy)  Tick marks at top of the hour
+              [-check YYYY]          Check for errors in equilibrium arguments
+              [-config {filename | -}]  Read configuration file / stdin
+              [-cur]                 Restrict -location search to currents
+              [-display ...]         X display
+              [-fgfall ...]          Color of ebbing water
+              [-fgmark ...]          Color of mark line
+              [-fgmiddle ...]        Color of middle line
+              [-fgmllw ...]          Color of mllw line
+              [-fgrise ...]          Color of flooding water
+              [-fgtext ...]          Color of text and lines
+              [-geometry ...]        X, PPM, or GIF geometry
+              [-gif {filename | -}]  Write graph as GIF to file / stdout
+              [-graph]               Graph 2 days of tides (modulo gstretch)
+              [-gstart YYYY:MM:DD:HH:MM]  Time at which to start graph or text
+              [-gstretch N.NN]       Adjust graph detail vs. time span
+              [-hairy]               Tide graph in clock / 2-color graph
+              [-help]                Send usage to standard output
+              [-hfile ...]           Location and name of harmonics file
+              [-hinc [N]]            Label depth marks in increments of N
+              [-hloff [{-|x}]N.NN]   Tide level offset for high tide
+              [-htoff [-]HH:MM]      Time offset for high tide
+              [-java]                Output HTML for tide applet
+              [-javanh]              Output HTML w/o headers for tide applet
+              [-list]                List all locations in harmonics file
+              [-listtz]              List with meridians and time zone info
+              [-lloff [{-|x}]N.NN]   Tide level offset for low tide
+              [-location "Name"]     Location to show tides for
+              [-loctz]               Try to use time zone of location (Moof!)
+              [-ltoff [-]HH:MM]      Time offset for low tide
+              [-mark [-]N.NN]        Draw line at specified tide level
+              [-middle]              Draw line near mean tide level
+              [-mllw]                Draw line at mean lower low water level
+              [-nofill]              Line graph instead of filled-in graph
+              [-nolines]             Suppress tick marks / depth lines
+              [-norename]            Don't set icon name to time of high tide
+              [-now]                 Show current time / mark place on graph
+              [-nowarn]              Suppress big ugly warning message
+              [-ppm {filename | -}]  Write graph as PPM to file / stdout
+              [-ps]                  Generate PostScript[tm] output
+              [-raw YYYY:MM:DD:HH:MM [HH:MM]] Raw output from gstart to this
+                                     time, with optional step (default 1:00)
+              [-skinny]              Trim the fat, make window tall and skinny
+              [-stats YYYY:MM:DD:HH:MM]  Find stats from gstart to this time
+              [-test [N]]            Test mode (mostly useless)
+              [-text [N]]            List N tides / select ASCII graph mode
+              [-thin]                Leave out year and time zone
+              [-tinc [N]]            Label each N hours
+              [-toplines]            (Graph)  Depth lines on top of graph
+              [-tz [-]HH:MM]         Fixed time zone offset for timestamps
+              [-units {ft|m}]        Convert units where applicable
+              [-utc]                 Show timestamps in UTC
+              [-uutc]                User's times (gstart, etc.) are in UTC
+              [-version]             Print XTide version
+              [-weekday]             Show day of week in printed dates
+
+Time format example -- half past midnight, June 1, 1995:  1995:06:01:00:30
+In PPM/GIF mode, colors must be specified as rgb:hh/hh/hh (where hh is a
+2-digit hexadecimal number) and geometry must be specified as NxN.
+
+
+Usage:  tide [-24]                  Use 24-hour time, not AM / PM
+             [-banner]              Sideways ASCII tide graph
+             [-bg color]            Background color
+             [-calen]               Make 1 month tide calendar
+             [-check YYYY]          Check for errors in equilibrium arguments
+             [-config {filename | -}]  Read configuration file / stdin
+             [-cur]                 Restrict -location search to currents
+             [-fgfall color]        Color of ebb current
+             [-fgmark color]        Color of mark line
+             [-fgmiddle color]      Color of middle line
+             [-fgmllw color]        Color of mllw line
+             [-fgrise color]        Color of normal graph / flood current
+             [-fgtext ...]          Color of text and lines
+             [-geometry ...]        PPM or GIF geometry
+             [-gif {filename | -}]  Write graph as GIF to file / stdout
+             [-graph]               ASCII graph mode
+             [-gstart YYYY:MM:DD:HH:MM]  Time at which to start
+             [-gstretch N.NN]       Adjust graph detail vs. time span
+             [-hairy]               2-color graph (PPM/GIF)
+             [-help]                Send usage to standard output
+             [-hfile ...]           Location and name of harmonics file
+             [-hinc [N]]            Label depth marks in increments of N
+             [-hloff [{-|x}]N.NN]   Tide level offset for high tide
+             [-htoff [-]HH:MM]      Time offset for high tide
+             [-java]                Output HTML for tide applet
+             [-javanh]              Output HTML w/o headers for tide applet
+             [-list]                List all locations in harmonics file
+             [-listtz]              List with meridians and time zone info
+             [-lloff [{-|x}]N.NN]   Tide level offset for low tide
+             [-location "Name"]     Location to show tides for
+             [-loctz]               Try to use time zone of location (Moof!)
+             [-ltoff [-]HH:MM]      Time offset for low tide
+             [-mark [-]N.NN]        Draw line at specified tide level
+             [-middle]              Draw line near mean tide level
+             [-mllw]                Draw line at mean lower low water level
+             [-nofill]              Line graph instead of filled-in graph
+             [-nolines]             Suppress tick marks / depth lines
+             [-now]                 Mark current time on graph
+             [-nowarn]              Suppress big ugly warning message
+             [-ppm {filename | -}]  Write graph as PPM to file / stdout
+             [-ps]                  Generate PostScript[tm] output
+             [-raw YYYY:MM:DD:HH:MM [HH:MM]] Raw output from gstart to this
+                                    time, with optional step (default 1:00)
+             [-skinny]              Abbreviate timestamps
+             [-stats YYYY:MM:DD:HH:MM]  Find stats from gstart to this time
+             [-text N]              List N tides to standard output
+             [-thin]                Leave out year and time zone
+             [-tinc [N]]            Label each N hours
+             [-toplines]            (PPM)  Depth lines on top of graph
+             [-tz [-]HH:MM]         Fixed time zone offset for timestamps
+             [-units {ft|m}]        Convert units where applicable
+             [-utc]                 Show timestamps in UTC
+             [-uutc]                User's times (gstart, etc.) are in UTC
+             [-version]             Print Tide version
+             [-weekday]             Show day of week in printed dates
+
+Time format example -- half past midnight, June 1, 1995:  1995:06:01:00:30
+Colors must be specified as rgb:hh/hh/hh (where hh is a 2-digit hexadecimal
+number)
+
+
+You NEED Harmonic Constants
+---------------------------
+
+You cannot predict tides for your locale unless you know its harmonic
+constants.  A database of harmonic constants is kept in the harmonics
+file.  The most recent versions of the available harmonics files will
+be kept in http://www.universe.digex.net/~dave/files.  They are no
+longer bundled with the xtide software, so snarf them and gunzip them.
+
+If your location is not among those already in the harmonics files,
+then getting constants for your location could be a real pain.  You
+can do what I did, and pay the National Ocean Service (in the U.S.)
+between ten and forty dollars for one set of constants.  Otherwise,
+lots of luck.  If you do go through the trouble, and the data that you
+get can be freely distributed (anything from NOAA generally can),
+please send it to me so that I can add it to the end of the harmonics
+file that I distribute.
+
+If you send me a set of constants, be sure to preface it with comment
+lines giving your name, your e-mail address, where you got the data,
+how old the data is, and the units used for amplitude.  The age of the
+data is significant not only because geographical changes can
+invalidate a set of constants, but because the NOS changed which datum
+they used for many locations in 1989.
+
+
+The National Ocean Service and Similar Non-U.S. Organizations
+-------------------------------------------------------------
+
+The way that I got harmonic constants from the NOS was to fax a
+request to 301-713-4436 asking for the 37 constituents for someplace
+at or near XYZ.  Provide your snail mail address.  They will mail you
+a bill at the same time that they mail the data.  It will be one or
+two weeks before you get it.  You can call 301-713-2877 if you want to
+try to check on its progress.
+
+It may also be possible to place an order by sending e-mail to
+ipss@ceob-g30.nos.noaa.gov, but that is only a rumor.
+
+There are a number of organizations world wide that are capable of
+providing harmonic constants.  I know little about them except that
+they exist, and that the system of 37 constituents used by the NOS is
+not used by all of them.  Given sufficient information and expertise,
+you should be able to modify the harmonics file to use whatever system
+is used by your favorite organization.  I cannot currently provide
+harmonics files to work with every possible system.  However, if you
+construct a harmonics file for a different system, please send it to
+me with a description of whose system it implements, and I will gladly
+add it to this distribution.  I will also include here any information
+that is sent to me to help other people get harmonic constants from
+different organizations.
+
+
+Getting Harmonic Constants from your Front Yard
+-----------------------------------------------
+
+If you are ambitious and have access to regular water level readings
+for your locale over the course of, oh, a YEAR or so, you can derive
+the harmonic constants yourself.  I will be just as happy to
+distribute sets of harmonic constants that you derive; see above for
+how to send them to me.
+
+At the moment we do not have a working program for deriving harmonic
+constants.  There is Fortran source code given in Computer
+Applications to Tides in the National Ocean Survey, but it is
+undocumented and so far unusable.  (That publication can be gotten
+from the NOS by faxing a request to the same number as provided above
+for harmonic constants; it costs ten dollars.)
+
+
+The Harmonics File
+------------------
+
+An incompatible change to the format of the harmonics file was made
+with version 1.2 of XTide.  Earlier versions will no longer work.  The
+change was to add a field for the DATUM so that "absolute" tide
+heights can be calculated.
+
+The harmonics file contains definitions for the constituents followed
+by a database of harmonic constants.  The data that must be entered
+for each location are described in the comments:
+
+#
+# Harmonic constants for all locations that we can predict tides for.
+#
+# First line:  name of location
+# Second line:  time meridian [whitespace] tzfile
+# Third line:  DATUM [whitespace] units
+# Remaining lines:  identifier [whitespace] amplitude [whitespace] epoch
+#
+# The DATUM is the mean lower low water, or equivalent number for
+# calculating the absolute tide height.
+# The time meridian takes the format [-]HH:MM and is hours east of
+# Greenwich.  This is your time zone displacement in the _winter_.  Do
+# not include Daylight Savings Time!
+# The tzfile is a reference to a file in the zoneinfo directory as
+# described in the man page for tzset on BSD machines.  You may omit
+# this if you have no idea, but the -loctz switch won't work for that
+# location.  You can also omit units if you have no idea.
+# Epoch is "modified" or "adapted" epoch in degrees, also known as
+# Kappa Prime.
+# The identifiers are for readability only; xtide assumes that they
+# are in the same order as defined above.
+#
+
+NOAA has used a variety of printout formats for harmonics data.  On
+the last printout format that I received, the columns you want to
+enter are labeled H (amplitude) and Kappa Prime (modified epoch).  My
+printout didn't have mean lower low water (MLLW), so I had to use MSL
+(Mean Sea Level) for the DATUM.  However, others have gotten printouts
+with a value designated as Z(0); use that as your DATUM if you get it.
+
+A long time ago, NOAA used Form 444 to report harmonics data.  On that
+form, you want to enter the values from column H (amplitude) and the
+_negations_ of the values in column D (-k').  The DATUM is listed off
+to the right (in the remarks section) on the line marked A0; right
+below that it tells you whether it's mean lower low water, or what.
+It tells you what your meridian is at the top of that section -- but
+you have to negate that too.
+
+Unless there is some major incompatibility, you should be able to
+modify the harmonics file to use a different method to calculate
+tides, with more or less constituents.  However, it is assumed that
+all sets of harmonic constants in a given harmonics file are on the
+same system, so you have to specify a different harmonics file on the
+command line if you want to do multiple locations with different tide
+prediction methods.
+
+
+Installation
+------------
+
+Note:  Steps needed to enable GIF support are described later in this
+document.
+
+1.  You need an ANSI C compiler.  You also need the harmonic constants
+for your location.  Please snarf one or more of the harmonics files
+provided in http://www.universe.digex.net/~dave/files/.  If your
+location is not in any of them, read the previous sections to find out
+what to do about it.
+
+2.  Copy the harmonics file to the place that you have decided to put
+it, gunzip it, and chmod 644.
+
+3.  Edit the #defines in config.h to specify the location and name of
+the harmonics file that you will use and the default location to show
+tides for.  The location that you specify must be in the harmonics
+file.  NOTE:  The environment variables LOCATION and HFILE override
+the values specified in config.h.
+
+IF YOU HAVE X LIBRARIES:
+
+  4.  xmkmf; make depend; make.
+
+  5.  Copy the xtide executable into /usr/X11R6/bin or whatever.
+
+IF YOU DON'T HAVE X LIBRARIES:
+
+  4.  Copy Makefile.tide to Makefile and edit as desired.
+
+  5.  make.
+
+6.  Copy the tide executable into /usr/local/bin or whatever.
+
+7.  Copy xtide.man to /usr/man/man1/xtide.1 and chmod 644.
+
+8.  (Optional) If you are using X, copy xtide.xpm into your icons
+directory (mode 644) and change your window manager config file to use
+that icon for windows whose names start with "XTide".  The syntax to
+do this in fvwm (system.fvwmrc) is:
+
+    Style "XTide*"     Icon xtide.xpm
+
+
+AIX and HP-UX Installation
+--------------------------
+(Ported by Dale DePriest)
+
+When compiling on these platforms, use the following compiler switches:
+
+AIX:          CC = c89 -DAIX -D_XOPEN_SOURCE
+HP-UX:        CC = c89 -D_XOPEN_SOURCE
+
+
+OS/2 Installation
+-----------------
+(Ported by Dale DePriest)
+
+Tide now includes support for OS2.  This port has been specifically
+tested using the gcc/emx version 0.9c.  XTide has also been ported
+specifically to support the os2 port of XFree86.  To build your
+copy of tide:
+
+1. copy makefile.os2 to Makefile
+2. run nmake or make.
+ 
+To build xtide you must have the Xfree86 programming environment.
+Run 'make xtide.exe'.
+
+EMX, beginning with 0.9c, does support Daylight Savings Time and Time Zone
+data.  You will need at least fix01 to support tide and xtide.
+You must set the TZ variable to get this to work.  An example would
+be 'set TZ=PST8PDT'.  The -loctz switch will do this for you.
+
+You can pick up a prebuilt copy of tide and xtide from
+hobbes.nmsu.edu, under the directory os2/unix.  You must have an X
+environment to use xtide while tide will work in any environment.
+Also get os2/unix/emx09c/emxrt.zip if you don't have it.
+
+
+DOS Installation
+----------------
+(Ported by Dale DePriest)
+
+If you have the emx/gcc build environment, you can build tide using
+the os2 makefile without modification.  Further, the tide program that
+was built for os2 will run unmodified on a dos machine if you have the
+file emx.exe present somewhere in your path (or rsxnt.exe if you are
+using DPMI memory).  See above, under OS/2 installation, for the
+location of the binaries.
+
+
+Macintosh and Microsoft Windows
+-------------------------------
+
+The Macintosh port of the TTY client is supported by Mikhail Fridberg
+(fridberg@pfc.mit.edu).  It is available at
+http://www.universe.digex.net/~dave/files/MacTide133sit.hqx (binhexed
+Stuffit archive).  A binary is included.
+
+The Microsoft Windows ports of XTide are supported by Paul C. Roberts
+(paul@slothdom.demon.co.uk) and/or Alex (alex@slothdom.demon.co.uk).
+They are available at ftp://ftp.demon.co.uk/pub/ibmpc/win3/apps/wtide.
+Binaries are included.
+
+
+Compiling with GIF Support
+--------------------------
+(GIF support by Dean Pentcheff)
+
+Installation is more complicated if you want to enable GIF support.
+GIF is not enabled by default because you will get better output by
+doing xtide -ppm - | ppmquant 256 | ppmtogif.  The only real reason to
+compile with GIF support is if you are short on CPU time, because it
+is a lot faster than ppmquant + ppmtogif.
+
+1.  First you need to compile Tom Boutell's GD gif-manipulating
+library, which is available from http://www.boutell.com/gd/.
+
+2.  #define DEANGIF in config.h.
+
+3.  Copy gd.h and libgd.a into the XTide build directory.
+
+4.  If using imake, replace Imakefile with Imakefile.deangif;
+otherwise edit Makefile.tide or makefile.os2 and add -lgd to LIBS.
+
+5.  Compile as normal.
+
+
+Configuration Files
+-------------------
+
+Config files are strictly optional.  They are a convenience feature.
+There is nothing you can do in config files that you can't do on the
+command line.  However, if you are making a Web interface to XTide, it
+is probably a lot safer to pipe in arguments with -config - than to
+put them on the command line.
+
+XTide (Tide) will attempt to read config files in the following order:
+
+1.  Any and all config files specified with the -config switch.
+2.  The config file specified in the environment variable XTIDERC
+(TIDERC).
+3.  ~/.xtiderc (~/.tiderc).  The environment variable HOME must be set
+for this to work.
+4.  The system config file specified by the xsysconfig (sysconfig)
+#define in config.h.
+
+Only one config file will be read, except if the -config switch is
+used multiple times.  Config files take effect before the command line
+is processed except for those specified with -config, which take
+effect at the place that -config occurs in the command line.
+
+The format of a config file is just like the command line, except that
+you can't do anything fancy.  Arguments can be delimited with double
+quotes, and # causes the rest of the line to be interpreted as
+comments.
+
+         # Here is an example config file
+         -loctz -location "Wherever I May Roam"
+         -fgrise uglybrown  # Ugly brown is actually quite pretty
+
+
+Bugs
+----
+
+1.  Solaris 2.4 has bugs related to Daylight Savings Time.  Please use
+a newer version of Solaris.
+
+2.  Because of the slackful matching used to find data sets in the
+harmonics file, if one data set has a name that is a prefix of the
+name of a second data set, such as "San Francisco" and "San Francisco
+Current", then the first data set must appear earlier in the harmonics
+file, or it will not be selectable.  (Typing "San Francisco" would
+get you "San Francisco Current".)
+
+3.  The -loctz switch is always broken to some degree on any machine
+that doesn't have Olson's zoneinfo database.  Also, inconsistencies in
+the zoneinfo database from one version to the next have broken some
+locations.
+
+4.  Some versions of libc contain a broken strftime that will
+occasionally get AM/PM wrong.
+
+5.  -uutc won't always work if you put it in a config file.
+
+6.  -ps is not fully implemented.  The size of the text generated by
+-ps varies in inverse proportion to the amplitude of the tide.
+
+7.  The true color code is disabled for one specific X server that it
+is known not to work on (Hummingbird).
+
+8.  The default bitmap icon is drawn in reverse video on some
+platforms.  This appears to be a bug in Xlib.
+
+
+XTide FAQ
+---------
+
+Q:  "Please add predictions for Skreegonk Bay to your web page.  There
+are a whole bunch of important people living here in Skreegonk and
+we're all very insulted that you don't do our tides."
+
+A:  The web site that you saw invokes XTide to predict tides.  I
+maintain XTide but not the web site.
+
+In order to predict tides at a given location, it is necessary to have
+the harmonic constants for that location.  I have collected as many
+data sets as I could on a zero budget, and I distribute them from
+http://www.universe.digex.net/~dave/files/.  The complete list of
+supported locations can be found at
+http://www.universe.digex.net/~dave/xtide/harmlist.html.
+
+If your location is not already on the list, you have two options:
+
+   1.  If you are in the U.S., you can pay NOAA between $10 and $40
+   for a data set.  For information on how to do this, see
+   http://www.universe.digex.net/~dave/xtide/harmonics.html.  Other
+   tide services in other countries may give out this data for free,
+   or they may refuse to give it out "for security reasons."
+
+   2.  Find out the tide offsets from a well-known reference station
+   for which I have data, and use XTide to apply these offsets.  You
+   should be able to get offsets from a local chartbook, Yacht Club,
+   or marine authority.
+
+Q:  "When I click on tide chart I get an error in my web browser.  Get
+off the Internet you incompetent jerk!"
+
+A:  I do not have a tide-predicting web page.  You need to look again
+and find the name of the person who wrote the page itself, and
+complain to them instead.
+
+Q:  "The colors in your tide predicting web page are so dark that I
+can't read the timestamps.  Get off the Internet you incompetent
+jerk!"
+
+A:  I do not have a tide-predicting web page.  Please direct complaints
+about web pages to the right people.  However, you may be able to cure
+your problem by using netscape -install to fix your colormap.
+
+Q:  "That tide chart really looks like dog poop.  Get off the Internet
+you incompetent jerk!"
+
+A:  Your problem is that you're using a brain-damaged web browser that
+you got from your Internet access provider.  And that's STILL not my
+web page!
+
+Q:  "Hi, I'm the one-thousand-and-fifth person today with a gripe about
+your web page.  Get off the Internet you incompetent jerk!"
+
+A:  I DO NOT HAVE A TIDE-PREDICTING WEB PAGE YOU CLUELESS WEBHEAD!!!
+
+Q:  "Geez, I think you can reply to the pesky questions without being a
+complete jerk!  You should feel flattered that anyone asks you for
+help!  Why don't you try being nice once in a while?"
+
+A:  I'm sorry.  I don't know what came over me.  (Twitch, twitch)
+
+Q:  "Please send me today's predictions for Skreegonk Bay.  I need them
+before 11:30, so hurry up.  By the way, I'll be e-mailing you again
+every time I need predictions, so you better get used to the idea.
+Get off the Internet you incompetent jerk!"
+
+A:  Sorry, I do not have the time to provide this level of service.
+Please RTFM or get a web browser.
+
+Q:  "I don't know anything about computers.  In fact, I am a vegetable
+life form that is incapable of independent thought.  Please send me
+the exact keystrokes that are required to get your web page to do what
+I want.  If anything goes wrong I will just e-mail you again and again
+until every keystroke is perfect."
+
+A:  Dude... I told you before, that's not my web page.  (Phew, that
+was a close one!)
+
+Q:  "I don't know anything about computers.  In fact, I am a vegetable
+life form that is incapable of independent thought.  Please send me
+the exact keystrokes that are required to download XTide, unpack it,
+compile it, and run it.  If anything goes wrong I will just e-mail you
+again and again until every keystroke is perfect.  My computer is a
+Banana 2000; hope that helps.  Incidentally I have noticed that your
+software is not plug-and-play and that your documentation is all
+written in computerese.  Get off the Internet you incompetent jerk!"
+
+A:  Er... I'm afraid that you need more help than I am able to give.
+(But I hope that you get it, good and hard.)
+
+Q:  "Hi, I'm the one-thousand-and-sixth person today with a gripe about
+your web page.  Get off the Internet you incompetent jerk!"
+
+A:  Life is a journey.  You're blocking the road.  Move it.
+
+
+*** THE REAL FAQ STARTS HERE. ***
+
+Q:  "Can you get me tide predictions for Skreegonk Bay?"
+
+A:  In order to predict tides at a given location, it is necessary to have
+the harmonic constants for that location.  I have collected as many
+data sets as I could on a zero budget, and I distribute them from
+http://www.universe.digex.net/~dave/files/.  The complete list of
+supported locations can be found at
+http://www.universe.digex.net/~dave/xtide/harmlist.html.
+
+If your location is not already on the list, you have two options:
+
+   1.  If you are in the U.S., you can pay NOAA between $10 and $40
+   for a data set.  For information on how to do this, see
+   http://www.universe.digex.net/~dave/xtide/harmonics.html.  Other
+   tide services in other countries may give out this data for free,
+   or they may refuse to give it out "for security reasons."
+
+   2.  Find out the tide offsets from a well-known reference station
+   for which I have data, and use XTide to apply these offsets.  You
+   should be able to get offsets from a local chartbook, Yacht Club,
+   or marine authority.
+
+Q:  "Can you at least tell me the offsets for Skreegonk Bay Entrance?"
+
+A:  No, I can't.  Your best bet is to contact one of the Skreegonk
+locals who might know, or ask NOAA.  Some people have gotten offsets
+from NOAA for free by sending e-mail requests to
+ipss@ceob-g30.nos.noaa.gov, but I have a feeling that if too many
+people do that, they'll start charging for the service.
+
+Q:  "You have a data set called Wallapalooza and a data set called
+Wallapalooza (2), and they're not identical.  What's the diff?"
+
+A:  It often happens that I get more than one data set for the same
+location.  Sometimes they are from different sources; other times, one
+is just older than the other.  When I have enough information to know
+which one is best, I will make it the first one (with no number).  But
+if you are concerned about matching predictions up with those from
+some particular source, you should try each data set, see which one
+matches the best, and let me know if I have the wrong one first.
+
+Q:  "The times are right for Skreegonk Bay Entrance Current, but the
+velocities are much too big, and it says the units are bogo-knots or
+kt^2."
+
+A:  So-called "hydraulic" current stations generate results which are
+the square of the result that you actually want.  Unfortunately, you
+will need to do the square root yourself until XTide version 2.0 is
+out.
+
+Q:  "Hey, what are bogo-knots?"
+
+A:  Knots squared.  See previous question.
+
+Q:  "What is a .tgz file?"
+
+A:  .tgz is just an abbreviation for .tar.gz (gzipped tar).  It's an
+old convention for making life easier on people who are trying to
+download to MS-DOS or Windows machines.
+
+Q:  "First it says high tide is at 3:15 PM but then when I run it again
+it says 3:14 PM!"
+
+A:  XTide's accuracy is plus or minus one minute.  The behavior that
+you witnessed is normal.
+
+Q:  "The -skinny option doesn't make it much skinnier...."
+
+A:  It's your window manager.  Some window managers won't let windows
+go outside of a certain aspect ratio; some won't let a window get
+smaller than is needed to display all the buttons in its title bar.
+
+Q:  "Has this been ported to Windows / OS/2 / anything but Unix?"
+
+A:  Yes, to varying degrees.  Binaries for OS/2 and DOS are
+available; refer to the Installation section for more information.
+The graphic client was ported to Microsoft Windows by Paul C. Roberts
+(paul@slothdom.demon.co.uk) and/or Alex (alex@slothdom.demon.co.uk);
+the modified sources and binaries are available at
+ftp://ftp.demon.co.uk/pub/ibmpc/win3/apps/wtide.  The TTY client was
+ported to the Macintosh by Mikhail Fridberg (fridberg@pfc.mit.edu);
+the modified sources and binary are in
+http://www.universe.digex.net/~dave/files/MacTide133sit.hqx (binhexed
+Stuffit archive).  **PLEASE NOTE**: Ports of XTide to non-Unix
+platforms are supported by the people who did the ports.  I am only
+responsible for fixing bugs in the original Unix sources.
+
+Q:  "The tides for my location are totally wrong!"
+
+A:  This used to happen a lot because of inverted epoch values in the
+harmonics file, but I think I got all of those.  Make sure that you
+are using the most recent version of the harmonics file.  If your
+tides are still totally wrong, then the only thing I can do is comment
+out the data set, unless you want to pay NOAA for better data.  If, on
+the other hand, the tides are consistently off by 1 hour in a
+systematic way, then there are two possibilities.  The first is that
+you are running XTide version 1.4.2 or older with a default time zone
+in the southern hemisphere, in which case you can fix the problem by
+upgrading to the latest version of XTide.  The second is that the
+meridian is wrong in the harmonics file, in which case I can fix that
+if you give me some times of high and low tides that are known to be
+correct.
+
+Q:  "What's slack water mean?"
+
+A:  This and many other terms are defined in the NOAA tide glossary at
+http://www-ceob.nos.noaa.gov/tidegloss.html.
+
+Q:  "XTide isn't complete without phases of moon, sunrise, sunset,
+Druidic holy days, fiddler crab hatches, etc."
+
+A:  There is already a surplus of free software to do all of that.
+Examples that come to mind are Xephem, Xmoontool, Xphoon, and Emacs
+(M-x phases-of-moon, M-x sunrise-sunset, M-x holidays, et. al.).
+
+Q:  "I have five constituents and some seasonal corrections for my
+location.  Can you get this to work?"
+
+A:  No, I can't.  Somebody with more expertise might be able to derive
+a full set of constituents from that, but the results would probably
+still only be a rough approximation of your tides.
+
+Q:  "I have a wonderful new contribution to XTide.  I modified graph
+mode to continuously update to follow the current time."
+
+A:  That's not a contribution, it's a duplication of effort.  Use
+-hairy with clock mode.  That's what it does.
+
+
+Acknowledgements
+----------------
+
+(The following are in no particular order.)
+
+Thanks to Greg Seidman (anthro@cs.umd.edu) for suggesting many of the
+features that appeared in version 1.
+
+Thanks to Frank Smith (frank@nwra.com) for supplying data and putting
+up with my confused e-mail during the stressful debugging of 1.0.1.
+
+Thanks to Karl Hahn (hahn@lds.loral.com), Tom Brown
+(tbrown@baremetal.com) and George (george@mech.seas.upenn.edu) for
+supplying a huge number of harmonic constants.
+
+Thanks to Jean-Pierre Lapointe (scipur@collegenotre-dame.qc.ca) for
+supplying the Canadian harmonics file and lots of other harmonics, and
+also the unequal offsets interpolation algorithm.
+
+Thanks to Edward P. Wallner (epwallnr@world.std.com) for the endless
+time, effort, and cash that he spent getting harmonic constants out of
+the dusty decks of the world's hydrographic bureaus and onto the
+Internet where they belong, and for mentoring on the calculation of
+node factors and equilibrium arguments.
+
+Thanks to Dale DePriest (daled@cadence.com) for suggesting many new
+features, beta testing, and porting to several flavorful operating
+systems.
+
+Thanks to Dean Pentcheff (dean@tbone.biol.sc.edu) for beta testing,
+suggesting features, coding GIF support, supplying many data sets, and
+generally being very active in promoting XTide.
+
+Thanks to Jef Poskanzer (jef@acme.com) for much coding, suggesting
+of features, and beta testing.
+
+Thanks to Jack Greenbaum (jackg@crc.ricoh.com) for much coding,
+suggesting of features, beta testing, and doing the homework to get
+prediction of currents figured out.
+
+Thanks to Rob Miracle (rwm@TanSoft.com) and Simon Burge
+(simonb@telstra.com.au) for helping with Ultrix compatibility.
+Additional thanks to Simon for helping diagnose failures that only
+occurred in the southern hemisphere.
+
+Thanks to Scott Hemphill (hemphill@alumni.caltech.edu) and Edward
+J. Corbett (edc@unr.edu) for equilibrium arguments, node factors, and
+some accuracy improvements in the harmonics file.
+
+Thanks to Toru Suzuki (cm30305@shiho.tokyo-u-fish.ac.jp) for providing
+and maintaining the harmonics.japan file.
+
+Thanks to Georg Vollmers (georg@egalize.han.de), Tom Varga
+(tvarga@lsil.com), Bob Kenney (rmk@unh.edu), Alan Eugene Davis
+(adavis@netpci.com), Bruce Bowler (BBowler@Bigelow.org), Phil
+Hughes (fyl@a42.com), and Graeme Rae (graeme@pelican.marine.fit.edu)
+for suggesting new features and/or beta testing.
+
+Thanks to Andrew Davidson (andrew.davidson@eng.sun.com) for helping
+with Solaris compatibility.
+
+Thanks to Geoff Kuenning (geoff@ficus.cs.ucla.edu) for the SunOS
+patch.
+
+Thanks to Jeff Small (jeff@cjsa.com) for suggesting features and
+writing the man page.
+
+Thanks to Mikhail Fridberg (fridberg@pfc.mit.edu) for doing the Mac
+port.
+
+Thanks to Paul C. Roberts (paul@slothdom.demon.co.uk) and Alex
+(alex@slothdom.demon.co.uk) for porting XTide to Microsoft Windows.
+
+Thanks to Stan Uno (uno@pacificnet.net) for Alpha and Macintosh patches.
+
+Thanks to Jeff Dairiki (dairiki@irving.apl.washington.edu) for the
+jumbo performance patch and excellent bug fixes.
+
+Thanks to Eric Rosen (eric@cse.ucsc.edu) for the BSD/OS 2.1 patch.
+
+
+Contact Info
+------------
+
+David Flater
+dave@universe.digex.net
+
+
+Changelog
+---------
+
+Patch 2 to 1.6, 1997-08-28:
+
+Increased intervalwidth in tidelib from 13 to 15 -- it wasn't quite
+wide enough for Dublon and probably other locations.  This (hopefully)
+fixes an assertion failure when using unequal offsets.  Thanks to Alan
+Eugene Davis for reporting the assertion failure.
+
+
+Patch 1 to 1.6, 1997-08-15:
+
+Patched timelib to get rid of problem on some Solaris and IRIX
+platforms where using -gstart and -loctz at the same time was yielding
+the wrong time zone.  The code for auto-detecting the level of time
+zone support was coming to an overly optimistic conclusion based on
+the results of an auto-probe.  By a bizarre coincidence, the mode of
+failure of these platforms under certain conditions was close enough
+to the correct answer to fool the auto-probe.  The workaround was to
+add code before the auto-probe to initialize the time zone to GMT.
+This appeared to clear out the random data that were somehow leading
+to reasonable-looking output when tzset actually blew up on the first
+auto-probe.
+
+
+Version 1.6, 1997-05-13:
+
+Major upgrade to zoneinfo compatibility code, in honor of 777 new data
+sets spanning most time zones.
+
+Minor performance boost in tidelib (_time2dt_tide).
+
+Lots of code changed in order to integrate Jean-Pierre's algorithm to
+interpolate tide levels with different offsets for high and low tide.
+
+Fixed text alignment in xtide.java.
+
+Stan Uno patch to xtide.java to work around Macintosh Netscape bug.
+
+Fixed up timelib functions to deal properly with Rarotonga and Riyadh
+time zones.
+
+Changed calendar generation to eliminate most occurrences of tide
+events showing up in the wrong day and get marginal performance gain.
+
+Added built-in bitmap icon.
+
+Tried to upgrade Java to JDK 1.1; failed, reported Java bugs to Sun.
+Unbundled Java applets.
+
+Recognize, but don't convert, knots^2.
+
+
+Patch 1 to 1.5, 1996-12-07:
+
+Updated all URLs from http://universe.digex.net to
+http://www.universe.digex.net because a reconfiguration is going to
+break the former.
+
+Other documentation updates.
+
+
+Version 1.5, 1996-11-17:
+
+Added multiplicative offsets.
+
+Added Dean's GIF code and -javanh option.
+
+Expanded some temporary buffers to make it harder to overrun them.
+
+Premature optimization is the root of all evil, but I guess after five
+versions it's not premature.  Performance patch -- change epochs to
+radians first.  I still don't know that this had much impact on
+performance, but Jeff Dairiki (who sent the patch) claimed 50% speedup
+on his machine.  Jeff stayed backward compatible for Java, but instead
+I made the same changes to the applets to speed them up too.  Java
+applets must now be upgraded at the same time as xtide to avoid
+disaster.
+
+While I'm at it, made another analogous speedup to the applets, and
+updated the old URL that's been in tide.java all this time (oops).
+
+Included Jeff Dairiki's iterative approximation code for a giant
+speedup in text modes.
+
+Added enhancements for true color displays.
+
+More code from Jeff Dairiki to clean up epoch changes and eliminate
+ages-old bugs.
+
+Added URANDOM compile-time option.
+
+Added more diagnostics for mktime failures in tm2gmt.
+
+Added units.
+
+Fixed logging of header information in text modes.
+
+Replaced all the little kludges around tm2gmt in timelib with one big
+kludge that ostensibly has a total of one less bug.  This will have
+some effect on tide predictions below the equator; whether the net
+effect is good or bad remains to be seen.
+
+
+Patch 2 to 1.4, 1996-08-10:
+
+Included BSD/OS 2.1 patch from Eric Rosen.
+
+Added warning for usage of offsets with currents.
+
+Fixed (worked around) -uutc DST bug.
+
+
+Patch 1 to 1.4, 1996-06-26:
+
+Added SIGHANDTYPE to satisfy a Sparc compiler.
+
+Updated error message for BADTIMESTAMP.
+
+Provided better captions in -stats.
+
+Stopped tidelib from barfing when harmonics file has blank lines in it.
+
+
+Version 1.4, 1996-06-04:
+
+Added -stats, -weekday, and -thin switches.
+
+Made -hairy work with -graph and -ppm to turn on 2-color graphing like
+the hairy tide clock.
+
+Added #ifdef OS2 to config.h to use 8-character default harmonics file
+name.
+
+Added -nofill switch.
+
+Broke up tidelib into more source files, rearranged things a bit.
+
+Added Jack's PostScript[tm] code.
+
+Added -24 switch.
+
+Expanded timestamp buffers to handle time zone names longer than 3
+characters.
+
+Magically expand the tide clock window if time stamps get too long.
+
+Improved text formatting vis-a-vis window resizing.
+
+Added speed parameter to -test switch.
+
+Added -raw switch.
+
+"Time Now" in tide clock doesn't lag wall clock any more.
+
+Added -uutc switch.
+
+Added -location random.  Fixed unlikely bug in -cur switch.
+
+Added -java.
+
+Icon name for tide clock is time of next high tide.
+
+Added "XTide:" to the head of window names for the benefit of window
+managers.  Provided icon.
+
+Added -norename switch.
+
+Offsets now work in all modes if and only if the offsets for high and
+low tide are the same.
+
+-help sends usage to stdout instead of stderr.
+
+
+Patch 10 to 1.3, 1996-04-07:
+
+Kludge to prevent assertion failures related to DST changes.
+
+
+Patch 9 to 1.3, 1996-03-21:
+
+Even BIGGER disclaimers and warnings.  -nowarn switch added.
+
+
+Patch 8 to 1.3, 1996-03-08:
+
+Cleaned up code from patch 7.  Added Oz patch to set_epoch.
+
+
+Patch 7 to 1.3, 1996-03-07:
+
+Window resizes were broken when the user specified negative coordinates for
+the geometry.
+
+
+Patch 6 to 1.3, 1996-02-21:
+
+Stan Uno sent a patch to avoid floating point exception on DEC Alpha
+OSF1 V3.0.
+
+
+Patch 5 to 1.3, 1/28/96:
+
+Fixed hanging on startup when colormap is full.
+
+
+Patch 4 to 1.3, 1/26/96:
+
+Remove uses of strdup from the code so that it'll compile on Ultrix.
+
+
+Patch 3 to 1.3, 12/5/95:
+
+Closest matching color code forgot to allocate the color once it found
+it.
+
+
+Patch 2 to 1.3, 12/4/95:
+
+Updated BROKEN_ZONEINFO code to add a few more time zones.
+
+Cleaned up binary garbage left in the time zone spec by some time zone
+files.
+
+
+Patch 1 to 1.3, 11/29/95:
+
+Fixed negative X and Y specs in X geometries.
+
+Added code to substitute the closest available color instead of
+barfing when color map is full.
+
+Updated the text of some error messages to be more accurate.
+
+
+Version 1.3, 10/31/95:
+
+Added -hinc and -tinc.  Turned on vertical labeling by default in
+graph and PPM, with best-guess increments.
+
+Environment variables LOCATION and HFILE now override config.h.
+
+Integrated OS/2 patch from Dale DePriest.
+
+-version now stops the show.
+
+Print more illuminating error message when color map is full.
+
+Support config files.
+
+Added -loctz.
+
+Support currents.
+
+Made -loctz work some of the time under IRIX.
+
+Added -cur.
+
+Support comments in config files.
+
+Support -tinc in hairy mode.
+
+Cleaned up more Solaris compiler warnings.
+
+AIX and HP compatibility courtesy of Dale DePriest.
+
+Never-ending maintenance on BROKEN_ZONEINFO code.
+
+Changed "line discipline" for ASCII graph mode.
+
+Fixed a potential segmentation violation when mark lines aren't in the
+visible range on the graph.
+
+Allow changing colors in PPM mode; made -geometry work in PPM mode
+too.
+
+Added -toplines.
+
+-now works with -graph and -ppm to center the graph around the current
+time and mark it on the graph.
+
+Harmonized color syntax for PPM mode with X color syntax.
+
+Expanded the workable range in graph mode (for Deception Pass).
+
+Fixed some stupid typos.
+
+Added some friendly error messages.
+
+-hinc now defaults to a reasonable value instead of always 1.
+
+Added -calen.
+
+Minor cleanups.
+
+Made font spec more specific to fix portability problem.
+
+Print out location name and mark level at top of all text modes.
+
+Fixed BROKEN_ZONEINFO again.
+
+Added -banner.
+
+Don't display mark setting for currents since it's always 0.
+
+Changed prev_day, increment_day to be more robust with DST changes.
+
+Go for one more hour when drawing hour ticks so that -tinc will draw
+partial digits in a symmetrical manner.
+
+Dynamically allocate memory for -calen instead of static.
+
+Go for one more hour on day marks too.
+
+
+Patch 3 to 1.2, 9/12/95:
+
+Again fixed the problem with tides changing out of synch with the
+water color in the tide clock.
+
+
+Patch 2 to 1.2, 9/11/95:
+
+Geoff Kuenning (geoff@ficus.cs.ucla.edu) sent a patch to work around a
+broken assert macro on SunOS 4.1.1.
+
+
+Patch 1 to 1.2, 9/11/95:
+
+Accept either SVR4 or __svr4__ to avoid using the old SunOs code under
+Solaris.
+
+Default location of harmonics file if you don't change config.h is now
+current directory.
+
+
+Version 1.2, 9/10/95:
+
+Jef split xtide.c into xtide.c, tide.c, and tidelib.c to allow people
+without X libraries to compile a text-only client.
+
+Tide levels reported in text mode are now adjusted to mean lower low
+water, or whatever tide datum has been provided.  An incompatible
+change to the format of the harmonics file was made to support this.
+
+Added -hloff, -htoff, -lloff, -ltoff, and -mark.
+
+Put mark and middle lines on top of the graph.  Made them red.
+
+Jack made the title of the graph different from that of the tide
+clock, added switches -mllw and -fgmllw, and provided code to
+calibrate the depth marks with MLLW.  Messed with the calibrated tick
+mark code, then made it the default.  Also stopped tick marks from
+clobbering text.
+
+Removed year from dates in skinny mode (graph and text).
+
+Integrated Rob's Ultrix compatibility patch.
+
+Added a bunch of asserts to the argument parsing code.
+
+Added the -ppm switch (one huge hack).
+
+Usage info now goes to stderr.
+
+Jef implemented ASCII graph mode and partially calibrated the tick
+marks with the top of the hour.  Finished it, made it the default.
+
+Fixed an off-by-one error in ASCII graph mode and rounded everything.
+
+Made -mark and -middle different colors.
+
+Ooops -- I broke the tick marks in other timezones.  Fixed.
+
+Removed non-sig-digs from tide heights printed in text mode.
+
+Changed __svr4__ to SVR4 in #ifdefs because it wasn't working right on
+some version of Solaris.  Added (int) cast to strlen returns to
+silence compiler warnings on Solaris.
+
+Enhanced -mark to show times when mark level is crossed.
+
+Corrected an old bug that has been causing all the tide predictions to
+be late by 1 minute.
+
+Hourly tick marks that mark day boundaries are thicker.
+
+Labeled the PPM with the location.  Added a switch to change its size.
+
+The special case code for mark transitions and tides at the same time
+had an off-by-one error.  Fixed.
+
+Closed the interval used to detect mark transitions.
+
+Fixed day marks for DST changes.
+
+
+Patch 1 to 1.1, 8/27/95:
+
+Fixed a possible robustness problem that was introduced in 1.1 when I
+tried to get the high and low tide predictions in the tide clock
+always to update at the same time that the water changed color.  There
+was the potential for the tides to get permanently out of
+synchronization with the current time after a localized disturbance
+such as a change of epoch or resetting the system clock.
+
+
+Version 1.1, 8/26/95:
+
+Next low tide is now displayed at the bottom of the window.
+
+Fixed the bug that was causing off-by-one-pixel errors in window
+updates.
+
+Added -middle, -now, -skinny, and -text switches.
+
+Changed matching of locations specified on the command line to have
+more slack.  It's now case-insensitive, and you only need to type
+enough letters to uniquely identify the location that you want.
+
+No more core dumps on assertion failures.
+
+Assorted cleanups and nit fixes, but mainly just more spaghetti code
+for your reading enjoyment.
+
+
+Patch 2 to 1.0, 8/16/95:
+
+Fixed two bugs that compensated in such a way that locations in the
+current time zone worked fine.  For locations in other time zones, the
+timestamps were totally wrong.
+
+Time displacements of the form -HH:MM, where MM was nonzero, were
+being processed incorrectly.  Fixed.
+
+
+Patch 1 to 1.0, 8/5/95:
+
+Fixed a potential underflow error that affected New Year's Day only,
+and only on machines where time_t is unsigned.
+
+
+Version 1.0 released locally on 8/4/95.
