@@ -1,4 +1,4 @@
-/* $Id: tide_db.c 3176 2008-08-20 23:36:01Z flaterco $ */
+/* $Id: tide_db.c 5422 2014-02-23 21:11:04Z flaterco $ */
 
 #include "tcd.h"
 #include "tide_db_header.h"
@@ -369,6 +369,7 @@ static FILE                 *fp = NULL;
 static TIDE_INDEX           *tindex = NULL;
 static NV_BOOL              modified = NVFalse;
 static NV_INT32             current_record, current_index;
+static NV_U_INT32           current_search_index;
 static NV_CHAR              filename[MONOLOGUE_LENGTH];
 
 
@@ -385,7 +386,7 @@ static void chk_fread (void *ptr, size_t size, size_t nmemb, FILE *stream) {
   ret = fread (ptr, size, nmemb, stream);
   if (ret != nmemb) {
     fprintf (stderr, "libtcd unexpected error: fread failed\n");
-    fprintf (stderr, "nmemb = %lu, got %lu\n", nmemb, ret);
+    fprintf (stderr, "nmemb = %u, got %u\n", nmemb, ret);
     abort();
   }
 }
@@ -396,7 +397,7 @@ static void chk_fwrite (const void *ptr, size_t size, size_t nmemb,
   ret = fwrite (ptr, size, nmemb, stream);
   if (ret != nmemb) {
     fprintf (stderr, "libtcd unexpected error: fwrite failed\n");
-    fprintf (stderr, "nmemb = %lu, got %lu\n", nmemb, ret);
+    fprintf (stderr, "nmemb = %u, got %u\n", nmemb, ret);
     fprintf (stderr, "The database is probably corrupt now.\n");
     abort();
   }
@@ -421,7 +422,7 @@ static void chk_fwrite (const void *ptr, size_t size, size_t nmemb,
 
 \*****************************************************************************/
 
-void dump_tide_record (TIDE_RECORD *rec)
+void dump_tide_record (const TIDE_RECORD *rec)
 {
     NV_U_INT32              i;
 
@@ -1030,7 +1031,7 @@ TIDE_STATION_HEADER *rec)
 
 \*****************************************************************************/
 
-NV_INT32 get_time (NV_CHAR *string)
+NV_INT32 get_time (const NV_CHAR *string)
 {
     NV_INT32        hour, minute, hhmm;
 
@@ -1167,13 +1168,13 @@ DB_HEADER_PUBLIC get_tide_db_header ()
    DWF 2004-09-30
    Prevent buffer overflows for MONOLOGUE_LENGTH strings.
 \*****************************************************************************/
-static void boundscheck_monologue (NV_CHAR *string) {
+static void boundscheck_monologue (const NV_CHAR *string) {
   assert (string);
   if (strlen(string) >= MONOLOGUE_LENGTH) {
     fprintf (stderr, "libtcd fatal error:  static buffer size exceeded\n");
     fprintf (stderr, "Buffer is size MONOLOGUE_LENGTH (%u)\n",
              MONOLOGUE_LENGTH);
-    fprintf (stderr, "String is length %lu\n", strlen(string));
+    fprintf (stderr, "String is length %u\n", strlen(string));
     fprintf (stderr, "The offending string is:\n%s\n", string);
     exit (-1);
   }
@@ -1184,13 +1185,13 @@ static void boundscheck_monologue (NV_CHAR *string) {
    DWF 2004-09-30
    Prevent buffer overflows for ONELINER_LENGTH strings.
 \*****************************************************************************/
-static void boundscheck_oneliner (NV_CHAR *string) {
+static void boundscheck_oneliner (const NV_CHAR *string) {
   assert (string);
   if (strlen(string) >= ONELINER_LENGTH) {
     fprintf (stderr, "libtcd fatal error:  static buffer size exceeded\n");
     fprintf (stderr, "Buffer is size ONELINER_LENGTH (%u)\n",
              ONELINER_LENGTH);
-    fprintf (stderr, "String is length %lu\n", strlen(string));
+    fprintf (stderr, "String is length %u\n", strlen(string));
     fprintf (stderr, "The offending string is:\n%s\n", string);
     exit (-1);
   }
@@ -1215,7 +1216,7 @@ static void boundscheck_oneliner (NV_CHAR *string) {
 
 \*****************************************************************************/
 
-static NV_CHAR *clip_string (NV_CHAR *string)
+static NV_CHAR *clip_string (const NV_CHAR *string)
 {
   static NV_CHAR        new_string[MONOLOGUE_LENGTH];
   NV_INT32              i, l, start = -1, end = -1;
@@ -1267,10 +1268,9 @@ static NV_CHAR *clip_string (NV_CHAR *string)
 
 \*****************************************************************************/
 
-NV_INT32 search_station (NV_CHAR *string)
+NV_INT32 search_station (const NV_CHAR *string)
 {
     static NV_CHAR        last_search[ONELINER_LENGTH];
-    static NV_U_INT32     j=0;
     NV_U_INT32            i;
     NV_CHAR               name[ONELINER_LENGTH], search[ONELINER_LENGTH];
 
@@ -1284,21 +1284,21 @@ NV_INT32 search_station (NV_CHAR *string)
     for (i = 0 ; i < strlen(string) + 1 ; ++i)
         search[i] = tolower (string[i]);
 
-    if (strcmp (search, last_search)) j = 0;
+    if (strcmp (search, last_search)) current_search_index = 0;
 
     strcpy (last_search, search);
 
-    while (j < hd.pub.number_of_records)
+    while (current_search_index < hd.pub.number_of_records)
     {
-        for (i = 0 ; i < strlen(tindex[j].name) + 1 ; ++i)
-            name[i] = tolower (tindex[j].name[i]);
+        for (i = 0 ; i < strlen(tindex[current_search_index].name) + 1 ; ++i)
+            name[i] = tolower (tindex[current_search_index].name[i]);
 
-        ++j;
+        ++current_search_index;
         if (strstr (name, search))
-          return (j - 1);
+          return (current_search_index - 1);
     }
 
-    j = 0;
+    current_search_index = 0;
     return -1;
 }
 
@@ -1321,7 +1321,7 @@ NV_INT32 search_station (NV_CHAR *string)
 
 \*****************************************************************************/
 
-NV_INT32 find_station (NV_CHAR *name)
+NV_INT32 find_station (const NV_CHAR *name)
 {
     NV_U_INT32              i;
 
@@ -1358,7 +1358,7 @@ NV_INT32 find_station (NV_CHAR *name)
 
 \*****************************************************************************/
 
-NV_INT32 find_tzfile (NV_CHAR *name)
+NV_INT32 find_tzfile (const NV_CHAR *name)
 {
     NV_INT32   j;
     NV_U_INT32 i;
@@ -1403,7 +1403,7 @@ NV_INT32 find_tzfile (NV_CHAR *name)
 
 \*****************************************************************************/
 
-NV_INT32 find_country (NV_CHAR *name)
+NV_INT32 find_country (const NV_CHAR *name)
 {
     NV_INT32    j;
     NV_U_INT32  i;
@@ -1448,7 +1448,7 @@ NV_INT32 find_country (NV_CHAR *name)
 
 \*****************************************************************************/
 
-NV_INT32 find_level_units (NV_CHAR *name)
+NV_INT32 find_level_units (const NV_CHAR *name)
 {
     NV_INT32    j;
     NV_U_INT32  i;
@@ -1493,7 +1493,7 @@ NV_INT32 find_level_units (NV_CHAR *name)
 
 \*****************************************************************************/
 
-NV_INT32 find_dir_units (NV_CHAR *name)
+NV_INT32 find_dir_units (const NV_CHAR *name)
 {
     NV_INT32    j;
     NV_U_INT32  i;
@@ -1539,7 +1539,7 @@ NV_INT32 find_dir_units (NV_CHAR *name)
 \*****************************************************************************/
 
 #ifdef COMPAT114
-NV_INT32 find_pedigree (NV_CHAR *name) {
+NV_INT32 find_pedigree (const NV_CHAR *name) {
   return 0;
 }
 #endif
@@ -1563,7 +1563,7 @@ NV_INT32 find_pedigree (NV_CHAR *name) {
 
 \*****************************************************************************/
 
-NV_INT32 find_datum (NV_CHAR *name)
+NV_INT32 find_datum (const NV_CHAR *name)
 {
     NV_INT32    j;
     NV_U_INT32  i;
@@ -1593,7 +1593,7 @@ NV_INT32 find_datum (NV_CHAR *name)
 /*****************************************************************************\
   DWF 2004-10-14
 \*****************************************************************************/
-NV_INT32 find_legalese (NV_CHAR *name)
+NV_INT32 find_legalese (const NV_CHAR *name)
 {
   NV_INT32    j;
   NV_U_INT32  i;
@@ -1639,7 +1639,7 @@ NV_INT32 find_legalese (NV_CHAR *name)
 
 \*****************************************************************************/
 
-NV_INT32 find_constituent (NV_CHAR *name)
+NV_INT32 find_constituent (const NV_CHAR *name)
 {
     NV_U_INT32               i;
     NV_CHAR     *temp;
@@ -1678,7 +1678,7 @@ NV_INT32 find_constituent (NV_CHAR *name)
 
 \*****************************************************************************/
 
-NV_INT32 find_restriction (NV_CHAR *name)
+NV_INT32 find_restriction (const NV_CHAR *name)
 {
     NV_INT32    j;
     NV_U_INT32  i;
@@ -1828,7 +1828,7 @@ void set_node_factor (NV_INT32 num, NV_INT32 year, NV_FLOAT32 value)
 \*****************************************************************************/
 
 #ifdef COMPAT114
-NV_INT32 add_pedigree (NV_CHAR *name, DB_HEADER_PUBLIC *db) {
+NV_INT32 add_pedigree (const NV_CHAR *name, const DB_HEADER_PUBLIC *db) {
   return 0;
 }
 #endif
@@ -1852,7 +1852,7 @@ NV_INT32 add_pedigree (NV_CHAR *name, DB_HEADER_PUBLIC *db) {
 
 \*****************************************************************************/
 
-NV_INT32 add_tzfile (NV_CHAR *name, DB_HEADER_PUBLIC *db)
+NV_INT32 add_tzfile (const NV_CHAR *name, DB_HEADER_PUBLIC *db)
 {
     NV_CHAR *c_name;
 
@@ -1918,7 +1918,7 @@ NV_INT32 add_tzfile (NV_CHAR *name, DB_HEADER_PUBLIC *db)
 
 \*****************************************************************************/
 
-NV_INT32 add_country (NV_CHAR *name, DB_HEADER_PUBLIC *db)
+NV_INT32 add_country (const NV_CHAR *name, DB_HEADER_PUBLIC *db)
 {
     NV_CHAR *c_name;
 
@@ -1984,7 +1984,7 @@ NV_INT32 add_country (NV_CHAR *name, DB_HEADER_PUBLIC *db)
 
 \*****************************************************************************/
 
-NV_INT32 add_datum (NV_CHAR *name, DB_HEADER_PUBLIC *db)
+NV_INT32 add_datum (const NV_CHAR *name, DB_HEADER_PUBLIC *db)
 {
     NV_CHAR *c_name;
 
@@ -2035,7 +2035,7 @@ NV_INT32 add_datum (NV_CHAR *name, DB_HEADER_PUBLIC *db)
 /*****************************************************************************\
   DWF 2004-10-14
 \*****************************************************************************/
-NV_INT32 add_legalese (NV_CHAR *name, DB_HEADER_PUBLIC *db)
+NV_INT32 add_legalese (const NV_CHAR *name, DB_HEADER_PUBLIC *db)
 {
     NV_CHAR *c_name;
 
@@ -2101,7 +2101,7 @@ NV_INT32 add_legalese (NV_CHAR *name, DB_HEADER_PUBLIC *db)
 
 \*****************************************************************************/
 
-NV_INT32 add_restriction (NV_CHAR *name, DB_HEADER_PUBLIC *db)
+NV_INT32 add_restriction (const NV_CHAR *name, DB_HEADER_PUBLIC *db)
 {
     NV_CHAR *c_name;
 
@@ -2152,7 +2152,7 @@ NV_INT32 add_restriction (NV_CHAR *name, DB_HEADER_PUBLIC *db)
 /*****************************************************************************\
   DWF 2004-10-04
 \*****************************************************************************/
-NV_INT32 find_or_add_restriction (NV_CHAR *name, DB_HEADER_PUBLIC *db) {
+NV_INT32 find_or_add_restriction (const NV_CHAR *name, DB_HEADER_PUBLIC *db) {
   NV_INT32 ret;
   ret = find_restriction (name);
   if (ret < 0)
@@ -2165,7 +2165,7 @@ NV_INT32 find_or_add_restriction (NV_CHAR *name, DB_HEADER_PUBLIC *db) {
 /*****************************************************************************\
   DWF 2004-10-04
 \*****************************************************************************/
-NV_INT32 find_or_add_tzfile (NV_CHAR *name, DB_HEADER_PUBLIC *db) {
+NV_INT32 find_or_add_tzfile (const NV_CHAR *name, DB_HEADER_PUBLIC *db) {
   NV_INT32 ret;
   ret = find_tzfile (name);
   if (ret < 0)
@@ -2178,7 +2178,7 @@ NV_INT32 find_or_add_tzfile (NV_CHAR *name, DB_HEADER_PUBLIC *db) {
 /*****************************************************************************\
   DWF 2004-10-04
 \*****************************************************************************/
-NV_INT32 find_or_add_country (NV_CHAR *name, DB_HEADER_PUBLIC *db) {
+NV_INT32 find_or_add_country (const NV_CHAR *name, DB_HEADER_PUBLIC *db) {
   NV_INT32 ret;
   ret = find_country (name);
   if (ret < 0)
@@ -2191,7 +2191,7 @@ NV_INT32 find_or_add_country (NV_CHAR *name, DB_HEADER_PUBLIC *db) {
 /*****************************************************************************\
   DWF 2004-10-04
 \*****************************************************************************/
-NV_INT32 find_or_add_datum (NV_CHAR *name, DB_HEADER_PUBLIC *db) {
+NV_INT32 find_or_add_datum (const NV_CHAR *name, DB_HEADER_PUBLIC *db) {
   NV_INT32 ret;
   ret = find_datum (name);
   if (ret < 0)
@@ -2204,7 +2204,7 @@ NV_INT32 find_or_add_datum (NV_CHAR *name, DB_HEADER_PUBLIC *db) {
 /*****************************************************************************\
   DWF 2004-10-14
 \*****************************************************************************/
-NV_INT32 find_or_add_legalese (NV_CHAR *name, DB_HEADER_PUBLIC *db) {
+NV_INT32 find_or_add_legalese (const NV_CHAR *name, DB_HEADER_PUBLIC *db) {
   NV_INT32 ret;
   ret = find_legalese (name);
   if (ret < 0)
@@ -3611,6 +3611,7 @@ database should be rebuilt from the original data if possible.\n");
 
     current_record = -1;
     current_index = -1;
+    current_search_index = 0;
 
     return (NVTrue);
 }
@@ -3633,11 +3634,12 @@ database should be rebuilt from the original data if possible.\n");
 
 \*****************************************************************************/
 
-NV_BOOL open_tide_db (NV_CHAR *file)
+NV_BOOL open_tide_db (const NV_CHAR *file)
 {
     assert (file);
     current_record = -1;
     current_index = -1;
+    current_search_index = 0;
     if (fp) {
         if (!strcmp(file,filename) && !modified) return NVTrue;
         else close_tide_db();
@@ -3814,9 +3816,10 @@ void close_tide_db ()
 
 \*****************************************************************************/
 
-NV_BOOL create_tide_db (NV_CHAR *file, NV_U_INT32 constituents,
-NV_CHAR *constituent[], NV_FLOAT64 *speed, NV_INT32 start_year,
-NV_U_INT32 num_years, NV_FLOAT32 *equilibrium[], NV_FLOAT32 *node_factor[])
+NV_BOOL create_tide_db (const NV_CHAR *file, NV_U_INT32 constituents, NV_CHAR
+const * const constituent[], const NV_FLOAT64 *speed, NV_INT32 start_year,
+NV_U_INT32 num_years, NV_FLOAT32 const * const equilibrium[], NV_FLOAT32
+const * const node_factor[])
 {
     NV_U_INT32            i, j;
     NV_FLOAT64            min_value, max_value;

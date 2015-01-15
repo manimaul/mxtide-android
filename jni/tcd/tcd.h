@@ -1,4 +1,4 @@
-/* $Id: tcd.h.in 2831 2007-12-01 01:04:11Z flaterco $ */
+/* $Id: tcd.h 5422 2014-02-23 21:11:04Z flaterco $ */
 /* tcd.h.  Generated from tcd.h.in by configure. */
 
 #ifndef __OAML_TIDES_H__
@@ -29,7 +29,7 @@
 
 /* Generated includes */
 #include <sys/types.h>
-#include <inttypes.h>
+#include <stdint.h>
 
 /* Generated data types */
 #define NV_BYTE    int8_t
@@ -57,7 +57,7 @@
 #define NV_INT16_MAX    32767
 
 
-#define LIBTCD_VERSION   "PFM Software - libtcd v2.2.4 - 2008-08-20"
+#define LIBTCD_VERSION   "PFM Software - libtcd v2.2.6 - 2014-02-23"
 #define LIBTCD_MAJOR_REV 2
 #define LIBTCD_MINOR_REV 2
 
@@ -216,7 +216,7 @@ typedef struct
 /*  Public function prototypes.  */
 
 /* Prints a low-level dump of the tide record to stderr. */
-void dump_tide_record (TIDE_RECORD *rec);
+void dump_tide_record (const TIDE_RECORD *rec);
 
 /* For fields in the tide record that are indices into tables of
    character string values, these functions are used to retrieve the
@@ -264,7 +264,7 @@ NV_FLOAT32 *get_node_factors (NV_INT32 num);
    leading zero when less than 10; ret_time_neat omits the leading
    zero and omits the sign when the value is 0:00.  Returned pointers
    point into static memory. */
-NV_INT32 get_time (NV_CHAR *string);
+NV_INT32 get_time (const NV_CHAR *string);
 NV_CHAR *ret_time (NV_INT32 time);
 NV_CHAR *ret_time_neat (NV_INT32 time);
 
@@ -279,38 +279,38 @@ NV_CHAR *ret_date (NV_U_INT32 date);
    numbers of all stations that have that string anywhere in the
    station name.  This search is case insensitive.  When no more
    records are found it returns -1. */
-NV_INT32 search_station (NV_CHAR *string);
+NV_INT32 search_station (const NV_CHAR *string);
 
 /* Inverses of the corresponding get_ operations.  Return -1 for not
    found. */
-NV_INT32 find_station (NV_CHAR *name);
-NV_INT32 find_tzfile (NV_CHAR *name);
-NV_INT32 find_country (NV_CHAR *name);
-NV_INT32 find_level_units (NV_CHAR *name);
-NV_INT32 find_dir_units (NV_CHAR *name);
-NV_INT32 find_restriction (NV_CHAR *name);
-NV_INT32 find_datum (NV_CHAR *name);
-NV_INT32 find_constituent (NV_CHAR *name);
-NV_INT32 find_legalese (NV_CHAR *name);
+NV_INT32 find_station (const NV_CHAR *name);
+NV_INT32 find_tzfile (const NV_CHAR *name);
+NV_INT32 find_country (const NV_CHAR *name);
+NV_INT32 find_level_units (const NV_CHAR *name);
+NV_INT32 find_dir_units (const NV_CHAR *name);
+NV_INT32 find_restriction (const NV_CHAR *name);
+NV_INT32 find_datum (const NV_CHAR *name);
+NV_INT32 find_constituent (const NV_CHAR *name);
+NV_INT32 find_legalese (const NV_CHAR *name);
 
 /* Add the value of name to the corresponding lookup table and return
    the index of the new value.  If db is not NULL, the database header
    struct pointed to will be updated to reflect the changes. */
-NV_INT32 add_restriction (NV_CHAR *name, DB_HEADER_PUBLIC *db);
-NV_INT32 add_tzfile (NV_CHAR *name, DB_HEADER_PUBLIC *db);
-NV_INT32 add_country (NV_CHAR *name, DB_HEADER_PUBLIC *db);
-NV_INT32 add_datum (NV_CHAR *name, DB_HEADER_PUBLIC *db);
-NV_INT32 add_legalese (NV_CHAR *name, DB_HEADER_PUBLIC *db);
+NV_INT32 add_restriction (const NV_CHAR *name, DB_HEADER_PUBLIC *db);
+NV_INT32 add_tzfile (const NV_CHAR *name, DB_HEADER_PUBLIC *db);
+NV_INT32 add_country (const NV_CHAR *name, DB_HEADER_PUBLIC *db);
+NV_INT32 add_datum (const NV_CHAR *name, DB_HEADER_PUBLIC *db);
+NV_INT32 add_legalese (const NV_CHAR *name, DB_HEADER_PUBLIC *db);
 
 /* Add the value of name to the corresponding lookup table if and
    only if it is not already present.  Return the index of the value.
    If db is not NULL, the database header struct pointed to will be
    updated to reflect the changes. */
-NV_INT32 find_or_add_restriction (NV_CHAR *name, DB_HEADER_PUBLIC *db);
-NV_INT32 find_or_add_tzfile (NV_CHAR *name, DB_HEADER_PUBLIC *db);
-NV_INT32 find_or_add_country (NV_CHAR *name, DB_HEADER_PUBLIC *db);
-NV_INT32 find_or_add_datum (NV_CHAR *name, DB_HEADER_PUBLIC *db);
-NV_INT32 find_or_add_legalese (NV_CHAR *name, DB_HEADER_PUBLIC *db);
+NV_INT32 find_or_add_restriction (const NV_CHAR *name, DB_HEADER_PUBLIC *db);
+NV_INT32 find_or_add_tzfile (const NV_CHAR *name, DB_HEADER_PUBLIC *db);
+NV_INT32 find_or_add_country (const NV_CHAR *name, DB_HEADER_PUBLIC *db);
+NV_INT32 find_or_add_datum (const NV_CHAR *name, DB_HEADER_PUBLIC *db);
+NV_INT32 find_or_add_legalese (const NV_CHAR *name, DB_HEADER_PUBLIC *db);
 
 /* Set the speed for the constituent corresponding to index num
    [0,constituents-1]. */
@@ -326,7 +326,7 @@ void set_node_factor (NV_INT32 num, NV_INT32 year, NV_FLOAT32 value);
    open, it will be closed.  libtcd maintains considerable internal
    state and can only handle one open database at a time.  Returns
    false if the open failed. */
-NV_BOOL open_tide_db (NV_CHAR *file);
+NV_BOOL open_tide_db (const NV_CHAR *file);
 
 /* Closes the open database. */
 void close_tide_db ();
@@ -334,10 +334,11 @@ void close_tide_db ();
 /* Creates a TCD file with the supplied constituents and no tide
    stations.  Returns false if creation failed.  The database is left
    in an open state. */
-NV_BOOL create_tide_db (NV_CHAR *file, NV_U_INT32 constituents,
-    NV_CHAR *constituent[], NV_FLOAT64 *speed, NV_INT32 start_year,
-    NV_U_INT32 num_years, NV_FLOAT32 *equilibrium[],
-    NV_FLOAT32 *node_factor[]);
+NV_BOOL create_tide_db (const NV_CHAR *file, NV_U_INT32 constituents,
+    NV_CHAR const * const constituent[], const NV_FLOAT64 *speed,
+    NV_INT32 start_year, NV_U_INT32 num_years,
+    NV_FLOAT32 const * const equilibrium[],
+    NV_FLOAT32 const * const node_factor[]);
 
 /* Returns a copy of the database header for the open database. */
 DB_HEADER_PUBLIC get_tide_db_header ();
@@ -399,8 +400,8 @@ NV_BOOL infer_constituents (TIDE_RECORD *rec);
 #define SOURCE_LENGTH       ONELINER_LENGTH
 #define COMMENTS_LENGTH     MONOLOGUE_LENGTH
 NV_CHAR *get_pedigree (NV_INT32 num);
-NV_INT32 find_pedigree (NV_CHAR *name);
-NV_INT32 add_pedigree (NV_CHAR *name, DB_HEADER_PUBLIC *db);
+NV_INT32 find_pedigree (const NV_CHAR *name);
+NV_INT32 add_pedigree (const NV_CHAR *name, const DB_HEADER_PUBLIC *db);
 NV_BOOL check_simple (TIDE_RECORD rec);
 #endif
 
