@@ -1,4 +1,4 @@
-// $Id: NullablePredictionValue.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: NullablePredictionValue.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // NullablePredictionValue:  strict nullable PredictionValue.
 
@@ -20,6 +20,8 @@
 */
 
 // If not null, an implicit conversion to PredictionValue is available.
+
+namespace libxtide {
 
 class NullablePredictionValue: public Nullable {
 public:
@@ -49,4 +51,4 @@ protected:
   PredictionValue _pv;
 };
 
-// Cleanup2006 Done
+}

@@ -1,4 +1,4 @@
-// $Id: StationRef.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: StationRef.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  StationRef  Index information for a station in a harmonics file.
 
@@ -18,8 +18,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
 #include "HarmonicsFile.hh"
+
+namespace libxtide {
 
 
 Station * const StationRef::load() const {
@@ -33,13 +35,15 @@ StationRef::StationRef (const Dstr &harmonicsFileName_,
                         const Dstr &name_,
                         const Coordinates &coordinates_,
                         const Dstr &timezone_,
-                        bool isReferenceStation_):
+                        bool isReferenceStation_,
+                        bool isCurrent_):
   harmonicsFileName(harmonicsFileName_),
   recordNumber(recordNumber_),
   name(name_),
   coordinates(coordinates_),
   timezone(timezone_),
-  isReferenceStation(isReferenceStation_) {}
+  isReferenceStation(isReferenceStation_),
+  isCurrent(isCurrent_) {}
 
 
 const bool sortByName (const StationRef *x, const StationRef *y) {
@@ -68,4 +72,4 @@ const bool sortByLng (const StationRef *x, const StationRef *y) {
   return (left.lng() < right.lng());
 }
 
-// Cleanup2006 Done
+}

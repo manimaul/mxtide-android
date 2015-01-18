@@ -1,4 +1,4 @@
-// $Id: Timestamp.cc 2871 2007-12-09 14:33:44Z flaterco $
+// $Id: Timestamp.cc 5753 2014-10-13 17:30:15Z flaterco $
 
 // Timestamp:  A point in time.  See also Year, Date, Interval.
 
@@ -19,7 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 // If time_t is a signed 32-bit int, you get:
@@ -37,7 +38,7 @@
 // ************************************
 
 // When TIME_WORKAROUND is engaged, time_t is redefined as a signed
-// 64-bit integer in common.hh.
+// 64-bit integer in libxtide.hh.
 
 // This function was lifted from the file time/offtime.c in
 // glibc-2.3.1, made standalone, munged in a futile effort to avoid
@@ -195,8 +196,15 @@ const bool Timestamp::zoneinfoIsNotHorriblyObsolete () const {
 
 
 /* Declarations for zoneinfo compatibility hack */
-// This is getting to be really ancient history and maybe should be
-// retired, but you never know.
+
+// This is really ancient history and should be killed with fire, but it is
+// still used by Visual Studio.  The hack is now disabled for everything
+// EXCEPT Visual Studio because it masked time zone breakage in an Android
+// port.
+
+#ifdef _MSC_VER
+#define ALLOW_BROKEN_ZONEINFO
+#endif
 
 /* It's not worth detecting or supporting POSIX because all the platforms
    I know of that support full POSIX with floating day rules do so by
@@ -211,6 +219,8 @@ enum ZoneinfoSupportLevel {NEWZONEINFO=0,
 
 static ZoneinfoSupportLevel zoneinfoSupportLevel (TZNULL);
 
+
+#ifdef ALLOW_BROKEN_ZONEINFO
 
 /* The following were originally based on tzdata96i.  Since then the
    following churn has occurred:
@@ -237,6 +247,11 @@ static ZoneinfoSupportLevel zoneinfoSupportLevel (TZNULL);
    2004-09-16
    Added :America/Juneau, :America/Nome, :America/Yakutat and
    :Pacific/Johnston.
+
+   2012-02-21
+   Changed :Pacific/Apia from SST11 to WST-13.
+   Doubtless there is worse code rot than that, but the correct fix is
+   to delete this entire workaround, not to try to update it.
 */
 
 /* In many cases, these substitutions will either break DST adjustments
@@ -574,7 +589,7 @@ static constString subs[][4] = {
 {":Indian/Mayotte",             "EAT-3", "EAT-3", "EAT-3"},
 {":Indian/Reunion",             "SMT-4", "SMT-4", "SMT-4"},
 
-{":Pacific/Apia",               "SST11", "SST11", "SST11"},
+{":Pacific/Apia",               "WST-13", "WST-13", "WST-13"},
 {":Pacific/Auckland",           ":NZ", "NZST-12NZDT", "NST-12"},
 {":Pacific/Chatham",            "CST-12:45", "CST-12:45", "CST-12:45"},
 {":Pacific/Easter",             ":Chile/EasterIsland", "CST6", "CST6"},
@@ -682,6 +697,21 @@ static constString subs[][4] = {
 /* Terminator */
 {NULL, NULL, NULL, NULL}};
 
+#endif
+
+
+// 2014-10-13
+// Compliant use of TZ requires zoneinfo filenames to be prefixed by a colon.
+// On Linux it works with or without the colon.  Android (Bionic) accepts the
+// nonstandard syntax but fails when the colon is present.
+static inline constString quirkTZ (constString TZ) {
+  #ifdef __ANDROID__
+    return TZ+(*TZ==':' ? 1:0);
+  #else
+    return TZ;
+  #endif
+}
+
 
 // Unfortunately, time zones are a session default.
 static void installTimeZone (const Dstr &timezone) {
@@ -711,20 +741,20 @@ static void installTimeZone (const Dstr &timezone) {
     tzset();
 
     /* New zoneinfo? */
-    strcpy (env_string, "TZ=:America/New_York");
+    sprintf (env_string, "TZ=%s", quirkTZ(":America/New_York"));
     require (putenv (env_string) == 0);
     tzset();
     ::strftime (junk, 79, "%Z", localtime (&testtime));
     if (junk[0] == 'E') {
       zoneinfoSupportLevel = NEWZONEINFO;
     } else {
-
+#ifdef ALLOW_BROKEN_ZONEINFO
       Global::log ("\
 XTide Warning:  Using obsolete time zone database.  Summer Time (Daylight\n\
 Savings Time) adjustments will not be done for some locations.", LOG_WARNING);
 
       /* Old zoneinfo? */
-      strcpy (env_string, "TZ=:US/Eastern");
+      sprintf (env_string, "TZ=%s", quirkTZ(":US/Eastern"));
       require (putenv (env_string) == 0);
       tzset();
       ::strftime (junk, 79, "%Z", localtime (&testtime));
@@ -739,9 +769,13 @@ Savings Time) adjustments will not be done for some locations.", LOG_WARNING);
 	zoneinfoSupportLevel = BRAINDEAD;
 #endif
       }
+#else
+      Global::barf (Error::BROKEN_ZONEINFO);
+#endif
     }
   }
 
+#ifdef ALLOW_BROKEN_ZONEINFO
   assert (zoneinfoSupportLevel != TZNULL);
 
   /* If our level of support is less than NEWZONEINFO, find the
@@ -755,9 +789,12 @@ Savings Time) adjustments will not be done for some locations.", LOG_WARNING);
 
   // If not found, soldier on with the original value.  The user might
   // know more than we do about what works.
+#else
+  assert (zoneinfoSupportLevel == NEWZONEINFO);
+#endif
 
   /* According to the SYSV man page, I can't alter env_string ever again. */
-  sprintf (env_string, "TZ=%s", timezoneLocalVar.aschar());
+  sprintf (env_string, "TZ=%s", quirkTZ(timezoneLocalVar.aschar()));
   require (putenv (env_string) == 0);
   tzset();
 }
@@ -1035,7 +1072,7 @@ Timestamp::Timestamp (Year year) {
 
 const Year Timestamp::year() const {
   assert (!_isNull);
-  return Year (((::tmStruct(_posixTime,UTC)).tm_year) + 1900);
+  return Year (((libxtide::tmStruct(_posixTime,UTC)).tm_year) + 1900);
 }
 
 
@@ -1112,7 +1149,7 @@ const bool operator!= (Timestamp a, Timestamp b) {
 const tm Timestamp::tmStruct (const Dstr &timezone) const {
   assert (!_isNull);
   installTimeZone (timezone);
-  return ::tmStruct (_posixTime, LOCAL);
+  return libxtide::tmStruct (_posixTime, LOCAL);
 }
 
 
@@ -1120,7 +1157,7 @@ void Timestamp::strftime (Dstr &text_out,
                           const Dstr &timezone,
 			  const Dstr &formatString) const {
   assert (!_isNull);
-  ::strftime (text_out, tmStruct(timezone), formatString);
+  libxtide::strftime (text_out, tmStruct(timezone), formatString);
 }
 
 
@@ -1136,8 +1173,8 @@ void Timestamp::strftime (Dstr &text_out,
 
 void Timestamp::print_iCalendar (Dstr &text_out, SecStyle secStyle) const {
   assert (!_isNull);
-  ::strftime (text_out,
-             ::tmStruct(_posixTime,UTC),
+  libxtide::strftime (text_out,
+             libxtide::tmStruct(_posixTime,UTC),
              (secStyle == zeroOutSecs ? "%Y%m%dT%H%M00Z" : "%Y%m%dT%H%M%SZ"));
 }
 
@@ -1179,7 +1216,7 @@ void Timestamp::printCalendarHeading (Dstr &text_out,
 
 void Timestamp::printCalendarDay (Dstr &text_out,
                                   const Dstr &timezone) const {
-  strftime (text_out, timezone, "%a %d");
+  strftime (text_out, timezone, Global::settings["cf"].s);
 }
 
 
@@ -1188,12 +1225,14 @@ Timestamp::Timestamp (const Dstr &timeString, const Dstr &timezone) {
   tempTm.tm_sec = 0;
   // Deliberately using %u instead of %d so that dashes won't be
   // interpreted as minus signs.  This causes compiler warnings.
+  quashWarning(-Wformat)
   if (sscanf (timeString.aschar(), "%u-%u-%u %u:%u",
     &(tempTm.tm_year),
     &(tempTm.tm_mon),
     &(tempTm.tm_mday),
     &(tempTm.tm_hour),
     &(tempTm.tm_min)) != 5) {
+  unquashWarning
     Dstr details ("The offending time specification was ");
     details += timeString;
     Global::barf (Error::BAD_TIMESTAMP, details);
@@ -1213,11 +1252,11 @@ void Timestamp::floorHour (const Dstr &timezone) {
   time_t lowerBound (overflowCheckedSum (_posixTime, -HOURSECONDS));
 
   /* The easy case will work unless we are hosed by DST. */
-  tm tempTm (::tmStruct (_posixTime, LOCAL));
+  tm tempTm (libxtide::tmStruct (_posixTime, LOCAL));
   time_t normalGuess (overflowCheckedSum (_posixTime,
                       -(tempTm.tm_min * 60 + tempTm.tm_sec)));
   assert (normalGuess > lowerBound && normalGuess <= _posixTime);
-  tempTm = ::tmStruct (normalGuess, LOCAL);
+  tempTm = libxtide::tmStruct (normalGuess, LOCAL);
   if (tempTm.tm_min == 0 && tempTm.tm_sec == 0) {
     _posixTime = normalGuess;
     return;
@@ -1227,7 +1266,7 @@ void Timestamp::floorHour (const Dstr &timezone) {
   time_t overshotGuess (overflowCheckedSum (normalGuess,
 	        HOURSECONDS - (tempTm.tm_min * 60 + tempTm.tm_sec)));
   if (overshotGuess > lowerBound && overshotGuess <= _posixTime) {
-    tempTm = ::tmStruct (overshotGuess, LOCAL);
+    tempTm = libxtide::tmStruct (overshotGuess, LOCAL);
     if (tempTm.tm_min == 0 && tempTm.tm_sec == 0) {
       _posixTime = overshotGuess;
       return;
@@ -1250,11 +1289,11 @@ void Timestamp::nextHour (const Dstr &timezone) {
   // works in nearly all cases if nextHour is used as directed (always
   // starting on an hour boundary), but see commentary in nextDay.
 
-  tm tempTm (::tmStruct (_posixTime, LOCAL));
+  tm tempTm (libxtide::tmStruct (_posixTime, LOCAL));
   time_t normalGuess (overflowCheckedSum (_posixTime, std::max (1,
                                                HOURSECONDS - tempTm.tm_min * 60
 			       				   - tempTm.tm_sec)));
-  tempTm = ::tmStruct (normalGuess, LOCAL);
+  tempTm = libxtide::tmStruct (normalGuess, LOCAL);
   if (tempTm.tm_min == 0 && tempTm.tm_sec == 0) {
     _posixTime = normalGuess;
     return;
@@ -1264,7 +1303,7 @@ void Timestamp::nextHour (const Dstr &timezone) {
   time_t overshotGuess (overflowCheckedSum (normalGuess,
                         -(tempTm.tm_min * 60 + tempTm.tm_sec)));
   if (overshotGuess > _posixTime && overshotGuess < normalGuess) {
-    tempTm = ::tmStruct (overshotGuess, LOCAL);
+    tempTm = libxtide::tmStruct (overshotGuess, LOCAL);
     if (tempTm.tm_min == 0 && tempTm.tm_sec == 0) {
       _posixTime = overshotGuess;
       return;
@@ -1288,13 +1327,13 @@ void Timestamp::floorDay (const Dstr &timezone) {
   time_t lowerBound (overflowCheckedSum (_posixTime, -DAYSECONDS));
 
   /* The easy case will work unless we are hosed by DST. */
-  tm tempTm (::tmStruct (_posixTime, LOCAL));
+  tm tempTm (libxtide::tmStruct (_posixTime, LOCAL));
   int today (tempTm.tm_mday);
   time_t normalGuess (overflowCheckedSum (_posixTime,
 				   -(tempTm.tm_hour * HOURSECONDS +
                                      tempTm.tm_min * 60 + tempTm.tm_sec)));
   assert (normalGuess > lowerBound && normalGuess <= _posixTime);
-  tempTm = ::tmStruct (normalGuess, LOCAL);
+  tempTm = libxtide::tmStruct (normalGuess, LOCAL);
   if (tempTm.tm_hour == 0 && tempTm.tm_sec == 0 && tempTm.tm_min == 0) {
     _posixTime = normalGuess;
     return;
@@ -1326,13 +1365,13 @@ void Timestamp::floorDay (const Dstr &timezone) {
                                       DAYSECONDS - tempTm.tm_hour * HOURSECONDS
                                                  - tempTm.tm_min * 60
 						 - tempTm.tm_sec)));
-    tempTm = ::tmStruct (upperGuess, LOCAL);
+    tempTm = libxtide::tmStruct (upperGuess, LOCAL);
     assert (tempTm.tm_mday == today);
 
     while (upperGuess - lowerGuess > 1) {
       time_t middleGuess (overflowCheckedSum (lowerGuess,
                                               (upperGuess - lowerGuess) / 2));
-      tempTm = ::tmStruct (middleGuess, LOCAL);
+      tempTm = libxtide::tmStruct (middleGuess, LOCAL);
       assert (tempTm.tm_mday == yesterday || tempTm.tm_mday == today);
       if (tempTm.tm_mday == yesterday)
         lowerGuess = middleGuess;
@@ -1370,13 +1409,13 @@ void Timestamp::nextDay (const Dstr &timezone) {
   // eventuality that somebody might enable leap seconds and we would
   // get stuck at 23:59:60.
 
-  tm tempTm (::tmStruct (_posixTime, LOCAL));
+  tm tempTm (libxtide::tmStruct (_posixTime, LOCAL));
   int today (tempTm.tm_mday);
   _posixTime = overflowCheckedSum (_posixTime, std::max (1,
                                       DAYSECONDS - tempTm.tm_hour * HOURSECONDS
                                                  - tempTm.tm_min * 60
 						 - tempTm.tm_sec));
-  tempTm = ::tmStruct (_posixTime, LOCAL);
+  tempTm = libxtide::tmStruct (_posixTime, LOCAL);
   if (tempTm.tm_hour == 0 && tempTm.tm_min == 0 && tempTm.tm_sec == 0) {
     return;
   }
@@ -1398,12 +1437,4 @@ const time_t Timestamp::timet() const {
   return _posixTime;
 }
 
-
-// The moonrise and moonset logic blows up if you go before 1900 or
-// after 2099.  This is just a range check for that.
-const bool Timestamp::inRangeForLunarRiseSet() const {
-  double skycalYear = 1900. + (jd() - 2415019.5) / 365.25;
-  return (skycalYear > 1900.1 && skycalYear < 2099.9);
 }
-
-// Cleanup2006 Cruft BlamePosix

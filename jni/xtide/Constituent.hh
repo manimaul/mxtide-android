@@ -1,4 +1,4 @@
-// $Id: Constituent.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Constituent.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // Constituent:  All that which pertains to a specific constituent
 // from a station viewpoint:  speed, equilibrium arguments, node
@@ -20,6 +20,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 class Constituent {
 public:
@@ -55,4 +57,4 @@ protected:
   void checkValid (Year year) const;
 };
 
-// Cleanup2006 Done
+}

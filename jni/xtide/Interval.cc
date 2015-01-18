@@ -1,4 +1,4 @@
-// $Id: Interval.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Interval.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 // Interval:  what you get if you subtract two timestamps.
 
@@ -19,7 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 Interval::Interval (interval_rep_t s):
@@ -132,4 +133,4 @@ void Interval::operator*= (unsigned a) {
   seconds *= a;
 }
 
-// Cleanup2006 Done
+}

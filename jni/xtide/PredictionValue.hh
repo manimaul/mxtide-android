@@ -1,4 +1,4 @@
-// $Id: PredictionValue.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: PredictionValue.hh 5748 2014-10-11 19:38:53Z flaterco $
 /*
     PredictionValue:  A quantity in units of feet, meters, knots, or
     knots squared.  See also, Amplitude.
@@ -18,6 +18,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 class Amplitude;
 class NullablePredictionValue;
@@ -113,4 +115,4 @@ const double          operator/ (PredictionValue a, PredictionValue b);
 const PredictionValue operator- (PredictionValue a);
 const PredictionValue abs       (PredictionValue a);
 
-// Cleanup2006 Done
+}

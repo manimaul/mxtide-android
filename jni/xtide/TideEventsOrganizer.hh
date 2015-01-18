@@ -1,4 +1,4 @@
-// $Id: TideEventsOrganizer.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: TideEventsOrganizer.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // TideEventsOrganizer  Collect, sort, subset, and iterate over tide events.
 
@@ -18,6 +18,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 typedef std::multimap<const Timestamp, TideEvent>
                                    TideEventsMap;
@@ -51,4 +53,4 @@ public:
   void add (const TideEvent &tideEvent);
 };
 
-// Cleanup2006 Done
+}

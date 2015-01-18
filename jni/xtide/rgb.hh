@@ -1,6 +1,8 @@
-// $Id: rgb.hh 1485 2007-01-01 15:19:34Z flaterco $
+// $Id: rgb.hh 5748 2014-10-11 19:38:53Z flaterco $
 // Converted from:
 // XConsortium: rgb.txt,v 10.41 94/02/20 18:39:36 rws Exp
+
+namespace libxtide {
 
 struct rgbline {
   const uint8_t r;
@@ -764,4 +766,4 @@ static rgbline const rgbtxt[] = {
 {144,238,144,"LightGreen"},
 {0,0,0,NULL}}; // Terminator.
 
-// Cleanup2006 CloseEnough
+}

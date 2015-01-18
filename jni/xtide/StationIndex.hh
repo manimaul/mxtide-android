@@ -1,4 +1,4 @@
-// $Id: StationIndex.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: StationIndex.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  StationIndex  Collection of StationRefs.
 
@@ -17,6 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 
 // "STL containers are not intended to be used as base classes (their
@@ -80,4 +82,4 @@ protected:
   StationRef * const getStationRefByLatin1Name (const Dstr &name) const;
 };
 
-// Cleanup2006 Done
+}

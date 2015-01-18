@@ -1,4 +1,4 @@
-// $Id: StationIndex.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: StationIndex.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  StationIndex  Collection of StationRefs.
 
@@ -18,8 +18,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
 #include "HarmonicsFile.hh"
+
+namespace libxtide {
 
 
 // Maximum length of HTML tables (Netscape has trouble with really big
@@ -118,13 +120,13 @@ void StationIndex::hfileIDs (Dstr &hfileIDs_out) {
 void StationIndex::sort (SortKey sortKey) {
   switch (sortKey) {
   case StationIndex::sortByName:
-    std::sort (begin(), end(), ::sortByName);
+    std::sort (begin(), end(), libxtide::sortByName);
     break;
   case StationIndex::sortByLat:
-    std::sort (begin(), end(), ::sortByLat);
+    std::sort (begin(), end(), libxtide::sortByLat);
     break;
   case StationIndex::sortByLng:
-    std::sort (begin(), end(), ::sortByLng);
+    std::sort (begin(), end(), libxtide::sortByLng);
     break;
   default:
     assert (false);
@@ -147,6 +149,10 @@ StationRef * const StationIndex::getStationRefByName (const Dstr &name) const {
   Dstr correct (name), incorrect (name);
   if (Global::codeset == "UTF-8")
     correct.unutf8();
+#ifdef DSTR_MAJOR_REV
+  else if (Global::codeset == "CP437")
+    correct.unCP437();
+#endif
   else
     incorrect.unutf8();
   if (!correct.isNull())
@@ -238,7 +244,7 @@ void StationIndex::print (Dstr &text_out,
       if (namewidth < 10)
 	namewidth = 10;
       char fmt[80];
-      sprintf (fmt, "%%-%d.%ds %%-3.3s %%-23.23s\n", namewidth, namewidth);
+      sprintf (fmt, "%%-%d.%ds %%-3.3s %%s\n", namewidth, namewidth);
       SafeVector<char> buf (tw + 30);
       for (unsigned long i=0; i<size(); ++i) {
 	Dstr styp, c;
@@ -247,20 +253,21 @@ void StationIndex::print (Dstr &text_out,
 	else
 	  styp = "Sub";
 	operator[](i)->coordinates.print (c, Coordinates::fixedWidth);
-	sprintf (&(buf[0]),
+        if (Global::needDegrees())
+          c.repstr ("°", Global::degreeSign);
+	sprintf (&buf[0],
                  fmt,
                  operator[](i)->name.aschar(),
                  styp.aschar(),
                  c.aschar());
-	text_out += &(buf[0]);
+	text_out += &buf[0];
       }
     }
     break;
   default:
     Global::formatBarf (Mode::list, form);
   }
-  if (Global::codeset == "UTF-8")
-    text_out.utf8();
+  Global::finalizeCodeset (text_out, Global::codeset, form);
 }
 
 
@@ -291,4 +298,4 @@ void StationIndex::setRootStationIndexIndices() {
     operator[](i)->rootStationIndexIndex = i;
 }
 
-// Cleanup2006 Done
+}

@@ -1,4 +1,4 @@
-// $Id: xmlparser.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: xmlparser.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // xmlparser.hh:  declarations for access to XML parser.
 
@@ -40,5 +40,3 @@ int yyparse();
 // (Messes up the XML parser.)
 #undef ECHO
 #define ECHO  /* Don't echo error text */
-
-// Cleanup2006 Done

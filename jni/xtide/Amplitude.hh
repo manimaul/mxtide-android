@@ -1,4 +1,4 @@
-/*  $Id: Amplitude.hh 2641 2007-09-02 21:31:02Z flaterco $
+/*  $Id: Amplitude.hh 5748 2014-10-11 19:38:53Z flaterco $
 
     Amplitude:  A non-negative quantity in units of feet, meters,
     knots, or knots squared.  See also, PredictionValue.
@@ -41,6 +41,7 @@
 // Amplitude is not a PredictionValue, but an implicit conversion from
 // Amplitude to PredictionValue is available.
 
+namespace libxtide {
 
 class Amplitude {
 public:
@@ -76,4 +77,4 @@ protected:
 const Amplitude operator* (double a, Amplitude b);
 const Amplitude operator* (Amplitude b, double a);
 
-// Cleanup2006 Done
+}

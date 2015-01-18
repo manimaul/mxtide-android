@@ -1,4 +1,4 @@
-/*  $Id: BetterMap.hh 2641 2007-09-02 21:31:02Z flaterco $
+/*  $Id: BetterMap.hh 5748 2014-10-11 19:38:53Z flaterco $
 
     BetterMap:  std::map plus a const operator[].
 
@@ -23,6 +23,8 @@
 
 #include <map>
 
+namespace libxtide {
+
 template <typename KeyT, typename ElmT> class BetterMap:
 public std::map<KeyT,ElmT> {
 
@@ -44,4 +46,4 @@ public:
 
 };
 
-// Cleanup2006 Done
+}

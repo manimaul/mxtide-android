@@ -1,4 +1,4 @@
-// $Id: Configurable.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Configurable.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  Configurable:  A setting or a switch.
 
@@ -17,6 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 class PredictionValue;
 typedef SafeVector<Dstr> DstrVector;
@@ -69,9 +71,11 @@ struct Configurable {
     posIntInterp,      // constrains unsignedRep to be > 0
     posDoubleInterp,   // constrains doubleRep to be > 0.0
     nonnegativeDoubleInterp, // constrains doubleRep to be >= 0.0
+    opacityDoubleInterp, // constrains doubleRep to be >= 0.0 and <= 1.0
     glDoubleInterp,    // constrains doubleRep to have one of the gl values
     modeInterp,        // constrains charRep to be one of the mode characters
     formatInterp,      // constrains charRep to be one of the format characters
+    gsInterp,          // constrains charRep to be one of the graphstyle chars
     colorInterp,       // constrains dstrRep to contain a color spec
     unitInterp,        // constrains dstrRep to be "ft", "m", or "x"
     timeFormatInterp,  // constrains dstrRep to be a strftime format string
@@ -112,4 +116,4 @@ struct Configurable {
 // Keyed by switchName.
 typedef BetterMap<const Dstr, Configurable> ConfigurablesMap;
 
-// Cleanup2006 Done
+}

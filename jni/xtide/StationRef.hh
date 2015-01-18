@@ -1,4 +1,4 @@
-// $Id: StationRef.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: StationRef.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  StationRef  Index information for a station in a harmonics file.
 
@@ -18,6 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+namespace libxtide {
+
 class Station;
 
 class StationRef {
@@ -29,7 +31,8 @@ public:
               const Dstr &name_,
               const Coordinates &coordinates_,
               const Dstr &timezone_,
-              bool isReferenceStation_);
+              bool isReferenceStation_,
+              bool isCurrent_);
 
   const Dstr &       harmonicsFileName;
   const uint32_t     recordNumber;
@@ -37,6 +40,7 @@ public:
   const Coordinates  coordinates;
   const Dstr         timezone;
   const bool         isReferenceStation;
+  const bool         isCurrent;
 
   // This is the index of this StationRef in Global::stationIndex().
   // It is used only for xttpd to create hyperlinks back to stations.
@@ -54,4 +58,4 @@ const bool sortByName (const StationRef *x, const StationRef *y);
 const bool sortByLat  (const StationRef *x, const StationRef *y);
 const bool sortByLng  (const StationRef *x, const StationRef *y);
 
-// Cleanup2006 Done
+}

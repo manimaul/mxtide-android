@@ -1,4 +1,4 @@
-// $Id: Timestamp.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Timestamp.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // Timestamp:  A point in time.  See also Year, Date, Interval.
 
@@ -18,6 +18,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 class Timestamp: public Nullable {
 public:
@@ -77,10 +79,6 @@ public:
   // true if it can do Rarotonga correctly.
   const bool zoneinfoIsNotHorriblyObsolete() const;
 
-  // The moonrise and moonset logic blows up if you go before 1900 or
-  // after 2099.  This is just a range check for that.
-  const bool inRangeForLunarRiseSet() const;
-
   // Following are four methods for finding hour transitions (i.e.,
   // minutes and seconds are 0) and day transitions (i.e., midnight).
   // This is not as simple as one might think.
@@ -135,4 +133,4 @@ const Timestamp operator+ (Timestamp a, Interval b);
 const Timestamp operator- (Timestamp a, Interval b);
 const Interval  operator- (Timestamp a, Timestamp b);
 
-// Cleanup2006 Done
+}

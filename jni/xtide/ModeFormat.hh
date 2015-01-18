@@ -1,4 +1,4 @@
-// $Id: ModeFormat.hh 2946 2008-01-18 23:12:25Z flaterco $
+// $Id: ModeFormat.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // Enums for modes and formats.
 
@@ -18,6 +18,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 namespace Mode {
   enum Mode {about='a',
@@ -40,8 +42,9 @@ namespace Format {
 	       iCalendar='i',
 	       LaTeX='l',
 	       PNG='p',
-	       text='t'
+	       text='t',
+	       SVG='v'
   };
 }
 
-// Cleanup2006 Done
+}

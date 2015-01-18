@@ -1,4 +1,4 @@
-// $Id: ZoneIndex.cc 2641 2007-09-02 21:31:02Z flaterco $	
+// $Id: ZoneIndex.cc 5749 2014-10-11 19:42:10Z flaterco $	
 
 /*  ZoneIndex  Index stations by zone for xttpd.
 
@@ -18,7 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+using namespace libxtide;
 #include "ZoneIndex.hh"
 
 

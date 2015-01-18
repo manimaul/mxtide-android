@@ -1,4 +1,4 @@
-/* $Id: Settings.cc 2946 2008-01-18 23:12:25Z flaterco $ */
+/* $Id: Settings.cc 5748 2014-10-11 19:38:53Z flaterco $ */
 
 /*  Settings  XTide global settings
 
@@ -18,15 +18,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
 #include "xmlparser.hh"
 #include "config.hh"
+
+namespace libxtide {
 
 
 Settings::ArgList Settings::commandLineArgs;
 
-static constString legalModes   = "abcCgklmprs";
-static constString legalFormats = "chilpt";
+static constString legalModes       = "abcCgklmprs";
+static constString legalFormats     = "chilptv";
+static constString legalGraphStyles = "dls";
 static const bool (*_getResource) (const Dstr &resourceName, Dstr &val_out)
   = NULL;
 static bool commandLineCached = false;
@@ -147,6 +150,22 @@ static const bool checkNonnegativeDouble (const Dstr &culprit, double val) {
 }
 
 
+static const bool checkOpacityDouble (const Dstr &culprit, double val) {
+  if (val < 0.0 || val > 1.0) {
+    if (!culprit.isNull()) {
+      Dstr details ("The offending input in ");
+      details += culprit;
+      details += " was '";
+      details += val;
+      details += "' (expecting a double between 0 and 1).";
+      Global::barf (Error::NUMBER_RANGE_ERROR, details);
+    }
+    return true;
+  }
+  return false;
+}
+
+
 static const bool checkGLdouble (const Dstr &culprit, double val) {
   if (val != -180.0 &&
       val != -150.0 &&
@@ -186,7 +205,7 @@ static const bool checkMode (const Dstr &culprit, char val) {
     details += val;
     details += "' (expecting one of ";
     details += legalModes;
-    details += '.';
+    details += ").";
     Global::barf (Error::BAD_MODE, details);
   }
   return true;
@@ -204,7 +223,7 @@ static const bool checkMode (const Dstr &culprit, constCharPointer val) {
     contentOrNull (details, val);
     details += " (expecting one of ";
     details += legalModes;
-    details += '.';
+    details += ").";
     Global::barf (Error::BAD_MODE, details);
   }
   return true;
@@ -221,7 +240,7 @@ static const bool checkFormat (const Dstr &culprit, char val) {
     details += val;
     details += "' (expecting one of ";
     details += legalFormats;
-    details += '.';
+    details += ").";
     Global::barf (Error::BAD_FORMAT, details);
   }
   return true;
@@ -239,8 +258,43 @@ static const bool checkFormat (const Dstr &culprit, constCharPointer val) {
     contentOrNull (details, val);
     details += " (expecting one of ";
     details += legalFormats;
-    details += '.';
+    details += ").";
     Global::barf (Error::BAD_FORMAT, details);
+  }
+  return true;
+}
+
+
+static const bool checkGraphStyle (const Dstr &culprit, char val) {
+  if (strchr (legalGraphStyles, val))
+    return false;
+  if (!culprit.isNull()) {
+    Dstr details ("The offending input in ");
+    details += culprit;
+    details += " was '";
+    details += val;
+    details += "' (expecting one of ";
+    details += legalGraphStyles;
+    details += ").";
+    Global::barf (Error::BAD_GRAPHSTYLE, details);
+  }
+  return true;
+}
+
+
+static const bool checkGraphStyle (const Dstr &culprit, constCharPointer val) {
+  if (val)
+    if (strlen (val) == 1)
+      return checkGraphStyle (culprit, *val);
+  if (!culprit.isNull()) {
+    Dstr details ("The offending input in ");
+    details += culprit;
+    details += " was ";
+    contentOrNull (details, val);
+    details += " (expecting one of ";
+    details += legalGraphStyles;
+    details += ").";
+    Global::barf (Error::BAD_GRAPHSTYLE, details);
   }
   return true;
 }
@@ -348,6 +402,9 @@ static const bool checkConfigurable (const Dstr &culprit,
   case Configurable::nonnegativeDoubleInterp:
     assert (val.representation == Configurable::doubleRep);
     return checkNonnegativeDouble (culprit, val.d);
+  case Configurable::opacityDoubleInterp:
+    assert (val.representation == Configurable::doubleRep);
+    return checkOpacityDouble (culprit, val.d);
   case Configurable::glDoubleInterp:
     assert (val.representation == Configurable::doubleRep);
     return checkGLdouble (culprit, val.d);
@@ -357,6 +414,9 @@ static const bool checkConfigurable (const Dstr &culprit,
   case Configurable::formatInterp:
     assert (val.representation == Configurable::charRep);
     return checkFormat (culprit, val.c);
+  case Configurable::gsInterp:
+    assert (val.representation == Configurable::charRep);
+    return checkGraphStyle (culprit, val.c);
   case Configurable::colorInterp:
     assert (val.representation == Configurable::dstrRep);
     return checkColor (culprit, val.s);
@@ -551,6 +611,7 @@ void Settings::checkArg (int argc,
 
   case Configurable::posIntInterp:
   case Configurable::posDoubleInterp:
+  case Configurable::opacityDoubleInterp:
   case Configurable::nonnegativeDoubleInterp:
   case Configurable::glDoubleInterp:
   case Configurable::numberInterp:
@@ -568,6 +629,12 @@ void Settings::checkArg (int argc,
 
   case Configurable::formatInterp:
     if (checkFormat ((char*)NULL, argii))
+      return;
+    myCookedArg = argii;
+    break;
+
+  case Configurable::gsInterp:
+    if (checkGraphStyle ((char*)NULL, argii))
       return;
     myCookedArg = argii;
     break;
@@ -647,8 +714,8 @@ const bool Settings::ambiguous (int argc,
 
 Settings::Settings () {
 
-  // No way to initialize a map with a literal, so make an array and
-  // initialize the map at run time.
+  // Can initialize a map with C++11 extended initializer lists, but this
+  // code ain't broke.
 
   // Switches recognized by X11 are magically removed from the command
   // line by XtOpenDisplay, so it is not necessary to list them here.
@@ -657,38 +724,47 @@ Settings::Settings () {
     {"bg", "background", "Background color for text windows and location chooser.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,bgdefcolor,PredictionValue(),DstrVector(), 0},
     {"fg", "foreground", "Color of text and other notations.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,fgdefcolor,PredictionValue(),DstrVector(), 0},
     {"bc", "buttoncolor", "Background color of buttons.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,buttondefcolor,PredictionValue(),DstrVector(), 0},
+    {"cc", "currentdotcolor", "Color of dots indicating current stations in the location chooser.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,currentdotdefcolor,PredictionValue(),DstrVector(), 0},
     {"dc", "daycolor", "Daytime background color in tide graphs.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,daydefcolor,PredictionValue(),DstrVector(), 0},
     {"Dc", "datumcolor", "Color of datum line in tide graphs.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,datumdefcolor,PredictionValue(),DstrVector(), 0},
-    {"ec", "ebbcolor", "Foreground in tide graphs during outgoing tide.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,ebbdefcolor,PredictionValue(),DstrVector(), 0},
-    {"fc", "floodcolor", "Foreground in tide graphs during incoming tide.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,flooddefcolor,PredictionValue(),DstrVector(), 0},
-    {"mc", "markcolor", "Color of mark line in graphs and of stations in the location chooser.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,markdefcolor,PredictionValue(),DstrVector(), 0},
+    {"ec", "ebbcolor", "Foreground color in tide graphs during outgoing tide.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,ebbdefcolor,PredictionValue(),DstrVector(), 0},
+    {"fc", "floodcolor", "Foreground color in tide graphs during incoming tide.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,flooddefcolor,PredictionValue(),DstrVector(), 0},
+    {"mc", "markcolor", "Color of mark line in graphs.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,markdefcolor,PredictionValue(),DstrVector(), 0},
     {"Mc", "mslcolor", "Color of middle-level line in tide graphs.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,msldefcolor,PredictionValue(),DstrVector(), 0},
     {"nc", "nightcolor", "Nighttime background color in tide graphs.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,nightdefcolor,PredictionValue(),DstrVector(), 0},
-    {"aa", "antialias", "Anti-alias tide graphs on true color displays?", Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,antialias,Dstr(),PredictionValue(),DstrVector(), 0},
+    {"tc", "tidedotcolor", "Color of dots indicating tide stations in the location chooser.", Configurable::settingKind, Configurable::dstrRep, Configurable::colorInterp, false, 0,0,0,tidedotdefcolor,PredictionValue(),DstrVector(), 0},
+    {"to", "tideopacity", "Opacity of the fill in graph style s (0-1).", Configurable::settingKind, Configurable::doubleRep, Configurable::opacityDoubleInterp, false, 0,deftideopacity,0,Dstr(),PredictionValue(),DstrVector(), 0},
     {"gt", "graphtenths", "Label tenths of units in tide graphs?", Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,graphtenths,Dstr(),PredictionValue(),DstrVector(), 0},
     {"el", "extralines", "Draw datum and middle-level lines in tide graphs?", Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,extralines,Dstr(),PredictionValue(),DstrVector(), 0},
     {"fe", "flatearth", "Prefer flat map to round globe location chooser?", Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,flatearth,Dstr(),PredictionValue(),DstrVector(), 0},
     {"cb", "cbuttons", "Create tide clocks with buttons?", Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,cbuttons,Dstr(),PredictionValue(),DstrVector(), 0},
     {"in", "infer", "Use inferred constituents (expert only)?", Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,infer,Dstr(),PredictionValue(),DstrVector(), 0},
-    {"nf", "nofill", "Draw tide graphs as line graphs?", Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,nofill,Dstr(),PredictionValue(),DstrVector(), 0},
+    {"ou", "omitunits", "Print numbers with no ft/m/kt?", Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,omitunits,Dstr(),PredictionValue(),DstrVector(), 0},
+    {"pb", "pagebreak", "Pagebreak and header before every month of a calendar?", Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,pagebreak,Dstr(),PredictionValue(),DstrVector(), 0},
+    {"lb", "linebreak", "Linebreak before prediction value in calendars?", Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,linebreak,Dstr(),PredictionValue(),DstrVector(), 0},
     {"em", "eventmask", "Event mask:", Configurable::settingKind, Configurable::dstrRep, Configurable::eventMaskInterp, false, 0,0,0,eventmask,PredictionValue(),DstrVector(), 0},
-    {"ns", "nosunmoon", Dstr(), Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, true, 0,0,0,Dstr(),PredictionValue(),DstrVector(), 0},
     {"tl", "toplines", "Draw depth lines on top of tide graph?", Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,toplines,Dstr(),PredictionValue(),DstrVector(), 0},
     {"z", "zulu", "Coerce all time zones to UTC?", Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,forceZuluTime,Dstr(),PredictionValue(),DstrVector(), 0},
     {"cw", "cwidth", "Initial width for tide clocks (pixels):", Configurable::settingKind, Configurable::unsignedRep, Configurable::posIntInterp, false, std::max(Global::minGraphWidth,defcwidth),0,0,Dstr(),PredictionValue(),DstrVector(), Global::minGraphWidth},
+    {"ch", "cheight", "Initial height for tide clocks (pixels):", Configurable::settingKind, Configurable::unsignedRep, Configurable::posIntInterp, false, std::max(Global::minGraphHeight,defcheight),0,0,Dstr(),PredictionValue(),DstrVector(), Global::minGraphHeight},
     {"gw", "gwidth", "Initial width for tide graphs (pixels):", Configurable::settingKind, Configurable::unsignedRep, Configurable::posIntInterp, false, std::max(Global::minGraphWidth,defgwidth),0,0,Dstr(),PredictionValue(),DstrVector(), Global::minGraphWidth},
-    {"gh", "gheight", "Initial height for tide graphs and clocks (pixels):", Configurable::settingKind, Configurable::unsignedRep, Configurable::posIntInterp, false, std::max(Global::minGraphHeight,defgheight),0,0,Dstr(),PredictionValue(),DstrVector(), Global::minGraphHeight},
-    {"tw", "ttywidth", "Width of ASCII graphs, clocks, banners, and calendars (characters):", Configurable::settingKind, Configurable::unsignedRep, Configurable::posIntInterp, false, std::max(Global::minTTYwidth,defttywidth),0,0,Dstr(),PredictionValue(),DstrVector(), Global::minTTYwidth},
+    {"gh", "gheight", "Initial height for tide graphs (pixels):", Configurable::settingKind, Configurable::unsignedRep, Configurable::posIntInterp, false, std::max(Global::minGraphHeight,defgheight),0,0,Dstr(),PredictionValue(),DstrVector(), Global::minGraphHeight},
+    {"tw", "ttywidth", "Width of text format (characters):", Configurable::settingKind, Configurable::unsignedRep, Configurable::posIntInterp, false, std::max(Global::minTTYwidth,defttywidth),0,0,Dstr(),PredictionValue(),DstrVector(), Global::minTTYwidth},
     {"th", "ttyheight", "Height of ASCII graphs and clocks (characters):", Configurable::settingKind, Configurable::unsignedRep, Configurable::posIntInterp, false, std::max(Global::minTTYheight,defttyheight),0,0,Dstr(),PredictionValue(),DstrVector(), Global::minTTYheight},
+    {"pi", "predictinterval", "Default predict interval (days):", Configurable::settingKind, Configurable::unsignedRep, Configurable::posIntInterp, false, 4,0,0,Dstr(),PredictionValue(),DstrVector(), 1},
     {"ga", "gaspect", "Initial aspect for tide graphs.", Configurable::settingKind, Configurable::doubleRep, Configurable::posDoubleInterp, false, 0,defgaspect,0,Dstr(),PredictionValue(),DstrVector(), 0},
-    {"lw", "lwidth", "Width for lines in line graphs (pixels, pos. real number).", Configurable::settingKind, Configurable::doubleRep, Configurable::posDoubleInterp, false, 0,deflwidth,0,Dstr(),PredictionValue(),DstrVector(), 0},
+    {"lw", "lwidth", "Width of line in graph styles l and s (pixels, pos. real number).", Configurable::settingKind, Configurable::doubleRep, Configurable::posDoubleInterp, false, 0,deflwidth,0,Dstr(),PredictionValue(),DstrVector(), 0},
+    {"mf", "monofont", "Monospace font (requires restart):", Configurable::settingKind, Configurable::dstrRep, Configurable::textInterp, false, 0,0,0,defmonofont,PredictionValue(),DstrVector(), 0},
+    {"gf", "graphfont", "Graph/clock font (requires restart):", Configurable::settingKind, Configurable::dstrRep, Configurable::textInterp, false, 0,0,0,defgraphfont,PredictionValue(),DstrVector(), 0},
     {"ph", "pageheight", "Nominal length of paper in LaTeX output (mm).", Configurable::settingKind, Configurable::doubleRep, Configurable::posDoubleInterp, false, 0,defpageheight,0,Dstr(),PredictionValue(),DstrVector(), 0},
     {"pm", "pagemargin", "Nominal width of margins in LaTeX output (mm).", Configurable::settingKind, Configurable::doubleRep, Configurable::nonnegativeDoubleInterp, false, 0,defpagemargin,0,Dstr(),PredictionValue(),DstrVector(), 0},
     {"pw", "pagewidth", "Nominal width of paper in LaTeX output (mm).", Configurable::settingKind, Configurable::doubleRep, Configurable::posDoubleInterp, false, 0,defpagewidth,0,Dstr(),PredictionValue(),DstrVector(), 0},
     {"gl", "globelongitude", "Initial center longitude for globe:", Configurable::settingKind, Configurable::doubleRep, Configurable::glDoubleInterp, false, 0,defgl,0,Dstr(),PredictionValue(),DstrVector(), 0},
+    {"cf", "caldayfmt", "Strftime style format string for printing days in calendars.", Configurable::settingKind, Configurable::dstrRep, Configurable::timeFormatInterp, false, 0,0,0,caldayfmt,PredictionValue(),DstrVector(), 0},
     {"df", "datefmt", "Strftime style format string for printing dates.", Configurable::settingKind, Configurable::dstrRep, Configurable::timeFormatInterp, false, 0,0,0,datefmt,PredictionValue(),DstrVector(), 0},
     {"hf", "hourfmt", "Strftime style format string for printing hour labels on time axis.", Configurable::settingKind, Configurable::dstrRep, Configurable::timeFormatInterp, false, 0,0,0,hourfmt,PredictionValue(),DstrVector(), 0},
     {"tf", "timefmt", "Strftime style format string for printing times.", Configurable::settingKind, Configurable::dstrRep, Configurable::timeFormatInterp, false, 0,0,0,timefmt,PredictionValue(),DstrVector(), 0},
+    {"gs", "graphstyle", "Style of graphs and clocks:", Configurable::settingKind, Configurable::charRep, Configurable::gsInterp, false, 0,0,defgraphstyle,Dstr(),PredictionValue(),DstrVector(), 0},
     {"u", "units", "Preferred units of length:", Configurable::settingKind, Configurable::dstrRep, Configurable::unitInterp, false, 0,0,0,prefunits,PredictionValue(),DstrVector(), 0},
 
     {"v", Dstr(), Dstr(), Configurable::switchKind, Configurable::charRep, Configurable::booleanInterp, false, 0,0,'n',Dstr(),PredictionValue(),DstrVector(), 0},
@@ -702,8 +778,14 @@ Settings::Settings () {
     {"ml", Dstr(), Dstr(), Configurable::switchKind, Configurable::predictionValueRep, Configurable::numberInterp, true, 0,0,0,Dstr(),PredictionValue(),DstrVector(), 0},
     {"o", Dstr(), Dstr(), Configurable::switchKind, Configurable::dstrRep, Configurable::textInterp, true, 0,0,0,Dstr(),PredictionValue(),DstrVector(), 0},
 
+    // Deprecated settings
+    {"ns", "nosunmoon", Dstr(), Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, true, 0,0,0,Dstr(),PredictionValue(),DstrVector(), 0},
+    {"nf", "nofill", Dstr(), Configurable::settingKind, Configurable::charRep, Configurable::booleanInterp, true, 0,0,0,Dstr(),PredictionValue(),DstrVector(), 0},
+
     // "X" is where the X geometry string ends up.
     {"X", Dstr(), Dstr(), Configurable::switchKind, Configurable::dstrRep, Configurable::textInterp, true, 0,0,0,Dstr(),PredictionValue(),DstrVector(), 0},
+    // "XX" is where the X font string ends up if HAVE_XAW3DXFT.
+    {"XX", "font", Dstr(), Configurable::settingKind, Configurable::dstrRep, Configurable::textInterp, true, 0,0,0,Dstr(),PredictionValue(),DstrVector(), 0},
 
     {Dstr(), Dstr(), Dstr(), Configurable::switchKind, Configurable::charRep, Configurable::textInterp, true, 0,0,0,Dstr(),PredictionValue(),DstrVector(), 0}
 };
@@ -873,9 +955,7 @@ void Settings::applyCommandLine (int argc, constStringArray argv) {
                          it != commandLineArgs.end();
                          ++it)
     if (it->switchName == "v" && it->arg == "y") {
-      Dstr line;
-      Global::versionString (line);
-      fprintf (stderr, "%s\n", line.aschar());
+      fprintf (stderr, "%s\n", XTideVersionString);
       exit (0);
     }
 
@@ -907,6 +987,29 @@ http://www.flaterco.com/xtide/settings.html.",
     emConfig.isNull = false;
     // If they provide both em and ns, em will be clobbered.
   }
+
+  Configurable &nfConfig (operator[]("nf"));
+  if (!nfConfig.isNull) {
+    static bool warnOnce = false;
+    if (!warnOnce) {
+      warnOnce = true;
+      Global::log ("\
+XTide Warning:  The nofill setting (command line -nf, or \"Draw tide graphs\n\
+as line graphs?\" in control panel) is obsolete.  For equivalent results, set\n\
+graphstyle (command line -gs, or \"Style of graphs and clocks:\" in control\n\
+panel) to the value l.  Documentation on settings is at\n\
+http://www.flaterco.com/xtide/settings.html.",
+        LOG_WARNING);
+    }
+    Configurable &gsConfig (operator[]("gs"));
+    if (nfConfig.c == 'y')
+      gsConfig.c = 'l';
+    else
+      gsConfig.c = 'd';
+    nfConfig.isNull = true;
+    gsConfig.isNull = false;
+    // If they provide both nf and gs, gs will be clobbered.
+  }
 }
 
-// Cleanup2006 Done
+}

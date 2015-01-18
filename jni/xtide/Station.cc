@@ -1,4 +1,4 @@
-// $Id: Station.cc 2946 2008-01-18 23:12:25Z flaterco $
+// $Id: Station.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  Station  A tide station.
 
@@ -24,17 +24,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
-//#include "Calendar.hh"
-//#include "Graph.hh"
-//#include "TTYGraph.hh"
-//#include "Banner.hh"
-//#include "RGBGraph.hh"
+#include "libxtide.hh"
+#include "Calendar.hh"
+#include "Graph.hh"
+#include "PixelatedGraph.hh"
+#include "TTYGraph.hh"
+#include "Banner.hh"
+#include "RGBGraph.hh"
 #include "Skycal.hh"
+#include "SVGGraph.hh"
 
 #ifdef HAVE_SYS_RESOURCE_H
 #include <sys/resource.h>
 #endif
+
+namespace libxtide {
 
 
 #ifndef HAVE_LLROUND
@@ -91,13 +95,13 @@ Station * const Station::reload() const {
 }
 
 
-const PredictionValue Station::minLevel() const {
-  return _constituents.datum() - _constituents.maxAmplitude();
+const PredictionValue Station::minLevelHeuristic() const {
+  return _constituents.datum() - _constituents.maxAmplitudeHeuristic();
 }
 
 
-const PredictionValue Station::maxLevel() const {
-  return _constituents.datum() + _constituents.maxAmplitude();
+const PredictionValue Station::maxLevelHeuristic() const {
+  return _constituents.datum() + _constituents.maxAmplitudeHeuristic();
 }
 
 
@@ -498,7 +502,7 @@ void Station::addSunMoonEvents (Timestamp startTime,
     }
 
     // Add moonrises and moonsets.
-    if (startTime.inRangeForLunarRiseSet() && (!(M && m))) {
+    if (!(M && m)) {
       te.eventTime = startTime;
       Skycal::findNextRiseOrSet (te.eventTime,
                                  coordinates,
@@ -510,8 +514,6 @@ void Station::addSunMoonEvents (Timestamp startTime,
   	  finishTideEvent (te);
 	  organizer.add (te);
         }
-	if (!(te.eventTime.inRangeForLunarRiseSet()))
-	  break;
 	Skycal::findNextRiseOrSet (te.eventTime,
                                    coordinates,
                                    Skycal::lunar,
@@ -646,6 +648,7 @@ void Station::aboutMode (Dstr &text_out,
   if (form == Format::HTML)
     text_out = "<table>\n";
   else {
+    text_out = (codeset == "VT100" ? Global::VT100_init : (char*)NULL);
     MetaFieldVector::const_iterator it = _metadata.begin();
     while (it != _metadata.end()) {
       if (it->name.length() > maximumNameLength)
@@ -658,11 +661,18 @@ void Station::aboutMode (Dstr &text_out,
     if (form == Format::HTML) {
       text_out += "<tr><td valign=top>";
       text_out += it->name;
-      text_out += "</td><td valign=top><pre>";
-      text_out += it->value;
-      text_out += "</pre></td></td>\n";
+      text_out += "</td><td valign=top><font face=\"monospace\">";
+      Dstr temp (it->value);
+      temp.repstr ("\n", "<br>\n");
+      text_out += temp;
+      text_out += "</font></td></td>\n";
     } else {
       Dstr tmp1 (it->name), tmp2 (it->value), tmp3;
+      // Ignore Global::degreeSign if codeset was overridden.
+      if (codeset == "VT100" && (tmp1 == "Coordinates" ||
+				 tmp1 == "Flood direction" ||
+				 tmp1 == "Ebb direction"))
+        tmp2.repstr ("°", Global::degreeSign);
       tmp1.pad (maximumNameLength+2);
       tmp2.getline (tmp3);
       tmp1 += tmp3;
@@ -681,8 +691,7 @@ void Station::aboutMode (Dstr &text_out,
   }
   if (form == Format::HTML)
     text_out += "</table>\n";
-  if (codeset == "UTF-8")
-    text_out.utf8();
+  Global::finalizeCodeset (text_out, codeset, form);
 }
 
 
@@ -697,87 +706,180 @@ void Station::finishTideEvent (TideEvent &te) {
 }
 
 
-// Legal forms are c, h, i, l, or t, but c and l do nothing.
-void Station::textBoilerplate (Dstr &text_out, Format::Format form) const {
+// Legal forms are c, h, i, l, or t, but c does nothing.
+// LaTeX has a catch-22 so that this has to be empty if firstpage.
+// Possibly the concept of document header should be factored out
+// (VT100 init codes go there).
+// FIXME, messy duplication between LaTeX and the others and messy
+// conditionals.
+void Station::textBoilerplate (Dstr &text_out, Format::Format form,
+			       bool firstpage, double textWidth) const {
   text_out = (char *)NULL;
-  if (form == Format::CSV || form == Format::LaTeX)
+  if (form == Format::CSV)
     return;
-  assert (form == Format::HTML ||
-          form == Format::iCalendar ||
-          form == Format::text);
 
-  if (form == Format::iCalendar) {
+  if (form == Format::LaTeX) {
+    if (firstpage)
+      return;
+    Dstr temp (name);
+    temp.LaTeX_mangle();
+    text_out += "{\\Large\\bf \\begin{tabularx}{";
+    text_out += textWidth;
+    text_out += "mm}{Lr}\n";
+    text_out += temp;
+    text_out += " & \\hspace{5mm}";
+    if (coordinates.isNull())
+      text_out += "Coordinates unknown";
+    else {
+      coordinates.print (temp);
+      text_out += temp;
+    }
+    text_out += "\\\\\n\\end{tabularx}}\n\n";
 
-    // RFC2445 doesn't allow putting very much outside of the VEVENTs.
-    // This makes sense considering that a calendaring tool is only
-    // equipped to display metadata corresponding to specific events.
+    if (isCurrent) {
+      text_out += "{\\large Flood direction ";
+      if (maxCurrentBearing.isNull())
+	text_out += "unspecified";
+      else {
+	maxCurrentBearing.print (temp);
+	text_out += temp;
+      }
+      text_out += " \\hfill Ebb direction ";
+      if (minCurrentBearing.isNull())
+	text_out += "unspecified";
+      else {
+	minCurrentBearing.print (temp);
+	text_out += temp;
+      }
+      text_out += "}\n\n";
+    }
 
-    // RFC2445 does clearly specify CRLF (CRNL) line discipline.
+    if (Global::settings["ou"].c == 'y') {
+      text_out += "Prediction units are ";
+      text_out += Units::longName(predictUnits());
+      MetaFieldVector::const_iterator it = _metadata.begin();
+      while (it != _metadata.end()) {
+	if (it->name == "Datum") {
+          text_out += " relative to ";
+	  text_out += it->value;
+	  break;
+	}
+	++it;
+      }
+      text_out += "\n\n";
+    }
 
-    text_out += "BEGIN:VCALENDAR\r\n\
-VERSION:2.0\r\n\
-PRODID:";
-    // ISO 9070 compliance not mandatory.
-    Dstr ver;
-    Global::versionString (ver);
-    text_out += ver;
-    text_out += "\r\n\
-CALSCALE:GREGORIAN\r\n\
-METHOD:PUBLISH\r\n";
+    if (!(note.isNull())) {
+      text_out += "Note:  ";
+      temp = note;
+      temp.LaTeX_mangle();
+      text_out += temp;
+      text_out += "\n\n";
+    }
   } else {
 
-    if (form == Format::HTML)
-      text_out += "<h3>";
-    text_out += name;
-    if (form == Format::HTML)
-      text_out += "<br>";
-    text_out += '\n';
-    if (coordinates.isNull())
-      text_out += "Coordinates unknown\n";
-    else {
-      Dstr t;
-      coordinates.print (t);
-      text_out += t;
-      text_out += '\n';
-    }
+    assert (form == Format::HTML ||
+	    form == Format::iCalendar ||
+	    form == Format::text);
 
-    // When known, append the direction of currents.  (The offending
-    // attributes should be null if it's not a current station.)
-    if (!(maxCurrentBearing.isNull())) {
+    if (form == Format::iCalendar) {
+
+      // RFC2445 doesn't allow putting very much outside of the VEVENTs.
+      // This makes sense considering that a calendaring tool is only
+      // equipped to display metadata corresponding to specific events.
+
+      // RFC2445 does clearly specify CRLF (CRNL) line discipline.
+
+      text_out += "BEGIN:VCALENDAR\r\n\
+VERSION:2.0\r\n\
+PRODID:";
+      // ISO 9070 compliance not mandatory.
+      text_out += XTideVersionString;
+      text_out += "\r\n\
+CALSCALE:GREGORIAN\r\n\
+METHOD:PUBLISH\r\n";
+    } else {
+
+      if (form == Format::text && Global::codeset == "VT100" && firstpage)
+	text_out += Global::VT100_init;
+      if (form == Format::HTML) {
+        if (firstpage)
+  	  text_out += "<h3>";
+        else
+          text_out += "<h3 style=\"page-break-before:always;\">";
+      }
+      text_out += name;
       if (form == Format::HTML)
 	text_out += "<br>";
-      text_out += "Flood direction ";
-      Dstr tmpbuf;
-      maxCurrentBearing.print (tmpbuf);
-      text_out += tmpbuf;
       text_out += '\n';
-    }
-    if (!(minCurrentBearing.isNull())) {
+      if (coordinates.isNull())
+	text_out += "Coordinates unknown\n";
+      else {
+	Dstr t;
+	coordinates.print (t);
+	if (form == Format::text && Global::needDegrees())
+	  t.repstr ("°", Global::degreeSign);
+	text_out += t;
+	text_out += '\n';
+      }
+
+      // When known, append the direction of currents.  (The offending
+      // attributes should be null if it's not a current station.)
+      if (!(maxCurrentBearing.isNull())) {
+	if (form == Format::HTML)
+	  text_out += "<br>";
+	text_out += "Flood direction ";
+	Dstr tmpbuf;
+	maxCurrentBearing.print (tmpbuf);
+	if (form == Format::text && Global::needDegrees())
+	  tmpbuf.repstr ("°", Global::degreeSign);
+	text_out += tmpbuf;
+	text_out += '\n';
+      }
+      if (!(minCurrentBearing.isNull())) {
+	if (form == Format::HTML)
+	  text_out += "<br>";
+	text_out += "Ebb direction ";
+	Dstr tmpbuf;
+	minCurrentBearing.print (tmpbuf);
+	if (form == Format::text && Global::needDegrees())
+	  tmpbuf.repstr ("°", Global::degreeSign);
+	text_out += tmpbuf;
+	text_out += '\n';
+      }
+
+      if (Global::settings["ou"].c == 'y') {
+	if (form == Format::HTML)
+	  text_out += "<br>";
+	text_out += "Prediction units are ";
+	text_out += Units::longName(predictUnits());
+	MetaFieldVector::const_iterator it = _metadata.begin();
+	while (it != _metadata.end()) {
+	  if (it->name == "Datum") {
+  	    text_out += " relative to ";
+	    text_out += it->value;
+	    break;
+	  }
+	  ++it;
+	}
+	text_out += '\n';
+      }
+
+      // Similarly for notes
+      if (!(note.isNull())) {
+	if (form == Format::HTML)
+	  text_out += "<br>Note:&nbsp; ";
+	else
+	  text_out += "Note:  ";
+	text_out += note;
+	text_out += '\n';
+      }
+
       if (form == Format::HTML)
-	text_out += "<br>";
-      text_out += "Ebb direction ";
-      Dstr tmpbuf;
-      minCurrentBearing.print (tmpbuf);
-      text_out += tmpbuf;
+	text_out += "</h3>";
       text_out += '\n';
+      Global::finalizeCodeset (text_out, Global::codeset, form);
     }
-
-    // Similarly for notes
-    if (!(note.isNull())) {
-      if (form == Format::HTML)
-	text_out += "<br>Note:&nbsp; ";
-      else
-	text_out += "Note:  ";
-      text_out += note;
-      text_out += '\n';
-    }
-
-    if (form == Format::HTML)
-      text_out += "</h3>";
-    text_out += '\n';
-
-    if (Global::codeset == "UTF-8")
-      text_out.utf8();
   }
 }
 
@@ -792,7 +894,7 @@ void Station::plainMode (Dstr &text_out,
                          Timestamp startTime,
                          Timestamp endTime,
 			 Format::Format form) {
-  textBoilerplate (text_out, form);
+  textBoilerplate (text_out, form, true);
   TideEventsOrganizer organizer;
   predictTideEvents (startTime, endTime, organizer);
   TideEventsIterator it = organizer.begin();
@@ -807,30 +909,24 @@ void Station::plainMode (Dstr &text_out,
     text_out += "END:VCALENDAR\r\n";
 }
 
-const TideEventsOrganizer Station::tideEventsOrganizer(Timestamp startTime, Timestamp endTime) {
-	TideEventsOrganizer organizer;
-	predictTideEvents(startTime, endTime, organizer);
-	return organizer;
-}
-
 
 void Station::statsMode (Dstr &text_out,
                          Timestamp startTime,
                          Timestamp endTime) {
 
-  textBoilerplate (text_out, Format::text);
-  PredictionValue maxl = maxLevel();
-  PredictionValue minl = minLevel();
+  textBoilerplate (text_out, Format::text, true);
+  PredictionValue maxl = maxLevelHeuristic();
+  PredictionValue minl = minLevelHeuristic();
   assert (minl < maxl);
   PredictionValue meanl = (maxl + minl) / 2.0;
   Dstr temp;
-  text_out += "Mathematical upper bound: ";
+  text_out += "Estimated upper bound: ";
   maxl.print (temp);
   text_out += temp;
-  text_out += "\nMathematical lower bound: ";
+  text_out += "\nEstimated lower bound: ";
   minl.print (temp);
   text_out += temp;
-  text_out += "\nMathematical mean, assuming symmetry: ";
+  text_out += "\nMean, assuming symmetry: ";
   meanl.print (temp);
   text_out += temp;
   text_out += "\n\n";
@@ -939,32 +1035,32 @@ void Station::statsMode (Dstr &text_out,
 }
 
 
-//void Station::calendarMode (Dstr &text_out,
-//                            Timestamp startTime,
-//                            Timestamp endTime,
-//			    Mode::Mode mode,
-//                            Format::Format form) {
-//  assert (mode == Mode::calendar || mode == Mode::altCalendar);
-//  assert ((form == Format::CSV && mode == Mode::calendar) ||
-//          form == Format::HTML ||
-//          form == Format::iCalendar ||
-//          form == Format::LaTeX ||
-//          form == Format::text);
-//
-//  if (form == Format::iCalendar)
-//    plainMode (text_out, startTime, endTime, form);
-//  else {
-//    textBoilerplate (text_out, form);
-//    std::auto_ptr<Calendar> cal (Calendar::factory (*this,
-//						    startTime,
-//						    endTime,
-//						    mode,
-//						    form));
-//    Dstr temp;
-//    cal->print (temp);
-//    text_out += temp;
-//  }
-//}
+void Station::calendarMode (Dstr &text_out,
+                            Timestamp startTime,
+                            Timestamp endTime,
+			    Mode::Mode mode,
+                            Format::Format form) {
+  assert (mode == Mode::calendar || mode == Mode::altCalendar);
+  assert ((form == Format::CSV && mode == Mode::calendar) ||
+          form == Format::HTML ||
+          form == Format::iCalendar ||
+          form == Format::LaTeX ||
+          form == Format::text);
+
+  if (form == Format::iCalendar)
+    plainMode (text_out, startTime, endTime, form);
+  else {
+    textBoilerplate (text_out, form, true);
+    std::auto_ptr<Calendar> cal (Calendar::factory (*this,
+						    startTime,
+						    endTime,
+						    mode,
+						    form));
+    Dstr temp;
+    cal->print (temp);
+    text_out += temp;
+  }
+}
 
 
 void Station::rareModes (Dstr &text_out,
@@ -989,54 +1085,87 @@ void Station::rareModes (Dstr &text_out,
 }
 
 
-//void Station::bannerMode (Dstr &text_out,
-//                          Timestamp startTime,
-//                          Timestamp endTime) {
-//  textBoilerplate (text_out, Format::text);
-//  std::auto_ptr<Banner> banner (Banner::factory (*this,
-//						 Global::settings["tw"].u,
-//						 startTime,
-//						 endTime));
-//  Dstr temp;
-//  banner->drawTides (this, startTime);
-//  banner->print (temp);
-//  text_out += temp;
-//}
+void Station::bannerMode (Dstr &text_out,
+                          Timestamp startTime,
+                          Timestamp endTime) {
+  textBoilerplate (text_out, Format::text, true);
+  std::auto_ptr<Banner> banner (Banner::factory (*this,
+						 Global::settings["tw"].u,
+						 startTime,
+						 endTime));
+  Dstr temp;
+  banner->drawTides (this, startTime);
+  banner->print (temp);
+  text_out += temp;
+}
 
 
-//void Station::graphMode (Dstr &text_out,
-//                         Timestamp startTime) {
-//  TTYGraph g (Global::settings["tw"].u, Global::settings["th"].u);
-//  g.drawTides (this, startTime);
-//  g.print (text_out);
-//}
+void Station::graphMode (Dstr &text_out,
+                         Timestamp startTime,
+			 Format::Format form) {
+  switch (form) {
+    // print method is not in Graph / don't need yet another class
+  case Format::text:
+    {
+      TTYGraph g (Global::settings["tw"].u, Global::settings["th"].u);
+      g.drawTides (this, startTime);
+      g.print (text_out);
+    }
+    break;
+  case Format::SVG:
+    {
+      SVGGraph g (Global::settings["gw"].u, Global::settings["gh"].u);
+      g.drawTides (this, startTime);
+      g.print (text_out);
+    }
+    break;
+  default:
+    assert (false);
+  }
+}
 
 
-//void Station::clockMode (Dstr &text_out) {
-//  TTYGraph g (Global::settings["tw"].u,
-//	      Global::settings["th"].u,
-//	      Graph::clock);
-//  g.drawTides (this, (time_t)time(NULL));
-//  g.print (text_out);
-//}
+void Station::clockMode (Dstr &text_out, Format::Format form) {
+  switch (form) {
+    // print method is not in Graph / don't need yet another class
+  case Format::text:
+    {
+      TTYGraph g (Global::settings["tw"].u, Global::settings["th"].u,
+		  Graph::clock);
+      g.drawTides (this, (time_t)time(NULL));
+      g.print (text_out);
+    }
+    break;
+  case Format::SVG:
+    {
+      SVGGraph g (Global::settings["cw"].u, Global::settings["gh"].u,
+		  Graph::clock);
+      g.drawTides (this, (time_t)time(NULL));
+      g.print (text_out);
+    }
+    break;
+  default:
+    assert (false);
+  }
+}
 
 
-//void Station::graphModePNG (FILE *fp, Timestamp startTime) {
-//  RGBGraph g (Global::settings["gw"].u, Global::settings["gh"].u);
-//  g.drawTides (this, startTime);
-//  Global::PNGFile = fp;
-//  g.writeAsPNG (Global::writePNGToFile);
-//}
-//
-//
-//void Station::clockModePNG (FILE *fp) {
-//  RGBGraph g (Global::settings["cw"].u,
-//	      Global::settings["gh"].u,
-//	      Graph::clock);
-//  g.drawTides (this, (time_t)time(NULL));
-//  Global::PNGFile = fp;
-//  g.writeAsPNG (Global::writePNGToFile);
-//}
+void Station::graphModePNG (FILE *fp, Timestamp startTime) {
+  RGBGraph g (Global::settings["gw"].u, Global::settings["gh"].u);
+  g.drawTides (this, startTime);
+  Global::PNGFile = fp;
+  g.writeAsPNG (Global::writePNGToFile);
+}
+
+
+void Station::clockModePNG (FILE *fp) {
+  RGBGraph g (Global::settings["cw"].u,
+	      Global::settings["gh"].u,
+	      Graph::clock);
+  g.drawTides (this, (time_t)time(NULL));
+  Global::PNGFile = fp;
+  g.writeAsPNG (Global::writePNGToFile);
+}
 
 
 void Station::print (Dstr &text_out,
@@ -1063,11 +1192,72 @@ void Station::print (Dstr &text_out,
     statsMode (text_out, startTime, endTime);
     break;
 
+  case Mode::calendar:
+    switch (form) {
+    case Format::CSV:
+    case Format::HTML:
+    case Format::iCalendar:
+    case Format::LaTeX:
+    case Format::text:
+      calendarMode (text_out, startTime, endTime, mode, form);
+      break;
+    default:
+      Global::formatBarf (mode, form);
+    }
+    break;
+
+  case Mode::altCalendar:
+    switch (form) {
+    case Format::HTML:
+    case Format::iCalendar:
+    case Format::LaTeX:
+    case Format::text:
+      calendarMode (text_out, startTime, endTime, mode, form);
+      break;
+    default:
+      Global::formatBarf (mode, form);
+    }
+    break;
+
   case Mode::raw:
   case Mode::mediumRare:
     if (form != Format::text && form != Format::CSV)
       Global::formatBarf (mode, form);
     rareModes (text_out, startTime, endTime, mode, form);
+    break;
+
+  case Mode::banner:
+    if (form != Format::text)
+      Global::formatBarf (mode, form);
+    bannerMode (text_out, startTime, endTime);
+    break;
+
+  case Mode::graph:
+    switch (form) {
+    case Format::PNG:
+      Global::log ("Can't happen:  Station::print called for graph mode, PNG form:  use graphModePNG instead\n", LOG_ERR);
+      assert (false);
+    case Format::text:
+    case Format::SVG:
+      graphMode (text_out, startTime, form);
+      break;
+    default:
+      Global::formatBarf (mode, form);
+    }
+    break;
+
+  case Mode::clock:
+    switch (form) {
+    case Format::PNG:
+      Global::log ("Can't happen:  Station::print called for clock mode, PNG form:  use graphModePNG instead\n", LOG_ERR);
+      assert (false);
+    case Format::text:
+    case Format::SVG:
+      clockMode (text_out, form);
+      break;
+    default:
+      Global::formatBarf (mode, form);
+    }
     break;
 
   default:
@@ -1079,4 +1269,4 @@ void Station::print (Dstr &text_out,
   }
 }
 
-// Cleanup2006 Done
+}

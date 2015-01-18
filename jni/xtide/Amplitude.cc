@@ -1,4 +1,4 @@
-/*  $Id: Amplitude.cc 2641 2007-09-02 21:31:02Z flaterco $
+/*  $Id: Amplitude.cc 5748 2014-10-11 19:38:53Z flaterco $
 
     Amplitude:  A non-negative quantity in units of feet, meters,
     knots, or knots squared.  See also, PredictionValue.
@@ -19,7 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 Amplitude::Amplitude () {}
@@ -69,4 +70,4 @@ const bool operator< (Amplitude a, Amplitude b) {
   return (a.pv < b.pv);
 }
 
-// Cleanup2006 Done
+}

@@ -1,4 +1,4 @@
-// $Id: HarmonicsPath.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: HarmonicsPath.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  HarmonicsPath  Vector of harmonics file names as specified by environment.
 
@@ -19,6 +19,8 @@
 */
 
 
+namespace libxtide {
+
 // "STL containers are not intended to be used as base classes (their
 // destructors are deliberately non-virtual).  Deriving from a
 // container is a common mistake made by novices."
@@ -28,7 +30,7 @@
 
 class HarmonicsPath: public SafeVector<Dstr> {
 public:
-  HarmonicsPath ();
+  HarmonicsPath (const Dstr &unparsedHfilePath);
 
   // HarmonicsPath defaults to harmonics.tcd in the current directory
   // if no path is provided, but to give accurate error messages we
@@ -44,4 +46,4 @@ protected:
   Dstr _origPath;
 };
 
-// Cleanup2006 Done
+}

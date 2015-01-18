@@ -1,4 +1,4 @@
-// $Id: Coordinates.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Coordinates.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  Coordinates:  Degrees latitude and longitude.
 
@@ -18,6 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+namespace libxtide {
+
 class Coordinates: public Nullable {
 public:
   Coordinates (); // Creates null Coordinates.
@@ -30,6 +32,9 @@ public:
   const double lng() const;
 
   // It is permissible to print nulls.
+  // These functions always use the Latin-1 degree sign.  If and when
+  // necessary, it is replaced with the UTF-8 or VT100 sequence by the
+  // caller.
   enum Pad {noPadding, fixedWidth};
   void print    (Dstr &text_out,
                  Pad pad = noPadding) const;  // X.XXXX N/S, X.XXXX E/W
@@ -41,4 +46,4 @@ protected:
   double longitude;
 };
 
-// Cleanup2006 Done
+}

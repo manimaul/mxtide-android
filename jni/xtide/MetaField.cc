@@ -1,4 +1,4 @@
-// $Id: MetaField.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: MetaField.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 /*
     Copyright (C) 2004  David Flater.
@@ -17,7 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 MetaField::MetaField (const Dstr &name_, const Dstr &value_):
@@ -26,4 +27,4 @@ MetaField::MetaField (const Dstr &name_, const Dstr &value_):
   value.trim();
 }
 
-// Cleanup2006 Done
+}

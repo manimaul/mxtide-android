@@ -1,9 +1,8 @@
-// $Id: Dstr.cc 2955 2008-01-25 23:17:01Z flaterco $
+// $Id: Dstr.cc 5062 2013-07-21 15:21:28Z flaterco $
 // Dstr:  Dave's String class.
 
 // Canonicalized 2005-05-05.
 // Moved into libdstr 2007-02-06.
-// libdstr 20080124 backported for XTide.
 
 // This source is public domain.  As if you would want it.
 
@@ -315,9 +314,8 @@ static int moascf (const char *val1, const char *val2, bool slack) {
   if (val1x.length() < n)
     n = val1x.length();
 
-  unsigned i;
-  int c, ii;
-  for (i=0; i<n; ++i) {
+  int c;
+  for (unsigned i=0; i<n; ++i) {
 
     // expand_ligatures() is expensive.  Call it only when necessary.
     if (isligature(val1x[i]) || isligature (val2x[i])) {
@@ -335,15 +333,8 @@ static int moascf (const char *val1, const char *val2, bool slack) {
       }
     }
 
-    ii = (int)(val1x[i]);
-    if (ii < 0)
-      ii += 256;
-    c = collation[ii];
-    ii = (int)(val2x[i]);
-    if (ii < 0)
-      ii += 256;
-    c -= collation[ii];
-    if (c)
+    if ((c = (int)collation[(unsigned char)val1x[i]] -
+	     (int)collation[(unsigned char)val2x[i]]))
       return c;
   }
 
@@ -1111,6 +1102,40 @@ Dstr &Dstr::unutf8 () {
       temp += theBuffer[i];
   }
   operator= (temp);
+  return (*this);
+}
+
+static void mapchars (char *s, char const * const map) {
+  if (s && map)
+    while ((*s = map[(unsigned char)(*s)]))
+      ++s;
+}
+
+Dstr &Dstr::CP437() {
+  static const char cp437[257] =
+	"\000\001\002\003\004\005\006\007\010\011\012\013\014\015\016\017\020\021\022\023\024\025\026\027\030\031\032\033\034\035\036\037"
+	" !\"#$%&'()*+,-./0123456789:;<=>?"
+	"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
+	"`abcdefghijklmnopqrstuvwxyz{|}~\177"
+	"????????????????????????????????"
+	"ÿ­\233\234?\235????¦®ª???øñý??æ?ú??§¯¬«?¨"
+	"????\216\217\222\200?\220???????¥????\231?????\232??á"
+	"\205 \203?\204\206\221\207\212\202\210\211\215¡\214\213?¤\225¢\223?\224ö?\227£\226\201??\230";
+  mapchars (theBuffer, cp437);
+  return (*this);
+}
+
+Dstr &Dstr::unCP437() {
+  static const char uncp437[257] =
+	"\000\001\002\003\004\005\006\007\010\011\012\013\014\015\016\017\020\021\022\023\024\025\026\027\030\031\032\033\034\035\036\037"
+	" !\"#$%&'()*+,-./0123456789:;<=>?"
+	"@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_"
+	"`abcdefghijklmnopqrstuvwxyz{|}~\177"
+	"ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥??"
+	"áíóúñÑªº¿?¬½¼¡«»????????????????"
+	"????????????????????????????????"
+	"?ß????µ??????????±????÷?°?·??²? ";
+  mapchars (theBuffer, uncp437);
   return (*this);
 }
 

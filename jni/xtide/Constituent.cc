@@ -1,4 +1,4 @@
-// $Id: Constituent.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Constituent.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 // Constituent:  All that which pertains to a specific constituent
 // from a station viewpoint:  speed, equilibrium arguments, node
@@ -21,7 +21,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 void Constituent::checkValid (Year year) const {
@@ -82,4 +83,4 @@ Constituent::Constituent (double speed_degreesPerHour,
   }
 }
 
-// Cleanup2006 Done
+}

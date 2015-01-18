@@ -1,4 +1,4 @@
-// $Id: TideEventsOrganizer.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: TideEventsOrganizer.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 // TideEventsOrganizer  Collect, sort, subset, and iterate over tide events.
 
@@ -20,7 +20,8 @@
 */
 
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 void TideEventsOrganizer::add (const TideEvent &tideEvent) {
@@ -39,4 +40,4 @@ void TideEventsOrganizer::add (const TideEvent &tideEvent) {
   insert (std::pair<const Timestamp, TideEvent> (t, tideEvent));
 }
 
-// Cleanup2006 Done
+}

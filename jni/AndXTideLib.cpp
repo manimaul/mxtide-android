@@ -8,8 +8,6 @@
 
 #include "AndXTideLib.hh"
 
-using namespace std;
-
 StationIndex si;
 Dstr data;
 
@@ -26,7 +24,7 @@ jstring
 Java_com_mxmariner_andxtidelib_XtideJni_getStationIndex( JNIEnv *env, jobject obj )
 {
 	getStationIndex();
-    return (*env).NewStringUTF(data.utf8().aschar());
+     return (*env).NewStringUTF(data.utf8().aschar());
 }
 
 jstring
@@ -35,7 +33,7 @@ Java_com_mxmariner_andxtidelib_XtideJni_getStationAbout( JNIEnv *env, jobject ob
 	const char *nName = (*env).GetStringUTFChars(pStationName, NULL);
 	long epoch = (long) pEpoch;
 	getAbout(nName, epoch);
-    return (*env).NewStringUTF(data.utf8().aschar());
+     return (*env).NewStringUTF(data.utf8().aschar());
 }
 
 jstring
@@ -75,7 +73,6 @@ Java_com_mxmariner_andxtidelib_XtideJni_getStationTimestamp( JNIEnv *env, jobjec
 }
 
 void getStationIndex() {
-	//si.sort(si.sortByName);
 	data = "";
 	for (unsigned long i=0; i<si.size(); ++i) {
 		si.operator[](i)->name.aschar();

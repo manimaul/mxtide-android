@@ -1,4 +1,4 @@
-// $Id: SubordinateStation.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: SubordinateStation.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  SubordinateStation  Station with offsets.
 
@@ -18,6 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+namespace libxtide {
+
 class SubordinateStation: public Station {
 public:
 
@@ -36,8 +38,8 @@ public:
 
   Station * const clone() const;
 
-  const PredictionValue minLevel() const;
-  const PredictionValue maxLevel() const;
+  const PredictionValue minLevelHeuristic() const;
+  const PredictionValue maxLevelHeuristic() const;
 
   const PredictionValue predictTideLevel (Timestamp predictTime);
 
@@ -83,4 +85,4 @@ protected:
   void finishTideEvent (TideEvent &te);
 };
 
-// Cleanup2006 Done
+}

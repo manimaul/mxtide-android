@@ -1,4 +1,4 @@
-// $Id: ConstituentSet.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: ConstituentSet.cc 5748 2014-10-11 19:38:53Z flaterco $
 /*
     ConstituentSet:  set of constituents, datum, and related methods.
 
@@ -18,7 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 /* tideBlendInterval
@@ -26,6 +27,10 @@
  *   one epoch to the next.
  */
 static const Interval tideBlendInterval (3600U);
+
+// Number of constituents to use for the heuristic estimate of maximum
+// amplitude.
+static const unsigned numConstForAmplitude (6U);
 
 
 // Convert to preferredLengthUnits if this conversion makes sense;
@@ -74,26 +79,65 @@ ConstituentSet::ConstituentSet (const SafeVector<Constituent> &constituents,
     _constituents[i].phase -= adjustments.timeAdd() * _constituents[i].speed;
   }
 
-  // Nasty loop to figure maxdt and maxAmplitude.
-  for (unsigned deriv=0; deriv<=maxDeriv+1; ++deriv) {
-    for (Year tempyear=_constituents[0].firstValidYear();
-         tempyear<=_constituents[0].lastValidYear();
-         ++tempyear) {
-      Amplitude max;
-      for (i=0;i<length;++i)
-        max += _constituents[i].amplitude
-               * _constituents[i].nod(tempyear)
-  	       * pow(_constituents[i].speed.radiansPerSecond(), (double)deriv);
-      if (max > maxdt[deriv])
-        maxdt[deriv] = max;
+  {
+    // Temporarily cache amplitudes times node factors for all years for use in
+    // figuring maxdt and estimating max amplitude.  It is not necessary to
+    // remember which year is which.
+    const unsigned numYears (_constituents[0].lastValidYear().val() -
+			     _constituents[0].firstValidYear().val() + 1);
+    SafeVector<SafeVector<Amplitude> > allAmps (numYears);
+    {
+      Year loopyear = _constituents[0].firstValidYear();
+      for (SafeVector<SafeVector<Amplitude> >::iterator it = allAmps.begin();
+	   it != allAmps.end();
+	   ++it, ++loopyear) {
+	SafeVector<Amplitude> &yearAmps (*it);
+	yearAmps.resize (length);
+	for (i=0;i<length;++i)
+	  yearAmps[i] = _constituents[i].amplitude
+		      * _constituents[i].nod(loopyear);
+      }
     }
-    if (deriv == 0)
-      _maxAmplitude = maxdt[deriv];
-    maxdt[deriv] *= 1.1;      /* Add a little safety margin... */
+
+    // Figure maxdt.
+    for (unsigned deriv=0; deriv<=maxDeriv+1; ++deriv) {
+      for (SafeVector<SafeVector<Amplitude> >::iterator it = allAmps.begin();
+	   it != allAmps.end();
+	   ++it) {
+	SafeVector<Amplitude> &yearAmps (*it);
+	Amplitude max;
+	for (i=0;i<length;++i)
+	  max += yearAmps[i] * pow(_constituents[i].speed.radiansPerSecond(),
+				   (double)deriv);
+	if (max > maxdt[deriv])
+	  maxdt[deriv] = max;
+      }
+      maxdt[deriv] *= 1.1;      /* Add a little safety margin... */
+    }
+
+    // Estimate max amplitude from numConstForAmplitude biggest constituents.
+    // Destructive to allAmps.
+    for (SafeVector<SafeVector<Amplitude> >::iterator it = allAmps.begin();
+	 it != allAmps.end();
+	 ++it) {
+      SafeVector<Amplitude> &yearAmps (*it);
+      SafeVector<Amplitude>::iterator middle (yearAmps.begin());
+      if (length < numConstForAmplitude)
+	middle = yearAmps.end();
+      else
+	std::advance (middle, numConstForAmplitude);
+      std::partial_sort (yearAmps.begin(), middle, yearAmps.end(),
+			 std::greater<Amplitude>());
+      Amplitude max;
+      for (i=0; i<numConstForAmplitude && i<length; ++i)
+	max += yearAmps[i];
+      if (max > _maxAmplitudeHeuristic)
+	_maxAmplitudeHeuristic = max;
+    }
   }
-  if (Units::isHydraulicCurrent(_maxAmplitude.Units()))
-    _maxAmplitude.Units(Units::flatten(_maxAmplitude.Units()));
-  assert (_maxAmplitude.val() > 0.0);
+  if (Units::isHydraulicCurrent(_maxAmplitudeHeuristic.Units()))
+    _maxAmplitudeHeuristic.Units(Units::flatten(_maxAmplitudeHeuristic.Units()));
+  assert (_maxAmplitudeHeuristic.val() > 0.0);
 
   // Harmonics file range of years may exceed that of this platform.
   // Try valiantly to find a safe initial value.
@@ -130,8 +174,8 @@ const Units::PredictionUnits ConstituentSet::predictUnits () const {
 }
 
 
-const Amplitude ConstituentSet::maxAmplitude() const {
-  return prefer (_maxAmplitude, preferredLengthUnits);
+const Amplitude ConstituentSet::maxAmplitudeHeuristic() const {
+  return prefer (_maxAmplitudeHeuristic, preferredLengthUnits);
 }
 
 
@@ -433,4 +477,4 @@ void ConstituentSet::tideDerivativeBlendValues (
 }
 #endif
 
-// Cleanup2006 Done
+}

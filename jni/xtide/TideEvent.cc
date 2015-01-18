@@ -1,4 +1,4 @@
-// $Id: TideEvent.cc 2833 2007-12-01 01:27:02Z flaterco $
+// $Id: TideEvent.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 // TideEvent  Generic representation for tide events.
 
@@ -20,12 +20,14 @@
 */
 
 
-#include "common.hh"
+#include "libxtide.hh"
 
 // For VC++, getpid is in process.h.
 #ifdef HAVE_PROCESS_H
 #include <process.h>
 #endif
+
+namespace libxtide {
 
 
 const bool TideEvent::isSunMoonEvent () const {
@@ -326,4 +328,4 @@ void TideEvent::print (Dstr &text_out,
   }
 }
 
-// Cleanup2006 Done
+}

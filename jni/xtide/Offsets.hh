@@ -1,4 +1,4 @@
-// $Id: Offsets.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Offsets.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // Offsets:  storage for tide offsets.
 
@@ -18,6 +18,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 class SimpleOffsets {
 public:
@@ -72,4 +74,4 @@ protected:
 const bool operator== (const SimpleOffsets &a, const SimpleOffsets &b);
 const bool operator!= (const SimpleOffsets &a, const SimpleOffsets &b);
 
-// Cleanup2006 Done
+}

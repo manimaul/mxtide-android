@@ -1,4 +1,4 @@
-// $Id: CurrentBearing.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: CurrentBearing.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*
     CurrentBearing:  Store and print <int>° or <int>° true, or null.
@@ -24,6 +24,8 @@
 // them and print them in degrees.  They can't even be floats (libtcd
 // ships ints).  However, they can be null.
 
+namespace libxtide {
+
 class CurrentBearing: public Nullable {
 public:
 
@@ -37,9 +39,12 @@ public:
 
   CurrentBearing (uint16_t degrees, bool isTrue);
 
-  // Print value in degrees with a degrees symbol and possibly a
-  // "true" qualifier attached.  This does not have fixed field width.
-  // It is an error to attempt to print a null CurrentBearing.
+  // Print value in degrees with a degree sign and possibly a "true"
+  // qualifier attached.  This does not have fixed field width.  It is an
+  // error to attempt to print a null CurrentBearing.
+  // This function always uses the Latin-1 degree sign.  If and when
+  // necessary, it is replaced with the UTF-8 or VT100 sequence by the
+  // caller.
   void print (Dstr &text_out) const;
 
 protected:
@@ -47,4 +52,4 @@ protected:
   bool isDegreesTrue;
 };
 
-// Cleanup2006 Done
+}

@@ -1,4 +1,4 @@
-// $Id: Settings.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Settings.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  Settings  XTide global settings
 
@@ -18,6 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+namespace libxtide {
 
 // "STL containers are not intended to be used as base classes (their
 // destructors are deliberately non-virtual).  Deriving from a
@@ -115,4 +117,4 @@ protected:
 			Dstr &cookedSwitchName_out);
 };
 
-// Cleanup2006 Done
+}

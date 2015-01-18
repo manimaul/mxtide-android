@@ -1,4 +1,4 @@
-// $Id: NullableInterval.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: NullableInterval.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // NullableInterval:  strict nullable Interval.
 
@@ -23,6 +23,8 @@
 // strict (see discussion in Nullable.hh).  However, as long as it's
 // not null there is an implicit conversion to Interval.
 
+namespace libxtide {
+
 class NullableInterval: public Nullable {
 public:
   NullableInterval ();                            // Makes a null Interval.
@@ -36,4 +38,4 @@ protected:
   Interval _interval;
 };
 
-// Cleanup2006 Done
+}

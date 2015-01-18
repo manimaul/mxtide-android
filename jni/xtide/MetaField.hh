@@ -1,4 +1,4 @@
-// $Id: MetaField.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: MetaField.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*
     Copyright (C) 2004  David Flater.
@@ -17,6 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+namespace libxtide {
+
 struct MetaField {
 
   // The constructor trims whitespace from value_.
@@ -29,4 +31,4 @@ struct MetaField {
 
 typedef SafeVector<MetaField> MetaFieldVector;
 
-// Cleanup2006 Done
+}

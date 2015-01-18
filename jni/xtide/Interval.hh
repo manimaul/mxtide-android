@@ -1,4 +1,4 @@
-// $Id: Interval.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Interval.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // Interval:  what you get if you subtract two timestamps.
 
@@ -18,6 +18,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 class NullableInterval;
 
@@ -68,4 +70,4 @@ const bool operator>= (Interval a, Interval b);
 const bool operator== (Interval a, Interval b);
 const bool operator!= (Interval a, Interval b);
 
-// Cleanup2006 Done
+}

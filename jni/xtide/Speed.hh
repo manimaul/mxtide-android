@@ -1,4 +1,4 @@
-// $Id: Speed.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Speed.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // Speed:  angular units over time units.
 
@@ -19,6 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+namespace libxtide {
+
 class Speed {
 public:
 
@@ -34,4 +36,4 @@ protected:
   double _radiansPerSecond;
 };
 
-// Cleanup2006 Done
+}

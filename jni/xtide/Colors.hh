@@ -1,4 +1,4 @@
-// $Id: Colors.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Colors.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  Colors  Manage XTide colors without X.
 
@@ -18,9 +18,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+namespace libxtide {
+
 namespace Colors {
 
-  const unsigned numColors = 10U;
+  const unsigned numColors = 12U;
 
   enum Colorchoice {background=0,
                     foreground=1,
@@ -31,7 +33,9 @@ namespace Colors {
                     flood=6,
                     ebb=7,
                     datum=8,
-                    msl=9};
+                    msl=9,
+                    tidedot=10,
+                    currentdot=11};
 
   extern constString colorarg[numColors]; // Wants to be [Colorchoice]
 
@@ -47,4 +51,4 @@ namespace Colors {
 			 Error::ErrType fatality = Error::fatal);
 }
 
-// Cleanup2006 Done
+}

@@ -1,4 +1,4 @@
-// $Id: Units.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Units.hh 5748 2014-10-11 19:38:53Z flaterco $
 /*
     Units
 
@@ -19,6 +19,7 @@
 */
 
 class Dstr;
+namespace libxtide {
 
 namespace Units {
 
@@ -43,4 +44,4 @@ namespace Units {
   const PredictionUnits flatten (PredictionUnits u);
 }
 
-// Cleanup2006 Done
+}

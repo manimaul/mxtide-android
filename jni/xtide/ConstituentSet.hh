@@ -1,4 +1,4 @@
-/*  $Id: ConstituentSet.hh 2641 2007-09-02 21:31:02Z flaterco $
+/*  $Id: ConstituentSet.hh 5748 2014-10-11 19:38:53Z flaterco $
 
     ConstituentSet:  set of constituents, datum, and related methods.
 
@@ -17,6 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 class ConstituentSet {
 public:
@@ -38,8 +40,12 @@ public:
   const Units::PredictionUnits predictUnits () const;
 
   // These will never have a value of type KnotsSquared.
-  const Amplitude       maxAmplitude() const;
-  const PredictionValue datum()        const;
+  // maxAmplitudeHeuristic is a practical estimate of the maximum amplitude
+  // that will be generated.  Occasionally it may be exceeded, but the true
+  // mathematical bound is usually much too conservative for determining the
+  // range of tide graphs.
+  const Amplitude       maxAmplitudeHeuristic() const;
+  const PredictionValue datum()                 const;
 
   // Calculate (deriv)th time derivative of the normalized tide (for
   // time in s).  The result does not have the datum added in and will
@@ -79,7 +85,7 @@ protected:
   // Maximum derivative supported by tideDerivative and family.
   static const unsigned maxDeriv = 2U;
 
-  Amplitude _maxAmplitude;
+  Amplitude _maxAmplitudeHeuristic;
   Amplitude maxdt[maxDeriv+2];
   Year      currentYear;
   Timestamp epoch;
@@ -101,4 +107,4 @@ protected:
 				   double blend);
 };
 
-// Cleanup2006 Done
+}

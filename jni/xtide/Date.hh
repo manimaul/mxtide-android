@@ -1,4 +1,4 @@
-// $Id: Date.hh 2835 2007-12-01 02:06:09Z flaterco $
+// $Id: Date.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // Date:  A particular day.  See also Year, Timestamp, Interval.
 
@@ -18,6 +18,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 class Date {
 public:
@@ -40,11 +42,11 @@ public:
   const date_t date() const;
 
 protected:
-  const Dstr timezoneLocalVar;
+  Dstr timezoneLocalVar;
   Timestamp _timestamp;
 };
 
 const bool operator<  (const Date &a, const Date &b);
 const bool operator<= (const Date &a, const Date &b);
 
-// Cleanup2006 Done
+}

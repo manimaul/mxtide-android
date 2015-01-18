@@ -1,4 +1,4 @@
-// $Id: Units.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Units.cc 5748 2014-10-11 19:38:53Z flaterco $
 /*
     Units
 
@@ -18,7 +18,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 static const unsigned numUnits = 4;
@@ -75,4 +76,4 @@ const Units::PredictionUnits Units::flatten (PredictionUnits u) {
   return u;
 }
 
-// Cleanup2006 Done
+}

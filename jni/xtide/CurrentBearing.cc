@@ -1,4 +1,4 @@
-// $Id: CurrentBearing.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: CurrentBearing.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 /*
     CurrentBearing:  Store and print <int>° or <int>° true, or null.
@@ -19,7 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 CurrentBearing::CurrentBearing () {}
@@ -41,4 +42,4 @@ void CurrentBearing::print (Dstr &text_out) const {
     text_out += " true";
 }
 
-// Cleanup2006 Done
+}

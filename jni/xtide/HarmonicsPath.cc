@@ -1,4 +1,4 @@
-// $Id: HarmonicsPath.cc 2862 2007-12-06 23:12:59Z flaterco $
+// $Id: HarmonicsPath.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  HarmonicsPath  Vector of harmonics file names as specified by environment.
 
@@ -18,8 +18,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
 #include "HarmonicsPath.hh"
+namespace libxtide {
 
 
 #ifdef UseSemicolonPathsep
@@ -28,28 +29,11 @@ static const char pathSeparator (';');
 static const char pathSeparator (':');
 #endif
 
-#ifdef UseLocalFiles
-static const char confFile[] = "xtide.conf";
-#else
-static const char confFile[] = "/etc/xtide.conf";
-#endif
 
-
-HarmonicsPath::HarmonicsPath ():
+HarmonicsPath::HarmonicsPath (const Dstr &unparsedHfilePath):
   _noPathProvided(false) {
 
-  // Get HFILE_PATH from environment or /etc/xtide.conf
-  Dstr hfile_path (getenv ("HFILE_PATH"));
-  if (hfile_path.isNull()) {
-    FILE *configfile;
-    if ((configfile = fopen (confFile, "rb"))) {
-      hfile_path.getline (configfile);
-      fclose (configfile);
-      // Kluge for MS-DOS line discipline
-      if (hfile_path.back() == '\r')
-        hfile_path -= hfile_path.length() - 1;
-    }
-  }
+  Dstr hfile_path (unparsedHfilePath);
   _origPath = hfile_path;
   if (hfile_path.isNull()) {
     _noPathProvided = true;
@@ -83,4 +67,4 @@ constString HarmonicsPath::origPath() {
   return _origPath.aschar();
 }
 
-// Cleanup2006 Done
+}

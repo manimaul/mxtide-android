@@ -1,9 +1,8 @@
-// $Id: Dstr.hh 2953 2008-01-24 23:02:24Z flaterco $
+// $Id: Dstr.hh 5054 2013-07-20 01:25:41Z flaterco $
 // Dstr:  Dave's String class.
 
 // Canonicalized 2005-05-05.
 // Moved into libdstr 2007-02-06.
-// libdstr 20080124 backported for XTide.
 
 // This source is public domain.  As if you would want it.
 
@@ -51,6 +50,14 @@
 
 class Dstr {
 public:
+
+  // -------- Version defines  --------
+
+  // Versions prior to 1.0 did not have these at all.
+  #define DSTR_MAJOR_REV 1
+  #define DSTR_MINOR_REV 0
+  #define DSTR_PATCHLEVEL 0
+
 
   // -------- Constructors and destructors --------
 
@@ -199,9 +206,8 @@ public:
   // of reps.  The replacement is done in one pass; any additional
   // instances that appear after the first pass are left alone.
   // Sensitive.
-  // N.B. I use this method a lot, but to this day every invocation
-  // has involved two string constants--so accepting const Dstr& would
-  // just create a bunch of unneeded temporaries.
+  // Most invocations of this method involve two string constants, so
+  // accepting const Dstr& would just create a bunch of unneeded temporaries.
   unsigned repstr (const char *X, const char *Y);
 
   // Mangle per RFC 2445 TEXT.  This is equivalent to
@@ -225,17 +231,6 @@ public:
   //   repstr ("ß", "ss")
   Dstr &expand_ligatures();
 
-  // Translate Latin-1 to UTF-8.  Dstr does not internally understand
-  // UTF-8, so once this is done, other nontrivial operations will
-  // become invalid.  length() will return number of bytes, not number
-  // of UTF-8 characters.
-  Dstr &utf8();
-
-  // Translate UTF-8 to Latin-1.  If the translation can't be done,
-  // the string becomes null.
-  Dstr &unutf8();
-
-  // For a more general translation service, use iconv.
 
   // -------- Whitespace operations --------
 
@@ -248,6 +243,27 @@ public:
   // Strip only one or the other.
   Dstr &trim_head ();
   Dstr &trim_tail ();
+
+
+  // -------- Character set / encoding translations --------
+
+  // Caution:  These translations are intended for use at I/O time to allow
+  // an application that is based on Latin-1 to function minimally in newer
+  // (UTF-8) and older (CP437) environments.  All other Dstr operations
+  // assume that the character encoding is Latin-1.  For a more general
+  // translation service, use iconv.
+
+  // Translate Latin-1 to UTF-8 or vice-versa.  Translation to UTF-8 always
+  // succeeds.  In the reverse direction, if any character doesn't translate
+  // or if the string is not valid UTF-8, the string becomes null.  length()
+  // will return the number of bytes, not the number of UTF-8 characters.
+  Dstr &utf8();
+  Dstr &unutf8();
+
+  // Translate Latin-1 to CP437 or vice-versa.  Lossy in both directions.
+  // Characters that don't translate become question marks.
+  Dstr &CP437();
+  Dstr &unCP437();
 
 
 protected:

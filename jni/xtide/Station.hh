@@ -1,4 +1,4 @@
-// $Id: Station.hh 2946 2008-01-18 23:12:25Z flaterco $
+// $Id: Station.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  Station  A tide station.
 
@@ -24,6 +24,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+namespace libxtide {
 
 class Station {
 public:
@@ -93,31 +95,35 @@ public:
   void statsMode (Dstr &text_out,
                   Timestamp startTime,
                   Timestamp endTime);
-//  void calendarMode (Dstr &text_out,
-//                     Timestamp startTime,
-//                     Timestamp endTime,
-//                     Mode::Mode mode,
-//                     Format::Format form);
+  void calendarMode (Dstr &text_out,
+                     Timestamp startTime,
+                     Timestamp endTime,
+                     Mode::Mode mode,
+                     Format::Format form);
   void rareModes (Dstr &text_out,
                   Timestamp startTime,
                   Timestamp endTime,
                   Mode::Mode mode,
                   Format::Format form);
-//  void bannerMode (Dstr &text_out,
-//                   Timestamp startTime,
-//                   Timestamp endTime);
-//  void graphMode (Dstr &text_out,
-//                  Timestamp startTime);
-//  void clockMode (Dstr &text_out);
-	
-  // If you're interested in more than printing formatted text this
-  // method will provide access to the TideEvents themselves via
-  // a tide events organizer.
-  const TideEventsOrganizer tideEventsOrganizer(Timestamp startTime, Timestamp endTime);
+  void bannerMode (Dstr &text_out,
+                   Timestamp startTime,
+                   Timestamp endTime);
+  void graphMode (Dstr &text_out,
+                  Timestamp startTime,
+                  Format::Format form);
+  void clockMode (Dstr &text_out,
+		  Format::Format form);
+
+  // Modes helper.  Formerly protected, but now used by Calendar....
+  // FIXME, textWidth is only for LaTeX; this is a fiasco.
+  void textBoilerplate (Dstr &text_out,
+			Format::Format form,
+                        bool firstpage,
+			double textWidth=0.0) const;
 
   // Special case for PNG graphs and clocks (binary out not text out).
-  //void graphModePNG (FILE *fp, Timestamp startTime);
-  //void clockModePNG (FILE *fp);
+  void graphModePNG (FILE *fp, Timestamp startTime);
+  void clockModePNG (FILE *fp);
 
 
   // Change preferred units of length.
@@ -129,10 +135,9 @@ public:
   // Return units that prediction methods will return (never knots squared).
   const Units::PredictionUnits predictUnits () const;
 
-  // Mathematical bounds (considerably wider than lowest/highest
-  // astronomical tide)---used to set range in graphs.
-  virtual const PredictionValue minLevel() const;
-  virtual const PredictionValue maxLevel() const;
+  // Estimated bounds used to set range in graphs.
+  virtual const PredictionValue minLevelHeuristic() const;
+  virtual const PredictionValue maxLevelHeuristic() const;
 
   // Get heights or velocities.
   virtual const PredictionValue predictTideLevel (Timestamp predictTime);
@@ -285,14 +290,10 @@ protected:
   const PredictionValue finishPredictionValue (PredictionValue pv);
 
 
-  // Modes helper.
-  void textBoilerplate (Dstr &text_out, Format::Format form) const;
-
-
 private:
   // Prohibited operation not implemented.
   // (Default copy constructor is used inside of clone().)
   Station &operator= (const Station &);
 };
 
-// Cleanup2006 Done
+}

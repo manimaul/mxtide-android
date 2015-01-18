@@ -1,4 +1,4 @@
-/*  $Id: SafeVector.hh 2641 2007-09-02 21:31:02Z flaterco $
+/*  $Id: SafeVector.hh 5748 2014-10-11 19:38:53Z flaterco $
 
     SafeVector equals std::vector except with bounds checking on
     operator[].
@@ -24,6 +24,9 @@
 
 #include <vector>
 
+namespace libxtide {
+
+
 template <class T> class SafeVector: public std::vector<T> {
 public:
 
@@ -33,6 +36,9 @@ public:
   // mysteries of templates I guess.)
   SafeVector (): std::vector<T>() {}
   SafeVector (unsigned n): std::vector<T>(n) {}
+  #ifndef NO_VECTOR_INITLISTS
+  SafeVector (std::initializer_list<T> l): std::vector<T>(l) {}
+  #endif
 
   // Die with assertion failure if index >= size().
   T &operator[] (unsigned index) {
@@ -57,4 +63,4 @@ public:
 
 };
 
-// Cleanup2006 Done
+}

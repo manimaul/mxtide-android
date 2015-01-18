@@ -1,4 +1,4 @@
-// $Id: Offsets.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Offsets.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 // Offsets:  storage for tide offsets.
 
@@ -19,7 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 SimpleOffsets::SimpleOffsets (Interval timeAdd,
@@ -134,4 +135,4 @@ const bool HairyOffsets::trySimplify (SimpleOffsets &simpleOffsets_out) const {
   return true;
 }
 
-// Cleanup2006 Done
+}

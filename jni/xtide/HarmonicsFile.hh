@@ -1,4 +1,4 @@
-// $Id: HarmonicsFile.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: HarmonicsFile.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  HarmonicsFile  Hide details of interaction with libtcd.
 
@@ -22,6 +22,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 class HarmonicsFile {
 public:
@@ -59,4 +61,4 @@ private:
   HarmonicsFile &operator= (const HarmonicsFile &);
 };
 
-// Cleanup2006 Done
+}

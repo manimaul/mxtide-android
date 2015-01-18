@@ -1,4 +1,4 @@
-// $Id: Errors.hh 2873 2007-12-09 16:44:29Z flaterco $
+// $Id: Errors.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // Enums for errors.
 
@@ -18,6 +18,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 namespace Error {
 
@@ -47,6 +49,7 @@ namespace Error {
                   NUMBER_RANGE_ERROR,
                   BAD_MODE,
                   BAD_FORMAT,
+                  BAD_GRAPHSTYLE,
                   BAD_TIMESTAMP,
                   BAD_IP_ADDRESS,
                   BAD_BOOL,
@@ -54,10 +57,11 @@ namespace Error {
                   BAD_EVENTMASK,
                   BAD_OR_AMBIGUOUS_COMMAND_LINE,
                   CANT_LOAD_FONT,
-                  NO_SYSLOG};
+                  NO_SYSLOG,
+                  BROKEN_ZONEINFO};
 
   enum ErrType {fatal, nonfatal};
 
 }
 
-// Cleanup2006 CloseEnough
+}

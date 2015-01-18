@@ -1,4 +1,4 @@
-// $Id: HarmonicsFile.cc 2854 2007-12-02 18:17:19Z flaterco $
+// $Id: HarmonicsFile.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  HarmonicsFile  Hide details of interaction with libtcd.
 
@@ -23,10 +23,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
 #include "HarmonicsFile.hh"
 #include "SubordinateStation.hh"
-#include "../tcd/tcd.h"
+#include <tcd/tcd.h>
+
+namespace libxtide {
 
 
 static bool haveInstance = false;
@@ -104,13 +106,26 @@ StationRef * const HarmonicsFile::getNextStationRef () {
   long i;
   if ((i = get_next_partial_tide_record (&rec)) == -1) return NULL;
   assert (i >= 0);
+
+  // FIXME:  currents kludge
+  // We don't get units in the libtcd header (partial tide record), so this
+  // is a kludge that depends on the naming convention.
+  char *name = (char *)rec.name;
+  bool isCurrent (false);
+  size_t l = strlen (name);
+  if ((l >= 8) &&
+      ((strstr (name, " Current") == name + l - 8) ||
+       (strstr (name, " Current "))))
+    isCurrent = true;
+
   StationRef *sr = new StationRef (_filename,
                                    i,
-                                   (char *)rec.name,
+                                   name,
         ((rec.latitude != 0.0 || rec.longitude != 0.0) ?
         Coordinates(rec.latitude, rec.longitude) : Coordinates()),
                                    (char *)get_tzfile(rec.tzfile),
-                                   (rec.record_type == REFERENCE_STATION));
+                                   (rec.record_type == REFERENCE_STATION),
+                                   isCurrent);
   return sr;
 }
 
@@ -454,10 +469,10 @@ Station * const HarmonicsFile::getStation (const StationRef &stationRef) {
   // unhealthy consequences (clock windows can be killed while only
   // partially constructed; graph windows can double-barf due to
   // events queued on the X server).
-  if (s->minLevel() >= s->maxLevel())
+  if (s->minLevelHeuristic() >= s->maxLevelHeuristic())
     Global::barf (Error::ABSURD_OFFSETS, s->name);
 
   return s;
 }
 
-// Cleanup2006 Done
+}

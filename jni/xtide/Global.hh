@@ -1,6 +1,7 @@
-// $Id: Global.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Global.hh 5748 2014-10-11 19:38:53Z flaterco $
 
-/*  Global  Global variables and functions.
+/*  Global  Global* variables and functions.
+    * Within libxtide.
 
     Copyright (C) 1998  David Flater.
 
@@ -18,8 +19,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-class Settings;
 class Dstr;
+
+namespace libxtide {
+
+class Settings;
 class StationIndex;
 class StationRef;
 class Interval;
@@ -51,10 +55,6 @@ namespace Global {
   // One second less than that.
   extern const Interval eventSafetyMarginMinus1;
 
-  // The delta to use for end time if begin time is provided but end
-  // time is not.
-  extern const Interval defaultPredictInterval;
-
   // The period of M1C, used in estimation of MLLW.  In NOS CO-OPS 1,
   // the term lunar day is also used, but that term is ambiguous.
   extern const Interval tidalDay;
@@ -67,7 +67,7 @@ namespace Global {
   // Cosmological constant for aspect calibration.
   extern const double aspectMagicNumber;
 
-  // Minimum graph width and height.
+  // Minimum graph width and height.  Also used for clocks.
   extern const unsigned minGraphWidth, minGraphHeight;
 
   // Minimum TTY width and height.
@@ -79,6 +79,9 @@ namespace Global {
   // Year limits for time control dialogs.
   extern const unsigned dialogFirstYear, dialogLastYear;
 
+  // VT100 SCS sequence to assign US-ASCII to G0 and Special Graphics to G1.
+  extern constString VT100_init;
+
 
   // Variables.
 
@@ -86,19 +89,57 @@ namespace Global {
   // control panel.  In tide and xttpd they never change once initialized.
   extern Settings settings;
 
-  // From locale.  Likely values are ISO-8859-1 and UTF-8.
+  // Codeset from locale.
+  // - Likely values are ISO-8859-1 and UTF-8.
+  // - CP437 (alias *437) is supported for DOS compatibility if Dstr is
+  //   version 1.0 or later.
+  // - For all other values, XTide reverts to ISO-8859-1 behavior.
+  // - ANSI_X3.4-1968 means US-ASCII and sometimes arises on misconfigured
+  //   Linux systems.  (Why that and not ANSI_X3.4-1986?)
+  // - If nl_langinfo isn't available, the value defaults to ISO-8859-1 but
+  //   can be overridden by defining CODESET.
+  // - If TERM is vt100 or vt102, codeset will be forced to VT100.  This is
+  //   a special case.
   extern Dstr codeset;
+
+  // If TERM is vt100 or vt102, this will be the character sequence to
+  // produce a degree sign on such terminals when G1 = Special Graphics.
+  // Otherwise, it will be the single Latin-1 character °.
+  extern constCharPointer degreeSign;
+  inline const bool needDegrees() { return degreeSign[1]; }
+
+  // The user_io_ptr feature of libpng doesn't seem to work.
+  // See writePNGToFile.
+  extern FILE *PNGFile;
+
+  // Client-side font used in RGBGraph.
+  extern ClientSide::Font graphFont;
+
 
   // Functions.
 
-  void versionString (Dstr &version_out);
+  // Initialize codeset from locale.  If TERM is vt100 or vt102, set
+  // degreeSign accordingly.
+  void initTerm();
 
-  // Initialize codeset from locale.
-  void initCodeset();
+  // Perform cumbersome run-time initialization of graphFont when the
+  // compiler won't do the compile-time initializer.
+  #ifdef NO_INITIALIZER_LISTS
+  void initializeGraphFont();
+  #endif
+
+  // Apply a codeset translation, if applicable, before output of a Dstr.
+  // CP437 is never applied to HTML-format output.
+  void finalizeCodeset (Dstr &text_out,
+			const Dstr &codeset,
+			Format::Format form);
 
   // Get and set ~/.disableXTidedisclaimer
   const bool disclaimerDisabled();    // If no HOME, default false
   void disableDisclaimer();           // Barfs if HOME is unset
+
+  // Read and retain xtide.conf on first need.
+  const Dstr &getXtideConf (unsigned lineNo);
 
   // Root station index is built on first access.
   StationIndex &stationIndex();
@@ -116,6 +157,11 @@ namespace Global {
   // Return true if eventMask is a valid event mask, false if not.
   const bool isValidEventMask (const Dstr &eventMask);
 
+  // Function for libpng.  See also PNGFile.
+  void writePNGToFile (png_structp png_ptr,
+		       png_bytep b_ptr,
+		       png_size_t sz);
+
   // Rounding functions that round to the nearest integer and round
   // halfway cases toward positive infinity.  Oddly enough, none of
   // the C99 rounding functions will do that.
@@ -125,7 +171,11 @@ namespace Global {
   // lround               -3  -2  -2  -2  -2  -1  -1  -1  -1   0   0   0   1   1   1   1   2   2   2   2   3
   // Global::iround       -2  -2  -2  -2  -1  -1  -1  -1   0   0   0   0   1   1   1   1   2   2   2   2   3
   const int                   iround (double x);
+  const long                  lround (double x);
   const interval_rep_t intervalround (double x);
+
+  // (int) floor(x)
+  const int ifloor (double x);
 
 
   // Error handling stuff.
@@ -168,4 +218,4 @@ namespace Global {
   void xperror (constCharPointer s);
 }
 
-// Cleanup2006 Done
+}

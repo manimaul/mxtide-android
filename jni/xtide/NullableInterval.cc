@@ -1,4 +1,4 @@
-// $Id: NullableInterval.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: NullableInterval.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 // NullableInterval:  strict nullable Interval.
 
@@ -19,7 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 NullableInterval::NullableInterval() {}
@@ -35,4 +36,4 @@ const interval_rep_t NullableInterval::s () const {
   return _interval.s();
 }
 
-// Cleanup2006 Done
+}

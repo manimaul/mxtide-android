@@ -1,4 +1,4 @@
-// $Id: Nullable.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Nullable.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 // Nullable:  mix-in to make a data type nullable.
 
@@ -19,7 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 Nullable::Nullable():
@@ -39,4 +40,4 @@ void Nullable::makeNull() {
   _isNull = true;
 }
 
-// Cleanup2006 Done
+}

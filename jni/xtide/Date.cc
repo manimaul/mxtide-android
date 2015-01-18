@@ -1,4 +1,4 @@
-// $Id: Date.cc 2835 2007-12-01 02:06:09Z flaterco $
+// $Id: Date.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 // Date:  A particular day.  See also Year, Timestamp, Interval.
 
@@ -19,7 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 Date::Date (Timestamp timestamp, const Dstr &timezone):
@@ -45,7 +46,8 @@ const Date::DateStruct Date::dateStruct() const {
   tm tempTm (_timestamp.tmStruct(timezoneLocalVar));
   assert (tempTm.tm_wday >= 0 && tempTm.tm_mon >= 0 &&
           tempTm.tm_wday < 7 && tempTm.tm_mon < 12);
-  DateStruct tempDateStruct = {tempTm.tm_wday, tempTm.tm_mon};
+  DateStruct tempDateStruct = {(unsigned)tempTm.tm_wday,
+			       (unsigned)tempTm.tm_mon};
   return tempDateStruct;
 }
 
@@ -78,4 +80,4 @@ const bool operator<= (const Date &a, const Date &b) {
   return (a.date() <= b.date());
 }
 
-// Cleanup2006 Done
+}

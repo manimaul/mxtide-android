@@ -1,4 +1,4 @@
-// $Id: SubordinateStation.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: SubordinateStation.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 /*  SubordinateStation  Station with offsets.
 
@@ -18,8 +18,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
 #include "SubordinateStation.hh"
+
+namespace libxtide {
 
 
 SubordinateStation::SubordinateStation (const Dstr &name_,
@@ -70,16 +72,16 @@ Station * const SubordinateStation::clone() const {
 }
 
 
-const PredictionValue SubordinateStation::minLevel() const {
-  PredictionValue pv (Station::minLevel());
+const PredictionValue SubordinateStation::minLevelHeuristic() const {
+  PredictionValue pv (Station::minLevelHeuristic());
   pv *= _offsets.minLevelMultiply();
   pv.convertAndAdd (_offsets.minLevelAdd());
   return pv;
 }
 
 
-const PredictionValue SubordinateStation::maxLevel() const {
-  PredictionValue pv (Station::maxLevel());
+const PredictionValue SubordinateStation::maxLevelHeuristic() const {
+  PredictionValue pv (Station::maxLevelHeuristic());
   pv *= _offsets.maxLevelMultiply();
   pv.convertAndAdd (_offsets.maxLevelAdd());
   return pv;
@@ -189,17 +191,20 @@ const PredictionValue SubordinateStation::predictTideLevel (
   }
   assert (subleftt <= predictTime && predictTime < subrightt);
 
-  // All manner of pathologies are possible.  We might have skipped
-  // over some conflicting events with the same eventTime.  uncleftt
-  // might be later than uncrightt.  The left and right events might
-  // even be the same type.  Doesn't matter much to us at this point.
-  // The math is robust in any case and people don't want assertion
-  // failures every time a subordinate station experiences a time
-  // warp.  It comes with the territory.
+  // All manner of pathologies are possible.  We might have skipped over some
+  // conflicting events with the same eventTime.  uncleftt might be later
+  // than uncrightt.  The left and right events might even be the same type.
+  // But suppressing garbage output is not straightforward.  For example, for
+  // each bracket where uncleftt is later than uncrightt, there is a
+  // neighboring bracket that includes an untracked event.  The untracked
+  // event is usually close to the boundary, so the middle and other end of
+  // the bracket are still approximately correct.  Throw it all out?  It's
+  // not obvious what it should be replaced by.  Interpolate--from what to
+  // what?
 
-  // The only case that really needs fixing is the one where we divide
-  // by zero.  If the uncorrected prediction values were the same,
-  // make a straight line between the corrected values, whatever they
+  // The only case that needs fixing to prevent program failure is the one
+  // where we divide by zero.  If the uncorrected prediction values were the
+  // same, make a straight line between the corrected values, whatever they
   // are.  (Probably they are also the same, but you never know.)
   if (uncrightp == uncleftp)
     return subleftp + (subrightp - subleftp) *
@@ -478,4 +483,4 @@ void SubordinateStation::predictTideEvents (Timestamp startTime,
 // many values that you may as well have done it in-place.  I'm going
 // to call it done.
 
-// Cleanup2006 Done
+}

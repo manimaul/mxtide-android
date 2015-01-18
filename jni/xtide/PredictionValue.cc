@@ -1,4 +1,4 @@
-// $Id: PredictionValue.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: PredictionValue.cc 5748 2014-10-11 19:38:53Z flaterco $
 /*
     PredictionValue:  A quantity in units of feet, meters, knots, or
     knots squared.  See also, Amplitude.
@@ -19,7 +19,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
+namespace libxtide {
 
 
 PredictionValue::PredictionValue ():
@@ -208,15 +209,21 @@ const PredictionValue abs (PredictionValue a) {
 // Print in the form -XX.YY units (padding as needed)
 void PredictionValue::print (Dstr &text_out) const {
   char temp[80];
-  sprintf (temp, "% 6.2f %s", _value, Units::longName(_units));
+  if (Global::settings["ou"].c == 'y')
+    sprintf (temp, "% 6.2f", _value);
+  else
+    sprintf (temp, "% 6.2f %s", _value, Units::longName(_units));
   text_out = temp;
 }
 
 
 void PredictionValue::printnp (Dstr &text_out) const {
   char temp[80];
-  sprintf (temp, "%2.2f %s", _value, Units::shortName(_units));
+  if (Global::settings["ou"].c == 'y')
+    sprintf (temp, "%2.2f", _value);
+  else
+    sprintf (temp, "%2.2f %s", _value, Units::shortName(_units));
   text_out = temp;
 }
 
-// Cleanup2006 Done
+}

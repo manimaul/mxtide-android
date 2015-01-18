@@ -1,4 +1,4 @@
-// $Id: Skycal.cc 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Skycal.cc 5748 2014-10-11 19:38:53Z flaterco $
 
 // Skycal.cc -- Functions for sun and moon events.
 
@@ -13,6 +13,10 @@
 // license statement, included below.  The new portions and "value
 // added" by David Flater are covered under the GNU General Public
 // License.
+
+// 2013-05-26
+//
+// Patch from James Ashton to replace etcorr.
 
 // 2003-02-04
 //
@@ -136,8 +140,12 @@ LEGALITIES:
 			May 26, 1993.
 */
 
-#include "common.hh"
+#include "libxtide.hh"
 #include "Skycal.hh"
+
+// To avoid creating a clash on every reference of a math.h trig function,
+// namespace libxtide is applied only to the non-static definitions.
+
 
 // DWF:  This affects the rise/set predictions.  Normally you would
 // need to adjust it for the elevation of the location, but since this
@@ -148,6 +156,7 @@ static const double riseAltitude (-0.83);
 #define DEG_IN_RADIAN     57.2957795130823
 #define HRS_IN_RADIAN     3.819718634
 #define SEC_IN_DAY        86400.
+#define GREG_DAYS_IN_YEAR 365.2425     /* 365 + 97 / 400 */
 #define FLATTEN           0.003352813  /* flattening of earth, 1/298.257 */
 #define EQUAT_RAD         6378137.     /* equatorial radius of earth, meters */
 #define J2000             2451545.     /* Julian date at standard epoch */
@@ -302,7 +311,7 @@ bool lunar, bool &is_rise)
         if (deriv == 0.0)
           return (-1.0e10); // Found dead end.
         adj = -err/deriv;
-	while(fabs(adj) >= Global::eventPrecisionJD) {
+	while(fabs(adj) >= libxtide::Global::eventPrecisionJD) {
 	  if (i++ == 12)
             return(-1.0e10); // Exceeded max iterations.
 	  jdguess += adj;
@@ -465,78 +474,68 @@ static void eclrot (double jd, double *x unusedParameter, double *y, double *z)
 }
 
 
-// Added 2003-02-04 from Skycal 5 for moonrise/moonset
-// DWF: this function is no good for years < 1900 or >= 2100.  I have
-// added assertions to make it abort if that range is exceeded.  (So
-// we can't have moonrise and moonset outside that range.)
+// Code by James.Ashton@anu.edu.au 2013-05-24
+// Use the polynomial approximations from
+//   http://eclipse.gsfc.nasa.gov/SEhelp/deltatpoly2004.html
+// good for 1999 BC to 3000 AD, derived by NASA from
+//   Morrison, L. and Stephenson, F. R., "Historical Values of the Earth's
+//   Clock Error delt and the Calculation of Eclipses", J. Hist. Astron.,
+//   Vol. 35 Part 3, August 2004, No. 120, pp 327-336 (2004).
 static double etcorr (double jd) {
+	double y = (jd - J2000) / GREG_DAYS_IN_YEAR + 2000;
+	double t, delt;
 
-	/* Given a julian date in 1900-2100, returns the jd corrected
-           for delta t; delta t  is 
-		TDT - UT (after 1983 and before 1994)
-		ET - UT (before 1983)
-		an extrapolated guess  (after 1994). 
-
-	For dates in the past (<= 1994 and after 1900) the value is linearly
-        interpolated on 5-year intervals; for dates after the present,
-        an extrapolation is used, because the true value of delta t
-	cannot be predicted precisely.  Note that TDT is essentially the
-	modern version of ephemeris time with a slightly cleaner 
-	definition.  
-
-	Where the algorithm shifts there is an approximately 0.1 second
-        discontinuity.  Also, the 5-year linear interpolation scheme can 
-        lead to errors as large as 0.5 seconds in some cases, though
- 	usually rather smaller. */
-
-	double dates[20];
-	double delts[20];  /* can't initialize this look-up table
-            with stupid old sun compiler .... */
-	double year, delt=0;
-	int i;
-
-	/* this stupid patch for primitive sun C compilers .... 
-		do not allow automatic initialization of arrays! */
-
-	for(i = 0; i <= 18; ++i) dates[i] = 1900 + (double) i * 5.;
-	dates[19] = 1994;
-
-	delts[0] = -2.72;  delts[1] = 3.86; delts[2] = 10.46;
-	delts[3] = 17.20;  delts[4] = 21.16; delts[5] = 23.62;
-	delts[6] = 24.02;  delts[7] = 23.93; delts[8] = 24.33;
-	delts[9] = 26.77;  delts[10] = 29.15; delts[11] = 31.07;
-	delts[12] = 33.15;  delts[13] = 35.73; delts[14] = 40.18;
-	delts[15] = 45.48;  delts[16] = 50.54; delts[17] = 54.34;
-	delts[18] = 56.86;  delts[19] = 59.98;
-
-	year = 1900. + (jd - 2415019.5) / 365.25;
-
-	if(year < 1994.0 && year >= 1900.) {
-		i = ((int)year - 1900) / 5;
-                assert (i >= 0 && i < 20);
-		delt = delts[i] + 
-		 ((delts[i+1] - delts[i])/(dates[i+1] - dates[i])) * (year - dates[i]);
+	if (y < -500) {
+		t = (y-1820)/100;
+		delt = -20 + 32 * t * t;
+	} else if (y < 500) {
+		t = y/100;
+		delt = 10583.6 - 1014.41 * t + 33.78311 * t * t - 5.952053 * t * t * t - 0.1798452 * t * t * t * t + 0.022174192 * t * t * t * t * t + 0.0090316521 * t * t * t * t * t * t;
+	} else if (y < 1600) {
+		t = (y-1000)/100;
+		delt = 1574.2 - 556.01 * t + 71.23472 * t * t + 0.319781 * t * t * t - 0.8503463 * t * t * t * t - 0.005050998 * t * t * t * t * t + 0.0083572073 * t * t * t * t * t * t;
+	} else if (y < 1700) {
+		t = y - 1600;
+		delt = 120 - 0.9808 * t - 0.01532 * t * t + t * t * t / 7129;
+	} else if (y < 1800) {
+		t = y - 1700;
+		delt = 8.83 + 0.1603 * t - 0.0059285 * t * t + 0.00013336 * t * t * t - t * t * t * t / 1174000;
+	} else if (y < 1860) {
+		t = y - 1800;
+		delt = 13.72 - 0.332447 * t + 0.0068612 * t * t + 0.0041116 * t * t * t - 0.00037436 * t * t * t * t + 0.0000121272 * t * t * t * t * t - 0.0000001699 * t * t * t * t * t * t + 0.000000000875 * t * t * t * t * t * t * t;
+	} else if (y < 1900) {
+		t = y - 1860;
+		delt = 7.62 + 0.5737 * t - 0.251754 * t * t + 0.01680668 * t * t * t -0.0004473624 * t * t * t * t + t * t * t * t * t / 233174;
+	} else if (y < 1920) {
+		t = y - 1900;
+		delt = -2.79 + 1.494119 * t - 0.0598939 * t * t + 0.0061966 * t * t * t - 0.000197 * t * t * t * t;
+	} else if (y < 1941) {
+		t = y - 1920;
+		delt = 21.20 + 0.84493 * t - 0.076100 * t * t + 0.0020936 * t * t * t;
+	} else if (y < 1961) {
+		t = y - 1950;
+		delt = 29.07 + 0.407 * t - t * t/233 + t * t * t / 2547;
+	} else if (y < 1986) {
+		t = y - 1975;
+		delt = 45.45 + 1.067 * t - t * t/260 - t * t * t / 718;
+	} else if (y < 2005) {
+		t = y - 2000;
+		delt = 63.86 + 0.3345 * t - 0.060374 * t * t + 0.0017275 * t * t * t + 0.000651814 * t * t * t * t + 0.00002373599 * t * t * t * t * t;
+	} else if (y < 2050) {
+		t = y - 2000;
+		delt = 62.92 + 0.32217 * t + 0.005589 * t * t;
+	} else if (y < 2150) {
+		t = (y - 1820)/100;
+		delt = -20 + 32 * t * t - 0.5628 * (2150 - y);
+	} else {
+		t = (y - 1820) / 100;
+		delt = -20 + 32 * t * t;
 	}
-
-	else if (year > 1994. && year < 2100.)
-		delt = 33.15 + (2.164e-3) * (jd - 2436935.4);  /* rough extrapolation */
-
-	else if (year < 1900) {
-	  // printf("etcorr ... no ephemeris time data for < 1900.\n");
-	  // delt = 0.;
-          assert (false);
-	}
-
-	else if (year >= 2100.) {
-	  // printf("etcorr .. very long extrapolation in delta T - inaccurate.\n");
-	  // delt = 180.; /* who knows? */
-          assert (false);
-	} 
 
 	return(jd + delt/SEC_IN_DAY);
 }
 
-	
+
 // Added 2003-02-04 from Skycal 5 for moonrise/moonset
 static void accumoon (double jd, double geolat, double lst, double elevsea,
 double *topora, double *topodec, double *topodist)
@@ -831,8 +830,8 @@ find_next_moon_phase (double &jd, int &phase) {
 }
 
 
-void Skycal::findNextMoonPhase (Timestamp t,
-                                TideEvent &tideEvent_out) {
+void libxtide::Skycal::findNextMoonPhase (Timestamp t,
+					  TideEvent &tideEvent_out) {
   int phase;
   double jd (t.jd());
   find_next_moon_phase (jd, phase);
@@ -890,7 +889,7 @@ static void
 find_next_rise_or_set (double &jd, double lat, double longit, bool lunar,
 bool &is_rise) {
   // Move ahead by precision interval to avoid snagging.
-  jd += Global::eventPrecisionJD;
+  jd += libxtide::Global::eventPrecisionJD;
 
   double jdorig = jd;
   double inc = 1.0 / 6.0; // 4 hours
@@ -913,10 +912,10 @@ bool &is_rise) {
 }
 
 
-void Skycal::findNextRiseOrSet (Timestamp t,
-                                const Coordinates &c,
-			        RiseSetType riseSetType,
-                                TideEvent &tideEvent_out) {
+void libxtide::Skycal::findNextRiseOrSet (Timestamp t,
+					  const Coordinates &c,
+					  RiseSetType riseSetType,
+					  TideEvent &tideEvent_out) {
   assert (!(c.isNull()));
   bool isRise;
   double jd = t.jd();
@@ -938,9 +937,30 @@ void Skycal::findNextRiseOrSet (Timestamp t,
 
 
 // Simple question deserving a simple answer...
-const bool Skycal::sunIsUp (Timestamp t, const Coordinates &c) {
+const bool libxtide::Skycal::sunIsUp (Timestamp t, const Coordinates &c) {
   assert (!(c.isNull()));
   return (altitude (t.jd(), c.lat(), -(c.lng())/15.0, 0) >= riseAltitude);
 }
 
-// Cleanup2006 Cruft ThirdPartyCode WontFix
+
+#ifdef EXPERIMENTAL_MOON_AGE_NOT_PHASE
+void libxtide::Skycal::findNewMoons (Timestamp t,
+				     Timestamp &prev_out,
+				     Timestamp &next_out) {
+  double jd(t.jd()), newjd, lastnewjd;
+  short kount=0;
+  // Duplicated from find_next_moon_phase "find current lunation" block.
+  // IDK whether 29.5307 really wants to be 29.530588853?
+  int nlast = (int)((jd - 2415020.5) / 29.5307 - 2);
+  flmoon(nlast,0,&lastnewjd);
+  flmoon(++nlast,0,&newjd);
+  while (newjd <= jd) {
+    lastnewjd = newjd;
+    flmoon(++nlast,0,&newjd);
+    require (kount++ < 5); // Original limit was 35 (!)
+  }
+  // And presto, we're done.
+  prev_out = lastnewjd;
+  next_out = newjd;
+}
+#endif

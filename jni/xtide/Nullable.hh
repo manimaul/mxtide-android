@@ -1,4 +1,4 @@
-// $Id: Nullable.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Nullable.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 // Nullable:  mix-in to make a data type nullable.
 
@@ -45,6 +45,7 @@
 // with no non-nullable parent class:
 //   class NullableNumber: public Nullable { ... }
 
+namespace libxtide {
 
 class Nullable {
 public:
@@ -66,4 +67,4 @@ protected:
   bool _isNull;
 };
 
-// Cleanup2006 Done
+}

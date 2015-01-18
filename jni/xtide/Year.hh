@@ -1,4 +1,4 @@
-// $Id: Year.hh 2641 2007-09-02 21:31:02Z flaterco $
+// $Id: Year.hh 5748 2014-10-11 19:38:53Z flaterco $
 
 /*
     Copyright (C) 1997  David Flater.
@@ -16,6 +16,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+namespace libxtide {
 
 class Year {
 public:
@@ -38,4 +40,4 @@ const bool operator <= (Year y1, Year y2);
 const bool operator == (Year y1, Year y2);
 const bool operator != (Year y1, Year y2);
 
-// Cleanup2006 Done
+}
