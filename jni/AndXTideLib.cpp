@@ -20,11 +20,11 @@ Java_com_mxmariner_andxtidelib_XtideJni_loadHarmonics( JNIEnv *env, jobject obj,
 	(*env).ReleaseStringUTFChars(pPath, nPath);
 }
 
-jstring
+jobjectArray
 Java_com_mxmariner_andxtidelib_XtideJni_getStationIndex( JNIEnv *env, jobject obj )
 {
-	getStationIndex();
-     return (*env).NewStringUTF(data.utf8().aschar());
+	return getStationIndex(env);
+     //return (*env).NewStringUTF(data.utf8().aschar());
 }
 
 jstring
@@ -72,17 +72,28 @@ Java_com_mxmariner_andxtidelib_XtideJni_getStationTimestamp( JNIEnv *env, jobjec
 	return (*env).NewStringUTF(data.utf8().aschar());
 }
 
-void getStationIndex() {
-	data = "";
+jobjectArray getStationIndex(JNIEnv *env) {
+    jobjectArray ret = (jobjectArray) (*env).NewObjectArray(si.size(),(*env).FindClass("java/lang/String"),NULL);
+    jstring js;
 	for (unsigned long i=0; i<si.size(); ++i) {
 		si.operator[](i)->name.aschar();
-		data += si.operator [](i)->name.aschar();
+		data = si.operator [](i)->name.aschar();
 		data += ";";
 		data += si.operator [](i)->coordinates.lat();
 		data += ";";
 		data += si.operator [](i)->coordinates.lng();
-		data += "\n";
+		data += ";";
+		if (si.operator [](i)->isCurrent) {
+			data += "current";
+		} else {
+			data += "tide";
+		}
+		
+        js = (*env).NewStringUTF(data.utf8().aschar());
+        (*env).SetObjectArrayElement(ret,i,js);
+        (*env).DeleteLocalRef(js);
 	}
+    return ret;
 }
 
 void getAbout(Dstr station, long epoch) {
