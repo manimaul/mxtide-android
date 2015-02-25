@@ -39,6 +39,11 @@ public class Station implements IStation {
     public IStationData getDataForTime(Date date) {
         return new StationData(date, this);
     }
+    
+    public StationData getDataForTime(long epoch) {
+        return new StationData(epoch, this);
+        
+    }
 
     public MXLatLng getPosition() {
         return latLng;

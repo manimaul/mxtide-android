@@ -14,7 +14,11 @@ public class StationData implements IStationData {
     private final Station station;
 
     public StationData(Date date, Station station) {
-        this.epoch = date.getTime() / 1000;
+        this(date.getTime() / 1000, station);
+    }
+    
+    public StationData(long epoch, Station station) {
+        this.epoch = epoch;
         this.station = station;
     }
 
