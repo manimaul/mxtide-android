@@ -34,6 +34,10 @@ public class HarmonicsDatabaseService extends Service {
         if (dbOpenSubscriber != null) {
             dbOpenSubscriber.unsubscribe();
         }
+        if (harmonicsDatabase != null) {
+            harmonicsDatabase.close();
+            harmonicsDatabase = null;
+        }
         return super.onUnbind(intent);
     }
     
@@ -80,7 +84,7 @@ public class HarmonicsDatabaseService extends Service {
                 return null;
             }
             
-            Station station = harmonicsDatabase.getStationDataById(stationId);
+            Station station = harmonicsDatabase.getStationById(stationId);
             if (station != null) {
                 return new RemoteStationData(station.getDataForTime(dateEpoch));
             }

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+@SuppressWarnings("UnusedDeclaration")
 public class MXEncoding {
     public static final String TAG = "MXEncoding";
 

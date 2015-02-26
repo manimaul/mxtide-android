@@ -10,9 +10,6 @@ import android.util.Log;
 
 import java.io.Closeable;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 
 import rx.Observable;
@@ -116,38 +113,6 @@ public class HarmonicsDatabase implements Closeable {
 
     }
 
-//    public ArrayList<Station> getTideStations() {
-//        return getStations(StationType.STATION_TYPE_TIDE);
-//    }
-//
-//    public ArrayList<Station> getCurrentStations() {
-//        return getStations(StationType.STATION_TYPE_CURRENT);
-//    }
-
-    public Observable<Station> getStationsObservable(final StationType type) {
-        return Observable.create(new Observable.OnSubscribe<Station>() {
-            @Override
-            public void call(Subscriber<? super Station> subscriber) {
-                final String[] columns = {NAME, LATITUDE, LONGITUDE, TYPE};
-                final String selection = TYPE + "=?";
-                final String selectionArgs[] = {type.getTypeStr()};
-                Cursor cursor = db.query(TABLE_STATIONS, columns, selection, selectionArgs, null, null, null);
-                String str; //name;45.243829;-122.193847;current
-                cursor.moveToFirst();
-                while (!cursor.isAfterLast() && !subscriber.isUnsubscribed()) {
-                    str = cursor.getString(0) + ";" +
-                            cursor.getString(1) + ";" +
-                            cursor.getString(2) + ";" +
-                            cursor.getString(3);
-                    subscriber.onNext(new Station(str));
-                    cursor.moveToNext();
-                }
-                subscriber.onCompleted();
-                cursor.close();
-            }
-        });
-    }
-
     public long[] getClosestStationsIds(double lat, double lng, int count) {
         double maxLat = lat + 1;
         double maxLng = lng + 1;
@@ -188,68 +153,6 @@ public class HarmonicsDatabase implements Closeable {
         return result;
     }
 
-    public ArrayList<Station> getClosestStations(MXLatLng position, int count) {
-        double maxLat = position.getLatitude() + 1;
-        double maxLng = position.getLongitude() + 1;
-        double minLat = position.getLatitude() - 1;
-        double minLng = position.getLongitude() - 1;
-        Cursor cursor = getStationCursorInBounds(maxLat, maxLng, minLat, minLng);
-        int found = cursor.getCount();
-        int cardinals = 4;
-        while (found < count && cardinals > 0) {
-            cardinals = 0;
-            cursor.close();
-            if (maxLat < 90d) {
-                maxLat++;
-                cardinals++;
-            }
-            if (maxLng < 180d) {
-                maxLng++;
-                cardinals++;
-            }
-            if (minLat > -90d) {
-                minLat--;
-                cardinals++;
-            }
-            if (minLng > -180d) {
-                minLng--;
-                cardinals++;
-            }
-            cursor = getStationCursorInBounds(maxLat, maxLng, minLat, minLng);
-            found = cursor.getCount();
-        }
-        ArrayList<Station> stations = new ArrayList<>(found);
-        cursor.moveToFirst();
-        String str;
-        while (!cursor.isAfterLast()) {
-            str = cursor.getString(0) + ";" +
-                    cursor.getString(1) + ";" +
-                    cursor.getString(2) + ";" +
-                    cursor.getString(3);
-            stations.add(new Station(str));
-            cursor.moveToNext();
-        }
-        cursor.close();
-
-        Collections.sort(stations, new StationSorter(position));
-
-        if (stations.size() > count) {
-            return new ArrayList<>(stations.subList(0, count - 1));
-        }
-
-        return stations;
-    }
-
-    private Cursor getStationCursorInBounds(double maxLat, double maxLng, double minLat, double minLng) {
-        final String sql = "Select " + NAME + ", " + LATITUDE + ", " + LONGITUDE + ", " + TYPE + " FROM " + TABLE_STATIONS
-                + " WHERE (" + LATITUDE + " BETWEEN ? AND ?) AND (" + LONGITUDE + " BETWEEN ? AND ?);";
-
-        final String[] selArgs = {String.valueOf(minLat), String.valueOf(maxLat),
-                String.valueOf(minLng), String.valueOf(maxLng)};
-
-        return db.rawQuery(sql, selArgs);
-    }
-
     private Cursor getStationIdCursorInBounds(double maxLat, double maxLng, double minLat, double minLng) {
         final String sql = "Select " + ID + " FROM " + TABLE_STATIONS
                 + " WHERE (" + LATITUDE + " BETWEEN ? AND ?) AND (" + LONGITUDE + " BETWEEN ? AND ?);";
@@ -274,7 +177,7 @@ public class HarmonicsDatabase implements Closeable {
         return result;
     }
     
-    public Station getStationDataById(long id) {
+    public Station getStationById(long id) {
         Station station = null;
         final String[] columns = {NAME, LATITUDE, LONGITUDE, TYPE};
         final String selection = ID + "=?";
@@ -294,71 +197,8 @@ public class HarmonicsDatabase implements Closeable {
         return station;
     }
 
-//    public ArrayList<Station> getStations(StationType type) {
-//        final String[] columns = {NAME, LATITUDE, LONGITUDE, TYPE};
-//        final String selection = TYPE + "=?";
-//        final String selectionArgs[] = {type.getTypeStr()};
-//        Cursor cursor = db.query(TABLE_STATIONS, columns, selection, selectionArgs, null, null, null);
-//        ArrayList<Station> stations = new ArrayList<>(cursor.getCount());
-//        String str; //name;45.243829;-122.193847;current
-//        cursor.moveToFirst();
-//        while (!cursor.isAfterLast()) {
-//            str = cursor.getString(0) + ";" +
-//                    cursor.getString(1) + ";" +
-//                    cursor.getString(2) + ";" +
-//                    cursor.getString(3);
-//            stations.add(new Station(str));
-//            cursor.moveToNext();
-//        }
-//        cursor.close();
-//        return stations;
-//    }
-
-//    public Observable<Station> getStationsObservable(StationType type) {
-//        final String[] columns = {NAME, LATITUDE, LONGITUDE, TYPE};
-//        final String selection = TYPE + "=?";
-//        final String selectionArgs[] = {type.getTypeStr()};
-//        Cursor cursor = db.query(TABLE_STATIONS, columns, selection, selectionArgs, null, null, null);
-//        Station[] stations = new Station[cursor.getCount()];
-//        String str; //name;45.243829;-122.193847;current
-//        cursor.moveToFirst();
-//        while (!cursor.isAfterLast()) {
-//            str = cursor.getString(0) + ";" +
-//                    cursor.getString(1) + ";" +
-//                    cursor.getString(2) + ";" +
-//                    cursor.getString(3);
-//            stations[cursor.getPosition()] = new Station(str);
-//            cursor.moveToNext();
-//        }
-//        cursor.close();
-//        return Observable.from(stations);
-//    }
-
     @Override
     public void close() {
         db.close();
-    }
-
-    private class StationSorter implements Comparator<Station> {
-
-        private final MXLatLng position;
-
-        StationSorter(MXLatLng position) {
-            this.position = position;
-        }
-
-        @Override
-        public int compare(Station lhs, Station rhs) {
-            if (position == null) {
-                return 0;
-            }
-            int lhsDistance = lhs.getPosition().distanceToPoint(position);
-            int rhsDistance = rhs.getPosition().distanceToPoint(position);
-
-            if (lhsDistance == rhsDistance) {
-                return 0;
-            }
-            return lhsDistance < rhsDistance ? -1 : 1;
-        }
     }
 }

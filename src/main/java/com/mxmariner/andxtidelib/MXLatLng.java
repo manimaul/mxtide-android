@@ -3,6 +3,7 @@ package com.mxmariner.andxtidelib;
 import android.location.Location;
 import android.util.Log;
 
+@SuppressWarnings("UnusedDeclaration")
 public class MXLatLng {
     public static final String TAG = MXLatLng.class.getSimpleName();
 
@@ -260,7 +261,7 @@ public class MXLatLng {
     }
 
     public int distanceToPoint(MXLatLng endPoint) {
-        return distanceToPoint(this, endPoint);
+        return distanceToPoint(latitude, longitude, endPoint.getLatitude(), endPoint.getLatitude());
     }
 
     /**
@@ -318,12 +319,11 @@ public class MXLatLng {
      * @return distance in meters
      * @see <a href="http://www.geocities.com/DrChengalva/GPSDistance.html">GPSDistance.html</a>
      */
-    public static int distanceToPoint(final MXLatLng startPoint, final MXLatLng endPoint) {
-
-        final double a1 = DEG2RAD * startPoint.getLatitude();
-        final double a2 = DEG2RAD * startPoint.getLongitude();
-        final double b1 = DEG2RAD * endPoint.getLatitude();
-        final double b2 = DEG2RAD * endPoint.getLongitude();
+    public static int distanceToPoint(final double startLat, final double startLng, final double endLat, final double endLng) {
+        final double a1 = DEG2RAD * startLat;
+        final double a2 = DEG2RAD * startLng;
+        final double b1 = DEG2RAD * endLat;
+        final double b2 = DEG2RAD * endLng;
 
         final double cosa1 = Math.cos(a1);
         final double cosb1 = Math.cos(b1);

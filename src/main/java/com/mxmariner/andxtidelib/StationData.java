@@ -2,7 +2,7 @@ package com.mxmariner.andxtidelib;
 
 import java.util.Date;
 
-public class StationData implements IStationData {
+public class StationData {
 
     private String timeStamp;
     private String[] plainData;
@@ -22,7 +22,6 @@ public class StationData implements IStationData {
         this.station = station;
     }
 
-    @Override
     public String getDataTimeStamp() {
         if (timeStamp == null) {
             timeStamp = XtideJni.getInstance().getStationTimestamp(station.getName(), epoch);
@@ -30,7 +29,6 @@ public class StationData implements IStationData {
         return timeStamp;
     }
 
-    @Override
     public String[] getPlainData() {
         if (plainData == null) {
             plainData = XtideJni.getInstance().getStationPlainData(station.getName(), epoch).split("\n");
@@ -38,7 +36,6 @@ public class StationData implements IStationData {
         return plainData;
     }
 
-    @Override
     public String[] getRawData() {
         if (rawData == null) {
             rawData = XtideJni.getInstance().getStationRawData(station.getName(), epoch).split("\n");
@@ -46,7 +43,6 @@ public class StationData implements IStationData {
         return rawData;
     }
 
-    @Override
     public String getPrediction() {
         if (prediction == null) {
             prediction = XtideJni.getInstance().getStationPrediction(station.getName(), epoch).trim();
@@ -54,7 +50,6 @@ public class StationData implements IStationData {
         return prediction;
     }
 
-    @Override
     public String getAboutStation() {
         if (about == null) {
             about = XtideJni.getInstance().getStationAbout(station.getName(), epoch).trim();
@@ -62,7 +57,6 @@ public class StationData implements IStationData {
         return about;
     }
 
-    @Override
     public void preLoad() {
         getDataTimeStamp();
         getPlainData();
@@ -71,17 +65,14 @@ public class StationData implements IStationData {
         getPrediction();
     }
 
-    @Override
     public String getName() {
         return station.getName();
     }
 
-    @Override
     public StationType getType() {
         return station.getType();
     }
 
-    @Override
     public MXLatLng getPosition() {
         return station.getPosition();
     }

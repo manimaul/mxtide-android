@@ -2,7 +2,7 @@ package com.mxmariner.andxtidelib;
 
 import java.util.Date;
 
-public class Station implements IStation {
+public class Station {
 	private String stationName;
     private StationType stationType;
 	private MXLatLng latLng;
@@ -35,8 +35,7 @@ public class Station implements IStation {
         return stationType;
     }
 
-    @Override
-    public IStationData getDataForTime(Date date) {
+    public StationData getDataForTime(Date date) {
         return new StationData(date, this);
     }
     
