@@ -1,5 +1,7 @@
 package com.mxmariner.andxtidelib;
 
+import com.mxmariner.andxtidelib.remote.StationType;
+
 import java.util.Date;
 
 public class StationData {
@@ -11,69 +13,61 @@ public class StationData {
     private String about;
 
     private final long epoch;
-    private final Station station;
+    private final StationDetail stationDetail;
 
-    public StationData(Date date, Station station) {
-        this(date.getTime() / 1000, station);
+    public StationData(Date date, StationDetail stationDetail) {
+        this(date.getTime() / 1000, stationDetail);
     }
-    
-    public StationData(long epoch, Station station) {
+
+    public StationData(long epoch, StationDetail stationDetail) {
         this.epoch = epoch;
-        this.station = station;
+        this.stationDetail = stationDetail;
     }
 
     public String getDataTimeStamp() {
         if (timeStamp == null) {
-            timeStamp = XtideJni.getInstance().getStationTimestamp(station.getName(), epoch);
+            timeStamp = XtideJni.getInstance().getStationTimestamp(stationDetail.getName(), epoch);
         }
         return timeStamp;
     }
 
     public String[] getPlainData() {
         if (plainData == null) {
-            plainData = XtideJni.getInstance().getStationPlainData(station.getName(), epoch).split("\n");
+            plainData = XtideJni.getInstance().getStationPlainData(stationDetail.getName(), epoch).split("\n");
         }
         return plainData;
     }
 
     public String[] getRawData() {
         if (rawData == null) {
-            rawData = XtideJni.getInstance().getStationRawData(station.getName(), epoch).split("\n");
+            rawData = XtideJni.getInstance().getStationRawData(stationDetail.getName(), epoch).split("\n");
         }
         return rawData;
     }
 
     public String getPrediction() {
         if (prediction == null) {
-            prediction = XtideJni.getInstance().getStationPrediction(station.getName(), epoch).trim();
+            prediction = XtideJni.getInstance().getStationPrediction(stationDetail.getName(), epoch).trim();
         }
         return prediction;
     }
 
     public String getAboutStation() {
         if (about == null) {
-            about = XtideJni.getInstance().getStationAbout(station.getName(), epoch).trim();
+            about = XtideJni.getInstance().getStationAbout(stationDetail.getName(), epoch).trim();
         }
         return about;
     }
 
-    public void preLoad() {
-        getDataTimeStamp();
-        getPlainData();
-        getRawData();
-        getAboutStation();
-        getPrediction();
-    }
-
     public String getName() {
-        return station.getName();
+        return stationDetail.getName();
     }
 
     public StationType getType() {
-        return station.getType();
+        return stationDetail.getType();
     }
 
     public MXLatLng getPosition() {
-        return station.getPosition();
+        return stationDetail.getPosition();
     }
 }

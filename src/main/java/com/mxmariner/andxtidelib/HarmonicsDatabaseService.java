@@ -5,9 +5,14 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
+import com.mxmariner.andxtidelib.remote.RemoteStation;
+import com.mxmariner.andxtidelib.remote.RemoteStationData;
+import com.mxmariner.andxtidelib.remote.StationType;
 import com.mxmariner.util.MXTools;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import rx.Subscriber;
 
@@ -15,15 +20,15 @@ import rx.Subscriber;
 public class HarmonicsDatabaseService extends Service {
 
     //region FIELDS  *******************************************************************************
-    
+
     private MyBinder myBinder = new MyBinder();
     private HarmonicsDatabase harmonicsDatabase;
     private DbOpenSubscriber dbOpenSubscriber;
 
     //endregion
-    
+
     //region LIFECYCLE *****************************************************************************
-    
+
     @Override
     public IBinder onBind(Intent intent) {
         return myBinder;
@@ -40,11 +45,11 @@ public class HarmonicsDatabaseService extends Service {
         }
         return super.onUnbind(intent);
     }
-    
+
     //endregion ************************************************************************************
-    
+
     //region INNER CLASSES *************************************************************************
-    
+
     private class MyBinder extends IHarmonicsDatabaseService.Stub {
         @Override
         public void loadDatabaseAsync(final IRemoteServiceCallback callback) throws RemoteException {
@@ -61,34 +66,34 @@ public class HarmonicsDatabaseService extends Service {
         }
 
         @Override
-        public long[] getStationsInBounds(double maxLat, double maxLng, double minLat, double minLng) throws RemoteException {
+        public List<RemoteStation> getStationsInBounds(StationType type, double maxLat, double maxLng, double minLat, double minLng) throws RemoteException {
             if (harmonicsDatabase == null) {
-                return new long[0];
+                return new ArrayList<>();
             }
 
-            return harmonicsDatabase.getStationsInBounds(maxLat, maxLng, minLat, minLng);
+            return harmonicsDatabase.getStationsInBounds(type, maxLat, maxLng, minLat, minLng);
         }
 
         @Override
-        public long[] getClosestStations(double lat, double lng, int count) throws RemoteException {
+        public List<RemoteStation> getClosestStations(StationType type, double lat, double lng, int count) throws RemoteException {
             if (harmonicsDatabase == null) {
-                return new long[0];
+                return new ArrayList<>();
             }
-            
-            return harmonicsDatabase.getClosestStationsIds(lat, lng, count);
+
+            return harmonicsDatabase.getClosestStationsIds(type, lat, lng, count);
         }
 
         @Override
-        public IRemoteStationData getDataForTime(long stationId, long dateEpoch) throws RemoteException {
+        public RemoteStationData getDataForTime(long stationId, long dateEpoch) throws RemoteException {
             if (harmonicsDatabase == null) {
                 return null;
             }
-            
-            Station station = harmonicsDatabase.getStationById(stationId);
-            if (station != null) {
-                return new RemoteStationData(station.getDataForTime(dateEpoch));
+
+            StationDetail stationDetail = harmonicsDatabase.getStationDetailById(stationId);
+            if (stationDetail != null) {
+                return new RemoteStationData(stationDetail.getDataForTime(dateEpoch));
             }
-            
+
             return null;
         }
     }
@@ -96,10 +101,10 @@ public class HarmonicsDatabaseService extends Service {
     //endregion ************************************************************************************
 
     //region SUBSCRIBERS ***************************************************************************
-    
+
     private class DbOpenSubscriber extends Subscriber<HarmonicsDatabase> {
         final IRemoteServiceCallback callback;
-        
+
         private DbOpenSubscriber(IRemoteServiceCallback callback) {
             this.callback = callback;
         }
@@ -137,5 +142,5 @@ public class HarmonicsDatabaseService extends Service {
     }
 
     //endregion ************************************************************************************
-    
+
 }

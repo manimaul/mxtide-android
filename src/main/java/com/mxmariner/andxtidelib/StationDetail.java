@@ -1,9 +1,11 @@
 package com.mxmariner.andxtidelib;
 
+import com.mxmariner.andxtidelib.remote.StationType;
+
 import java.util.Date;
 
-public class Station {
-	private String stationName;
+public class StationDetail {
+    private String stationName;
     private StationType stationType;
 	private MXLatLng latLng;
 	
@@ -12,8 +14,8 @@ public class Station {
 	 * @param xtideStr ex "some station name;45.243829;-122.193847;current"
      *                    "some station name;45.243829;-122.193847;tide;
 	 */
-	public Station(String xtideStr) {
-		String[] data = xtideStr.split(";");
+    public StationDetail(String xtideStr) {
+        String[] data = xtideStr.split(";");
 		stationName = data[0].trim();
         latLng = new MXLatLng(0,0);
         latLng.setLatitudeParseString(data[1]);

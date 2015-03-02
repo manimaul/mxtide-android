@@ -8,9 +8,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.mxmariner.andxtidelib.remote.RemoteStation;
+import com.mxmariner.andxtidelib.remote.StationType;
+
 import java.io.Closeable;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -69,17 +74,17 @@ public class HarmonicsDatabase implements Closeable {
                             dt = System.currentTimeMillis() - t;
                             Log.d(TAG, "getStationIndex() - " + dt);
                             HashSet<String> stationSet = new HashSet<>(stationIndex.length);
-                            Station station;
+                            StationDetail stationDetail;
                             ContentValues stationValues = new ContentValues(4);
                             stationsDb.beginTransaction();
                             for (String staStr : stationIndex) {
-                                station = new Station(staStr);
-                                if (!stationSet.contains(station.getName())) {
-                                    stationValues.put(NAME, station.getName());
-                                    stationValues.put(LATITUDE, station.getPosition().getLatitude());
-                                    stationValues.put(LONGITUDE, station.getPosition().getLongitude());
-                                    stationValues.put(TYPE, station.getType().getTypeStr());
-                                    stationSet.add(station.getName());
+                                stationDetail = new StationDetail(staStr);
+                                if (!stationSet.contains(stationDetail.getName())) {
+                                    stationValues.put(NAME, stationDetail.getName());
+                                    stationValues.put(LATITUDE, stationDetail.getPosition().getLatitude());
+                                    stationValues.put(LONGITUDE, stationDetail.getPosition().getLongitude());
+                                    stationValues.put(TYPE, stationDetail.getType().getTypeStr());
+                                    stationSet.add(stationDetail.getName());
                                     stationsDb.insert(TABLE_STATIONS, null, stationValues);
                                 }
                             }
@@ -103,22 +108,19 @@ public class HarmonicsDatabase implements Closeable {
                 }
             }
         });
-
-
-
     }
 
     private HarmonicsDatabase(SQLiteDatabase db) {
         this.db = db;
-
     }
 
-    public long[] getClosestStationsIds(double lat, double lng, int count) {
+    public List<RemoteStation> getClosestStationsIds(StationType type, double lat, double lng, int count) {
         double maxLat = lat + 1;
         double maxLng = lng + 1;
         double minLat = lat - 1;
         double minLng = lng - 1;
-        Cursor cursor = getStationIdCursorInBounds(maxLat, maxLng, minLat, minLng);
+
+        Cursor cursor = getStationIdCursorInBounds(type, maxLat, maxLng, minLat, minLng);
         int found = cursor.getCount();
         int cardinals = 4;
         while (found < count && cardinals > 0) {
@@ -140,45 +142,70 @@ public class HarmonicsDatabase implements Closeable {
                 minLng--;
                 cardinals++;
             }
-            cursor = getStationIdCursorInBounds(maxLat, maxLng, minLat, minLng);
+            cursor = getStationIdCursorInBounds(type, maxLat, maxLng, minLat, minLng);
             found = cursor.getCount();
         }
-        long[] result = new long[found];
+        int num = Math.min(found, count);
+        List<RemoteStation> remoteStations = new ArrayList<>(num);
         cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            result[cursor.getPosition()] = cursor.getLong(0);
+        RemoteStation remoteStation;
+        while (!cursor.isAfterLast() && num != 0) {
+            remoteStation = getRemoteStationById(cursor.getLong(0));
+            if (remoteStation != null) {
+                remoteStations.add(remoteStation);
+            }
             cursor.moveToNext();
+            num--;
         }
         cursor.close();
-        return result;
+        return remoteStations;
     }
 
-    private Cursor getStationIdCursorInBounds(double maxLat, double maxLng, double minLat, double minLng) {
+    private Cursor getStationIdCursorInBounds(StationType type, double maxLat, double maxLng, double minLat, double minLng) {
         final String sql = "Select " + ID + " FROM " + TABLE_STATIONS
-                + " WHERE (" + LATITUDE + " BETWEEN ? AND ?) AND (" + LONGITUDE + " BETWEEN ? AND ?);";
+                + " WHERE (type=?) AND (" + LATITUDE + " BETWEEN ? AND ?) AND (" + LONGITUDE + " BETWEEN ? AND ?);";
 
-        final String[] selArgs = {String.valueOf(minLat), String.valueOf(maxLat),
+        final String[] selArgs = {type.getTypeStr(), String.valueOf(minLat), String.valueOf(maxLat),
                 String.valueOf(minLng), String.valueOf(maxLng)};
 
         return db.rawQuery(sql, selArgs);
     }
 
-    public long[] getStationsInBounds(double maxLat, double maxLng, double minLat, double minLng) {
+    public List<RemoteStation> getStationsInBounds(StationType type, double maxLat, double maxLng, double minLat, double minLng) {
 
-        final Cursor cursor = getStationIdCursorInBounds(maxLat, maxLng, minLat, minLng);
-        long[] result = new long[cursor.getCount()];
+        final Cursor cursor = getStationIdCursorInBounds(type, maxLat, maxLng, minLat, minLng);
+        List<RemoteStation> remoteStations = new ArrayList<>(cursor.getCount());
         cursor.moveToFirst();
+        RemoteStation remoteStation;
         while (!cursor.isAfterLast()) {
-            result[cursor.getPosition()] = cursor.getLong(0);
+            remoteStation = getRemoteStationById(cursor.getLong(0));
+            if (remoteStation != null) {
+                remoteStations.add(remoteStation);
+            }
             cursor.moveToNext();
         }
         cursor.close();
 
-        return result;
+        return remoteStations;
     }
-    
-    public Station getStationById(long id) {
-        Station station = null;
+
+    public RemoteStation getRemoteStationById(long id) {
+        RemoteStation remoteStation = null;
+        final String[] columns = {LATITUDE, LONGITUDE, TYPE};
+        final String selection = ID + "=?";
+        final String selectionArgs[] = {String.valueOf(id)};
+        Cursor cursor = db.query(TABLE_STATIONS, columns, selection, selectionArgs, null, null, null);
+        if (cursor.moveToFirst()) {
+            remoteStation = new RemoteStation(id, cursor.getDouble(0), cursor.getDouble(1),
+                    StationType.typeWithString(cursor.getString(2)));
+        }
+        cursor.close();
+        return remoteStation;
+
+    }
+
+    public StationDetail getStationDetailById(long id) {
+        StationDetail stationDetail = null;
         final String[] columns = {NAME, LATITUDE, LONGITUDE, TYPE};
         final String selection = ID + "=?";
         final String selectionArgs[] = {String.valueOf(id)};
@@ -192,9 +219,9 @@ public class HarmonicsDatabase implements Closeable {
         }
         cursor.close();
         if (str != null) {
-            station = new Station(str);
+            stationDetail = new StationDetail(str);
         }
-        return station;
+        return stationDetail;
     }
 
     @Override
