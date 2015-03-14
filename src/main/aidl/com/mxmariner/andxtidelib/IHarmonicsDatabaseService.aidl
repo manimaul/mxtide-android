@@ -7,7 +7,8 @@ import com.mxmariner.andxtidelib.remote.StationType;
 
 interface IHarmonicsDatabaseService {
     void loadDatabaseAsync(IRemoteServiceCallback callback);
-    List<RemoteStation> getStationsInBounds(in StationType type, double maxLat, double maxLng, double minLat, double minLng);
+    List<RemoteStation> getStationsInBounds(in StationType type, double north, double east, double south, double west);
+    int getStationsCountInBounds(in StationType type, double north, double east, double south, double west);
     List<RemoteStation> getClosestStations(in StationType type, double lat, double lng, int count);
     RemoteStationData getDataForTime(long stationId, long dateEpoch);
 }

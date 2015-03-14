@@ -66,6 +66,15 @@ public class HarmonicsDatabaseService extends Service {
         }
 
         @Override
+        public int getStationsCountInBounds(StationType type, double north, double east, double south, double west) throws RemoteException {
+            if (harmonicsDatabase != null) {
+                return harmonicsDatabase.getStationsCountInBounds(type, north, east, south, west);
+            }
+
+            return 0;
+        }
+
+        @Override
         public List<RemoteStation> getStationsInBounds(StationType type, double maxLat, double maxLng, double minLat, double minLng) throws RemoteException {
             if (harmonicsDatabase == null) {
                 return new ArrayList<>();

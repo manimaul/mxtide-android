@@ -4,6 +4,7 @@ package com.mxmariner.andxtidelib;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -33,7 +34,7 @@ public class HarmonicsDatabase implements Closeable {
     private static final String CREATE_TABLE_STATIONS = "CREATE TABLE " + TABLE_STATIONS + " (" +
             ID + "  INTEGER PRIMARY KEY AUTOINCREMENT," +
             NAME + " TEXT UNIQUE," +
-            TYPE +" TEXT," +
+            TYPE + " TEXT," +
             LATITUDE + " NUMERIC, " +
             LONGITUDE + " NUMERIC);";
 
@@ -161,19 +162,46 @@ public class HarmonicsDatabase implements Closeable {
         return remoteStations;
     }
 
-    private Cursor getStationIdCursorInBounds(StationType type, double maxLat, double maxLng, double minLat, double minLng) {
+    /**
+     * Clips a number to the specified minimum and maximum values.
+     *
+     * @param n        The number to clip
+     * @param minValue Minimum allowable value
+     * @param maxValue Maximum allowable value
+     * @return The clipped value.
+     */
+    private static double clip(final double n, final double minValue, final double maxValue) {
+        return Math.min(Math.max(n, minValue), maxValue);
+    }
+
+    private Cursor getStationIdCursorInBounds(StationType type, double north, double east, double south, double west) {
+        east = clip(east, -180d, 180d);
+        west = clip(west, -180d, 180d);
+        if (east < west) {
+            Cursor westCursor = getStationIdCursorInBounds(type, north, 180d, south, west);
+            Cursor eastCursor = getStationIdCursorInBounds(type, north, east, south, -180d);
+            return new MergeCursor(new Cursor[]{westCursor, eastCursor});
+        }
+
         final String sql = "Select " + ID + " FROM " + TABLE_STATIONS
                 + " WHERE (type=?) AND (" + LATITUDE + " BETWEEN ? AND ?) AND (" + LONGITUDE + " BETWEEN ? AND ?);";
 
-        final String[] selArgs = {type.getTypeStr(), String.valueOf(minLat), String.valueOf(maxLat),
-                String.valueOf(minLng), String.valueOf(maxLng)};
+        final String[] selArgs = {type.getTypeStr(), String.valueOf(south), String.valueOf(north),
+                String.valueOf(west), String.valueOf(east)};
 
         return db.rawQuery(sql, selArgs);
     }
 
-    public List<RemoteStation> getStationsInBounds(StationType type, double maxLat, double maxLng, double minLat, double minLng) {
+    public int getStationsCountInBounds(StationType type, double north, double east, double south, double west) {
+        final Cursor cursor = getStationIdCursorInBounds(type, north, east, south, west);
+        int count = cursor.getCount();
+        cursor.close();
+        return count;
+    }
 
-        final Cursor cursor = getStationIdCursorInBounds(type, maxLat, maxLng, minLat, minLng);
+    public List<RemoteStation> getStationsInBounds(StationType type, double north, double east, double south, double west) {
+
+        final Cursor cursor = getStationIdCursorInBounds(type, north, east, south, west);
         List<RemoteStation> remoteStations = new ArrayList<>(cursor.getCount());
         cursor.moveToFirst();
         RemoteStation remoteStation;
