@@ -247,7 +247,7 @@ public class HarmonicsDatabase implements Closeable {
         }
         cursor.close();
         if (str != null) {
-            stationDetail = new StationDetail(str);
+            stationDetail = new StationDetail(str, id);
         }
         return stationDetail;
     }

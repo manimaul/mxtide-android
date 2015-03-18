@@ -8,6 +8,12 @@ public class StationDetail {
     private String stationName;
     private StationType stationType;
 	private MXLatLng latLng;
+    private long id = -1;
+
+    public StationDetail(String xtideStr, long id) {
+        this(xtideStr);
+        this.id = id;
+    }
 	
 	/**
 	 * 
@@ -44,6 +50,10 @@ public class StationDetail {
     public StationData getDataForTime(long epoch) {
         return new StationData(epoch, this);
         
+    }
+
+    public long getId() {
+        return id;
     }
 
     public MXLatLng getPosition() {

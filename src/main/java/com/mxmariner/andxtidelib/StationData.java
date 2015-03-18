@@ -11,6 +11,7 @@ public class StationData {
     private String[] rawData;
     private String prediction;
     private String about;
+    private long id = -1l;
 
     private final long epoch;
     private final StationDetail stationDetail;
@@ -22,6 +23,11 @@ public class StationData {
     public StationData(long epoch, StationDetail stationDetail) {
         this.epoch = epoch;
         this.stationDetail = stationDetail;
+        this.id = stationDetail.getId();
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getDataTimeStamp() {
@@ -34,6 +40,10 @@ public class StationData {
     public String[] getPlainData() {
         if (plainData == null) {
             plainData = XtideJni.getInstance().getStationPlainData(stationDetail.getName(), epoch).split("\n");
+            for (int i=0; i<plainData.length; i++) {
+                //remove date prefix e.g. 2015-01-01 or 2015/01/01
+                plainData[i] = plainData[i].replaceFirst("\\d{4}(-|/)\\d{2}(-|/)\\d{2}", "");
+            }
         }
         return plainData;
     }

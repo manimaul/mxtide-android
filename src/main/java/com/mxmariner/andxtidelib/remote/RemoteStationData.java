@@ -7,6 +7,7 @@ import com.mxmariner.andxtidelib.StationData;
 
 public class RemoteStationData implements Parcelable {
 
+    private final long id;
     private final String name;
     private final String dataTimeStamp;
     private final double latitude;
@@ -18,6 +19,7 @@ public class RemoteStationData implements Parcelable {
     private final String about;
 
     public RemoteStationData(StationData stationData) {
+        id = stationData.getId();
         name = stationData.getName();
         dataTimeStamp = stationData.getDataTimeStamp();
         latitude = stationData.getPosition().getLatitude();
@@ -27,6 +29,10 @@ public class RemoteStationData implements Parcelable {
         rawData = stationData.getRawData();
         prediction = stationData.getPrediction();
         about = stationData.getAboutStation();
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getName() {
@@ -62,6 +68,7 @@ public class RemoteStationData implements Parcelable {
     }
 
     protected RemoteStationData(Parcel in) {
+        id = in.readLong();
         name = in.readString();
         dataTimeStamp = in.readString();
         latitude = in.readDouble();
@@ -80,6 +87,7 @@ public class RemoteStationData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(name);
         dest.writeString(dataTimeStamp);
         dest.writeDouble(latitude);
