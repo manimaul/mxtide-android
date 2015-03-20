@@ -75,17 +75,17 @@ public class HarmonicsDatabase implements Closeable {
                             dt = System.currentTimeMillis() - t;
                             Log.d(TAG, "getStationIndex() - " + dt);
                             HashSet<String> stationSet = new HashSet<>(stationIndex.length);
-                            StationDetail stationDetail;
+                            Station station;
                             ContentValues stationValues = new ContentValues(4);
                             stationsDb.beginTransaction();
                             for (String staStr : stationIndex) {
-                                stationDetail = new StationDetail(staStr);
-                                if (!stationSet.contains(stationDetail.getName())) {
-                                    stationValues.put(NAME, stationDetail.getName());
-                                    stationValues.put(LATITUDE, stationDetail.getPosition().getLatitude());
-                                    stationValues.put(LONGITUDE, stationDetail.getPosition().getLongitude());
-                                    stationValues.put(TYPE, stationDetail.getType().getTypeStr());
-                                    stationSet.add(stationDetail.getName());
+                                station = new Station(staStr);
+                                if (!stationSet.contains(station.getName())) {
+                                    stationValues.put(NAME, station.getName());
+                                    stationValues.put(LATITUDE, station.getPosition().getLatitude());
+                                    stationValues.put(LONGITUDE, station.getPosition().getLongitude());
+                                    stationValues.put(TYPE, station.getType().getTypeStr());
+                                    stationSet.add(station.getName());
                                     stationsDb.insert(TABLE_STATIONS, null, stationValues);
                                 }
                             }
@@ -232,8 +232,8 @@ public class HarmonicsDatabase implements Closeable {
 
     }
 
-    public StationDetail getStationDetailById(long id) {
-        StationDetail stationDetail = null;
+    public Station getStationDetailById(long id) {
+        Station station = null;
         final String[] columns = {NAME, LATITUDE, LONGITUDE, TYPE};
         final String selection = ID + "=?";
         final String selectionArgs[] = {String.valueOf(id)};
@@ -247,9 +247,9 @@ public class HarmonicsDatabase implements Closeable {
         }
         cursor.close();
         if (str != null) {
-            stationDetail = new StationDetail(str, id);
+            station = new Station(str, id);
         }
-        return stationDetail;
+        return station;
     }
 
     @Override

@@ -10,5 +10,5 @@ interface IHarmonicsDatabaseService {
     List<RemoteStation> getStationsInBounds(in StationType type, double north, double east, double south, double west);
     int getStationsCountInBounds(in StationType type, double north, double east, double south, double west);
     List<RemoteStation> getClosestStations(in StationType type, double lat, double lng, int count);
-    RemoteStationData getDataForTime(long stationId, long dateEpoch);
+    RemoteStationData getDataForTime(long stationId, long dateEpoch, int options);
 }

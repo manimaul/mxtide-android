@@ -11,6 +11,10 @@
 StationIndex si;
 Dstr data;
 
+/*
+ * Todo cache last loaded station
+ */
+
 
 void
 Java_com_mxmariner_andxtidelib_XtideJni_loadHarmonics( JNIEnv *env, jobject obj, jstring pPath)
@@ -24,7 +28,6 @@ jobjectArray
 Java_com_mxmariner_andxtidelib_XtideJni_getStationIndex( JNIEnv *env, jobject obj )
 {
 	return getStationIndex(env);
-     //return (*env).NewStringUTF(data.utf8().aschar());
 }
 
 jstring
@@ -33,6 +36,24 @@ Java_com_mxmariner_andxtidelib_XtideJni_getStationAbout( JNIEnv *env, jobject ob
 	const char *nName = (*env).GetStringUTFChars(pStationName, NULL);
 	long epoch = (long) pEpoch;
 	getAbout(nName, epoch);
+     return (*env).NewStringUTF(data.utf8().aschar());
+}
+
+jstring
+Java_com_mxmariner_andxtidelib_XtideJni_getStationGraphSvg( JNIEnv *env, jobject obj, jstring pStationName, jlong pEpoch )
+{
+	const char *nName = (*env).GetStringUTFChars(pStationName, NULL);
+	long epoch = (long) pEpoch;
+	getGraph(nName, epoch);
+     return (*env).NewStringUTF(data.utf8().aschar());
+}
+
+jstring
+Java_com_mxmariner_andxtidelib_XtideJni_getStationClockSvg( JNIEnv *env, jobject obj, jstring pStationName, jlong pEpoch )
+{
+	const char *nName = (*env).GetStringUTFChars(pStationName, NULL);
+	long epoch = (long) pEpoch;
+	getClock(nName, epoch);
      return (*env).NewStringUTF(data.utf8().aschar());
 }
 
@@ -72,7 +93,8 @@ Java_com_mxmariner_andxtidelib_XtideJni_getStationTimestamp( JNIEnv *env, jobjec
 	return (*env).NewStringUTF(data.utf8().aschar());
 }
 
-jobjectArray getStationIndex(JNIEnv *env) {
+jobjectArray getStationIndex(JNIEnv *env) 
+{
     jobjectArray ret = (jobjectArray) (*env).NewObjectArray(si.size(),(*env).FindClass("java/lang/String"),NULL);
     jstring js;
 	for (unsigned long i=0; i<si.size(); ++i) {
@@ -96,7 +118,8 @@ jobjectArray getStationIndex(JNIEnv *env) {
     return ret;
 }
 
-void getAbout(Dstr station, long epoch) {
+void getAbout(Dstr station, long epoch) 
+{
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
 
@@ -107,7 +130,8 @@ void getAbout(Dstr station, long epoch) {
 	sa->print(data, ts, ts, Mode::about, Format::text);
 }
 
-void getPrediction(Dstr station, long epoch) {
+void getPrediction(Dstr station, long epoch) 
+{
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
 
@@ -120,7 +144,32 @@ void getPrediction(Dstr station, long epoch) {
 	value.print(data);
 }
 
-void getData(Dstr station, long epoch, Mode::Mode mode) {
+void getClock(Dstr station, long epoch) 
+{
+	StationRef *sr = si.getStationRefByName(station);
+	Station *sa = sr->load();
+
+	sa->setUnits(Units::feet);
+	Timestamp ts = Timestamp(epoch);
+
+	data = "";
+	sa->print(data, ts, ts, Mode::clock, Format::SVG);
+}
+
+void getGraph(Dstr station, long epoch) 
+{
+	StationRef *sr = si.getStationRefByName(station);
+	Station *sa = sr->load();
+
+	sa->setUnits(Units::feet);
+	Timestamp ts = Timestamp(epoch);
+
+	data = "";
+	sa->print(data, ts, ts, Mode::graph, Format::SVG);
+}
+
+void getData(Dstr station, long epoch, Mode::Mode mode) 
+{
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
 	sa->setUnits(Units::feet);
@@ -149,7 +198,8 @@ void getData(Dstr station, long epoch, Mode::Mode mode) {
 	sa->print(data, starttime, endtime, mode, Format::text);
 }
 
-void getTimestamp(Dstr station, long epoch) {
+void getTimestamp(Dstr station, long epoch) 
+{
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
 	Timestamp t = Timestamp(epoch);
@@ -158,6 +208,7 @@ void getTimestamp(Dstr station, long epoch) {
 	t.print(data, sa->timezone);
 }
 
-void loadHarmonics(const char* path) {
+void loadHarmonics(const char* path) 
+{
 	si.addHarmonicsFile(path);
 }

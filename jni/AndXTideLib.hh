@@ -12,6 +12,7 @@
 #include <time.h>
 #include "xtide/libxtide.hh"
 #include <jni.h>
+#include <android/log.h>
 #include <string.h>
 
 using namespace libxtide;
@@ -25,10 +26,14 @@ JNIEXPORT jstring JNICALL Java_com_mxmariner_andxtidelib_XtideJni_getStationRawD
 JNIEXPORT jstring JNICALL Java_com_mxmariner_andxtidelib_XtideJni_getStationPlainData( JNIEnv *env, jobject obj, jstring pStationName, jlong pEpoch );
 JNIEXPORT jstring JNICALL Java_com_mxmariner_andxtidelib_XtideJni_getStationPrediction( JNIEnv *env, jobject obj, jstring pStationName, jlong pEpoch );
 JNIEXPORT jstring JNICALL Java_com_mxmariner_andxtidelib_XtideJni_getStationTimestamp( JNIEnv *env, jobject obj, jstring pStationName, jlong pEpoch );
+JNIEXPORT jstring JNICALL Java_com_mxmariner_andxtidelib_XtideJni_getStationClockSvg( JNIEnv *env, jobject obj, jstring pStationName, jlong pEpoch );
+JNIEXPORT jstring JNICALL Java_com_mxmariner_andxtidelib_XtideJni_getStationGraphSvg( JNIEnv *env, jobject obj, jstring pStationName, jlong pEpoch );
 }
 
 void loadHarmonics(const char* path);
 void getAbout(Dstr station, long epoch);
+void getClock(Dstr station, long epoch);
+void getGraph(Dstr station, long epoch);
 void getPrediction(Dstr station, long epoch);
 void getData(Dstr station, long epoch, Mode::Mode mode);
 jobjectArray getStationIndex(JNIEnv *env);

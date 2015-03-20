@@ -1,13 +1,16 @@
-package com.mxmariner.andxtidelib;
+package com.mxmariner.andxtidelib.remote;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import com.mxmariner.andxtidelib.remote.RemoteStation;
-import com.mxmariner.andxtidelib.remote.RemoteStationData;
-import com.mxmariner.andxtidelib.remote.StationType;
+import com.mxmariner.andxtidelib.HarmonicsDatabase;
+import com.mxmariner.andxtidelib.IHarmonicsDatabaseService;
+import com.mxmariner.andxtidelib.IRemoteServiceCallback;
+import com.mxmariner.andxtidelib.R;
+import com.mxmariner.andxtidelib.Station;
+import com.mxmariner.andxtidelib.XtideJni;
 import com.mxmariner.util.MXTools;
 
 import java.io.File;
@@ -93,18 +96,50 @@ public class HarmonicsDatabaseService extends Service {
         }
 
         @Override
-        public RemoteStationData getDataForTime(long stationId, long dateEpoch) throws RemoteException {
+        public RemoteStationData getDataForTime(long stationId, long dateEpoch, int options) throws RemoteException {
             if (harmonicsDatabase == null) {
                 return null;
             }
 
-            StationDetail stationDetail = harmonicsDatabase.getStationDetailById(stationId);
-            if (stationDetail != null) {
-                return new RemoteStationData(stationDetail.getDataForTime(dateEpoch));
+            Station station = harmonicsDatabase.getStationDetailById(stationId);
+            if (station != null) {
+                return buildRemoteStationData(station, dateEpoch, options);
             }
 
             return null;
         }
+    }
+
+    public static RemoteStationData buildRemoteStationData(Station station, long epoch, int optionalData) {
+        String name = station.getName();
+
+        RemoteStationData remoteStationData = new RemoteStationData();
+        remoteStationData.id = station.getId();
+        remoteStationData.name = station.getName();
+        remoteStationData.dataTimeStamp = XtideJni.getInstance().getStationTimestamp(name, epoch);
+        remoteStationData.latitude = station.getPosition().getLatitude();
+        remoteStationData.longitude = station.getPosition().getLongitude();
+
+        /* optional data */
+        if ((optionalData & RemoteStationData.REQUEST_OPTION_PLAIN_DATA) != 0)
+            remoteStationData.plainData = XtideJni.getInstance().getStationPlainDataSa(name, epoch);
+
+        if ((optionalData & RemoteStationData.REQUEST_OPTION_RAW_DATA) != 0)
+            remoteStationData.rawData = XtideJni.getInstance().getStationRawDataSa(name, epoch);
+
+        if ((optionalData & RemoteStationData.REQUEST_OPTION_PREDICTION) != 0)
+            remoteStationData.prediction = XtideJni.getInstance().getStationPredictionS(name, epoch);
+
+        if ((optionalData & RemoteStationData.REQUEST_OPTION_ABOUT) != 0)
+            remoteStationData.about = XtideJni.getInstance().getStationAbout(name, epoch);
+
+        if ((optionalData & RemoteStationData.REQUEST_OPTION_GRAPH_SVG) != 0)
+            remoteStationData.graphSvg = XtideJni.getInstance().getStationGraphSvg(name, epoch);
+
+        if ((optionalData & RemoteStationData.REQUEST_OPTION_CLOCK_SVG) != 0)
+            remoteStationData.clockSvg = XtideJni.getInstance().getStationClockSvg(name, epoch);
+
+        return remoteStationData;
     }
 
     //endregion ************************************************************************************
