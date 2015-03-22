@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.MergeCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.mxmariner.andxtidelib.remote.RemoteStation;
@@ -15,6 +16,8 @@ import com.mxmariner.andxtidelib.remote.StationType;
 import java.io.Closeable;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -146,20 +149,21 @@ public class HarmonicsDatabase implements Closeable {
             cursor = getStationIdCursorInBounds(type, maxLat, maxLng, minLat, minLng);
             found = cursor.getCount();
         }
-        int num = Math.min(found, count);
-        List<RemoteStation> remoteStations = new ArrayList<>(num);
+        List<RemoteStation> remoteStations = new ArrayList<>(found);
         cursor.moveToFirst();
         RemoteStation remoteStation;
-        while (!cursor.isAfterLast() && num != 0) {
+        while (!cursor.isAfterLast()) {
             remoteStation = getRemoteStationById(cursor.getLong(0));
             if (remoteStation != null) {
                 remoteStations.add(remoteStation);
             }
             cursor.moveToNext();
-            num--;
         }
         cursor.close();
-        return remoteStations;
+
+        Collections.sort(remoteStations, new StationSorter(lat, lng));
+
+        return remoteStations.subList(0, Math.min(found, count));
     }
 
     /**
@@ -255,5 +259,33 @@ public class HarmonicsDatabase implements Closeable {
     @Override
     public void close() {
         db.close();
+    }
+
+    private class StationSorter implements Comparator<RemoteStation> {
+
+        private final double lat;
+        private final double lng;
+
+        public StationSorter(double lat, double lng) {
+            this.lat = lat;
+            this.lng = lng;
+        }
+
+        @Override
+        public int compare(RemoteStation lhs, RemoteStation rhs) {
+
+            int lhsDistance = 0;
+            int rhsDistance = 0;
+            try {
+                lhsDistance = MXLatLng.distanceToPoint(lat, lng, lhs.getLatitude(), lhs.getLongitude());
+                rhsDistance = MXLatLng.distanceToPoint(lat, lng, rhs.getLatitude(), rhs.getLongitude());
+            } catch (RemoteException ignored) {}
+
+            if (lhsDistance == rhsDistance) {
+                return 0;
+            }
+
+            return lhsDistance < rhsDistance ? -1 : 1;
+        }
     }
 }
