@@ -57,13 +57,13 @@ static constString defgraphfont = "embedded";
 
 // Default colors.
 static constString bgdefcolor         = "white";
-static constString fgdefcolor         = "black";
+static constString fgdefcolor         = "mxtext";
 static constString markdefcolor       = "red";
-static constString buttondefcolor     = "gray80";
-static constString daydefcolor        = "SkyBlue";
-static constString nightdefcolor      = "DeepSkyBlue";
-static constString flooddefcolor      = "Blue";
-static constString ebbdefcolor        = "SeaGreen";
+static constString buttondefcolor     = "mxday";
+static constString daydefcolor        = "mxday";
+static constString nightdefcolor      = "mxnight";
+static constString flooddefcolor      = "mxflood";
+static constString ebbdefcolor        = "mxebb";
 static constString datumdefcolor      = "white";
 static constString msldefcolor        = "yellow";
 static constString tidedotdefcolor    = "red";

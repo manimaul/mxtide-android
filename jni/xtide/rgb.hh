@@ -12,6 +12,12 @@ struct rgbline {
 };
 
 static rgbline const rgbtxt[] = {
+{255,212,77,"mxflood"},
+{255,212,77,"mxebb"},
+{239,239,239,"mxday"},
+{223,223,223,"mxnight"},
+{33,33,33,"mxtext"},
+
 {255,250,250,"snow"},
 {248,248,255,"ghost white"},
 {248,248,255,"GhostWhite"},
