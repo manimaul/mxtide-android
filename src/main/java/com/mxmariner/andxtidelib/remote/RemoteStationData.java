@@ -18,6 +18,7 @@ public class RemoteStationData implements Parcelable {
     protected String dataTimeStamp;
     protected double latitude;
     protected double longitude;
+    protected StationType stationType;
 
     /* optional data */
     protected String[] plainData;
@@ -48,6 +49,10 @@ public class RemoteStationData implements Parcelable {
 
     public String getDataTimeStamp() {
         return dataTimeStamp;
+    }
+
+    public StationType getStationType() {
+        return stationType;
     }
 
     /* optional data */
@@ -82,6 +87,8 @@ public class RemoteStationData implements Parcelable {
         dataTimeStamp = in.readString();
         latitude = in.readDouble();
         longitude = in.readDouble();
+        stationType = (StationType) in.readSerializable();
+
         plainData = (String[]) in.readArray(String.class.getClassLoader());
         rawData = (String[]) in.readArray(String.class.getClassLoader());
         prediction = in.readString();
@@ -102,6 +109,8 @@ public class RemoteStationData implements Parcelable {
         dest.writeString(dataTimeStamp);
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
+        dest.writeSerializable(stationType);
+
         dest.writeArray(plainData);
         dest.writeArray(rawData);
         dest.writeString(prediction);

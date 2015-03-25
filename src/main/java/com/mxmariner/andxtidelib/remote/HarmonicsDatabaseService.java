@@ -119,6 +119,7 @@ public class HarmonicsDatabaseService extends Service {
         remoteStationData.dataTimeStamp = XtideJni.getInstance().getStationTimestamp(name, epoch);
         remoteStationData.latitude = station.getPosition().getLatitude();
         remoteStationData.longitude = station.getPosition().getLongitude();
+        remoteStationData.stationType = station.getType();
 
         /* optional data */
         if ((optionalData & RemoteStationData.REQUEST_OPTION_PLAIN_DATA) != 0)
