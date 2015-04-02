@@ -69,6 +69,11 @@ public class HarmonicsDatabaseService extends Service {
         }
 
         @Override
+        public void setUnits(UnitType unitType) throws RemoteException {
+            XtideJni.getInstance().setUnitsS(unitType);
+        }
+
+        @Override
         public int getStationsCountInBounds(StationType type, double north, double east, double south, double west) throws RemoteException {
             if (harmonicsDatabase != null) {
                 return harmonicsDatabase.getStationsCountInBounds(type, north, east, south, west);

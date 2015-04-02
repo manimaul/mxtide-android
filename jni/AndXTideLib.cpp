@@ -11,10 +11,7 @@
 StationIndex si;
 Dstr data;
 
-/*
- * Todo cache last loaded station
- */
-
+Unit unit = meters;
 
 void
 Java_com_mxmariner_andxtidelib_XtideJni_loadHarmonics( JNIEnv *env, jobject obj, jstring pPath)
@@ -22,6 +19,16 @@ Java_com_mxmariner_andxtidelib_XtideJni_loadHarmonics( JNIEnv *env, jobject obj,
 	const char *nPath =(*env).GetStringUTFChars(pPath, NULL);
 	loadHarmonics(nPath);
 	(*env).ReleaseStringUTFChars(pPath, nPath);
+}
+
+void
+Java_com_mxmariner_andxtidelib_XtideJni_setUnits( JNIEnv *env, jobject obj, jint pUnit)
+{
+	if (pUnit == feet) {
+		unit = feet;
+	} else if (pUnit == meters) {
+		unit = meters;
+	}
 }
 
 jobjectArray
@@ -123,7 +130,12 @@ void getAbout(Dstr station, long epoch)
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
 
-	sa->setUnits(Units::feet);
+	if (unit == meters) {
+		sa->setUnits(Units::meters);
+	} else {
+		sa->setUnits(Units::feet);
+	}
+
 	Timestamp ts = Timestamp(epoch);
 
 	data = "";
@@ -135,7 +147,12 @@ void getPrediction(Dstr station, long epoch)
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
 
-	sa->setUnits(Units::feet);
+	if (unit == meters) {
+		sa->setUnits(Units::meters);
+	} else {
+		sa->setUnits(Units::feet);
+	}
+
 	Timestamp ts = Timestamp(epoch);
 
 	PredictionValue value = sa->predictTideLevel(ts);
@@ -149,7 +166,11 @@ void getClock(Dstr station, long epoch)
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
 
-	sa->setUnits(Units::feet);
+	if (unit == meters) {
+		sa->setUnits(Units::meters);
+	} else {
+		sa->setUnits(Units::feet);
+	}
 	Timestamp ts = Timestamp(epoch);
 
 	data = "";
@@ -161,7 +182,11 @@ void getGraph(Dstr station, long epoch)
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
 
-	sa->setUnits(Units::feet);
+	if (unit == meters) {
+		sa->setUnits(Units::meters);
+	} else {
+		sa->setUnits(Units::feet);
+	}
 	Timestamp ts = Timestamp(epoch);
 
 	data = "";
@@ -172,7 +197,11 @@ void getData(Dstr station, long epoch, Mode::Mode mode)
 {
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
-	sa->setUnits(Units::feet);
+	if (unit == meters) {
+		sa->setUnits(Units::meters);
+	} else {
+		sa->setUnits(Units::feet);
+	}
 
 	struct tm morning;
 	struct tm evening;
