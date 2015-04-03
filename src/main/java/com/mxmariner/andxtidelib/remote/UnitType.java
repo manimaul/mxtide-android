@@ -4,8 +4,28 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public enum UnitType implements Parcelable {
-    METERS,
-    FEET;
+    METERS("Meters"),
+    FEET("Feet");
+
+    private final String strType;
+
+    UnitType(String strType) {
+        this.strType = strType;
+    }
+
+    public static UnitType typeWithString(String strType) {
+        for (UnitType type : UnitType.values()) {
+            if (type.strType.equalsIgnoreCase(strType))
+                return type;
+        }
+
+        return METERS; 
+    }
+
+    @Override
+    public String toString() {
+        return strType;
+    }
 
     @Override
     public int describeContents() {
