@@ -13,6 +13,8 @@ import android.util.Log;
 import com.mxmariner.andxtidelib.remote.RemoteStation;
 import com.mxmariner.andxtidelib.remote.StationType;
 
+import org.reactivestreams.Subscriber;
+
 import java.io.Closeable;
 import java.io.File;
 import java.util.ArrayList;
@@ -21,8 +23,11 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
-import rx.Observable;
-import rx.Subscriber;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.annotations.NonNull;
+
 
 public class HarmonicsDatabase implements Closeable {
     public static final String TAG = HarmonicsDatabase.class.getSimpleName();
@@ -49,9 +54,9 @@ public class HarmonicsDatabase implements Closeable {
 
     public static Observable<HarmonicsDatabase> openOrCreateAsync(final Context context, final File tcdHarmonicsFile) {
 
-        return Observable.create(new Observable.OnSubscribe<HarmonicsDatabase>() {
+        return Observable.create(new ObservableOnSubscribe<HarmonicsDatabase>() {
             @Override
-            public void call(final Subscriber<? super HarmonicsDatabase> subscriber) {
+            public void subscribe(@NonNull final ObservableEmitter<HarmonicsDatabase> subscriber) throws Exception {
                 Log.i(TAG, "name = " + tcdHarmonicsFile.getName());
                 File dbFile = new File(context.getFilesDir(), tcdHarmonicsFile.getName() + ".s3db");
 
@@ -61,7 +66,7 @@ public class HarmonicsDatabase implements Closeable {
                 if (dbFile.exists()) {
                     stationsDb = SQLiteDatabase.openDatabase(dbFile.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);
                     subscriber.onNext(new HarmonicsDatabase(stationsDb));
-                    subscriber.onCompleted();
+                    subscriber.onComplete();
                 } else {
                     stationsDb = SQLiteDatabase.openOrCreateDatabase(dbFile, null);
                     stationsDb.execSQL(CREATE_TABLE_STATIONS);
@@ -104,7 +109,7 @@ public class HarmonicsDatabase implements Closeable {
                             super.onPostExecute(result);
                             HarmonicsDatabase database = new HarmonicsDatabase(stationsDb);
                             subscriber.onNext(database);
-                            subscriber.onCompleted();
+                            subscriber.onComplete();
                         }
                     };
 

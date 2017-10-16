@@ -17,7 +17,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Subscriber;
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 
 public class HarmonicsDatabaseService extends Service {
@@ -26,7 +29,7 @@ public class HarmonicsDatabaseService extends Service {
 
     private MyBinder myBinder = new MyBinder();
     private HarmonicsDatabase harmonicsDatabase;
-    private DbOpenSubscriber dbOpenSubscriber;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     //endregion
 
@@ -39,9 +42,7 @@ public class HarmonicsDatabaseService extends Service {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        if (dbOpenSubscriber != null) {
-            dbOpenSubscriber.unsubscribe();
-        }
+        compositeDisposable.clear();
         if (harmonicsDatabase != null) {
             harmonicsDatabase.close();
             harmonicsDatabase = null;
@@ -61,10 +62,9 @@ public class HarmonicsDatabaseService extends Service {
             } else {
                 String tcdName = "harmonics-dwf-20141224-free.tcd";
                 File tcd = new File(getFilesDir(), tcdName);
-                MXTools.copyRawResourceFile(HarmonicsDatabaseService.this, R.raw.harmonics_dwf_20141224_free_tcd, tcd);
-                dbOpenSubscriber = new DbOpenSubscriber(callback);
+                MXTools.copyRawResourceFile(HarmonicsDatabaseService.this, R.raw.harmonics_dwf_20161231_free_tcd, tcd);
                 HarmonicsDatabase.openOrCreateAsync(HarmonicsDatabaseService.this, tcd)
-                        .subscribe(dbOpenSubscriber);
+                        .subscribe(new DbOpenSubscriber(callback));
             }
         }
 
@@ -152,7 +152,7 @@ public class HarmonicsDatabaseService extends Service {
 
     //region SUBSCRIBERS ***************************************************************************
 
-    private class DbOpenSubscriber extends Subscriber<HarmonicsDatabase> {
+    private class DbOpenSubscriber implements Observer<HarmonicsDatabase> {
         final IRemoteServiceCallback callback;
 
         private DbOpenSubscriber(IRemoteServiceCallback callback) {
@@ -160,7 +160,7 @@ public class HarmonicsDatabaseService extends Service {
         }
 
         @Override
-        public void onCompleted() {
+        public void onComplete() {
             try {
                 callback.onComplete(0);
             } catch (RemoteException e) {
@@ -178,6 +178,11 @@ public class HarmonicsDatabaseService extends Service {
         }
 
         @Override
+        public void onSubscribe(@NonNull Disposable disposable) {
+            compositeDisposable.add(disposable);
+        }
+
+        @Override
         public void onNext(HarmonicsDatabase database) {
             harmonicsDatabase = database;
         }
@@ -185,9 +190,7 @@ public class HarmonicsDatabaseService extends Service {
 
     @Override
     public void onDestroy() {
-        if (dbOpenSubscriber != null) {
-            dbOpenSubscriber.unsubscribe();
-        }
+        compositeDisposable.clear();
         super.onDestroy();
     }
 

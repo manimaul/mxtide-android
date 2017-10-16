@@ -119,7 +119,7 @@
 #include <time.h>
 #include <ctype.h>
 #include <errno.h>
-#include <png.h>
+#include <png/png.h>
 #include <limits.h>
 
 #ifdef HAVE_SYSLOG_H
