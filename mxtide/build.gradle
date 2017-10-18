@@ -9,6 +9,13 @@ android {
         versionCode 2
         versionName "2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                arguments '-DANDROID_STL=c++_shared',
+                        '-DANDROID_TOOLCHAIN=clang',
+                        '-DANDROID_PLATFORM=android-23'
+            }
+        }
     }
     buildTypes {
         release {
