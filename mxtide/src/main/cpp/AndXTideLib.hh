@@ -10,7 +10,7 @@
 
 
 #include <time.h>
-#include "xtide/libxtide.hh"
+#include <xtide/libxtide.hh>
 #include <jni.h>
 #include <android/log.h>
 #include <string.h>

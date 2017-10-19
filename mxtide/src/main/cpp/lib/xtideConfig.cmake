@@ -1,15 +1,12 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-set(png_DIR ${CMAKE_CURRENT_LIST_DIR})
-find_package(png REQUIRED)
+set(mpng_DIR ${CMAKE_CURRENT_LIST_DIR})
+find_package(mpng REQUIRED)
 
 set(tcd_DIR ${CMAKE_CURRENT_LIST_DIR})
 find_package(tcd REQUIRED)
 
 set(XTIDE_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/xtide)
-
-message(XTIDE_SRC_DIR: ${XTIDE_SRC_DIR})
-
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -Wno-missing-field-initializers -Wdeprecated-register -Wformat -Wimplicit-function-declaration")
 
 
@@ -64,6 +61,8 @@ add_library(xtide STATIC
         ${XTIDE_SRC_DIR}/ZoneIndex.cc
 )
 
-#set_target_properties(xtide PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(xtide PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-target_link_libraries(xtide png tcd)
+target_link_libraries(xtide
+                      mpng
+                      tcd
+)

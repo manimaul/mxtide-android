@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 set(PNG_SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/png/)
 
-add_library(png STATIC
+add_library(mpng STATIC
         ${PNG_SRC_DIR}/png.c
         ${PNG_SRC_DIR}/pngerror.c
         ${PNG_SRC_DIR}/pngget.c
@@ -20,4 +20,11 @@ add_library(png STATIC
         ${PNG_SRC_DIR}/pngwutil.c
 )
 
-target_include_directories(png PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+find_library(z-lib
+             z
+)
+
+target_include_directories(mpng PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_link_libraries(mpng
+                      ${z-lib}
+)
