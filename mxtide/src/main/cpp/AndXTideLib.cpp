@@ -100,7 +100,7 @@ Java_com_mxmariner_andxtidelib_XtideJni_getStationTimestamp( JNIEnv *env, jobjec
 	return (*env).NewStringUTF(data.utf8().aschar());
 }
 
-jobjectArray getStationIndex(JNIEnv *env) 
+jobjectArray getStationIndex(JNIEnv *env)
 {
     jobjectArray ret = (jobjectArray) (*env).NewObjectArray(si.size(),(*env).FindClass("java/lang/String"),NULL);
     jstring js;
@@ -117,7 +117,7 @@ jobjectArray getStationIndex(JNIEnv *env)
 		} else {
 			data += "tide";
 		}
-		
+
         js = (*env).NewStringUTF(data.utf8().aschar());
         (*env).SetObjectArrayElement(ret,i,js);
         (*env).DeleteLocalRef(js);
@@ -125,7 +125,7 @@ jobjectArray getStationIndex(JNIEnv *env)
     return ret;
 }
 
-void getAbout(Dstr station, long epoch) 
+void getAbout(Dstr station, long epoch)
 {
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
@@ -142,7 +142,7 @@ void getAbout(Dstr station, long epoch)
 	sa->print(data, ts, ts, Mode::about, Format::text);
 }
 
-void getPrediction(Dstr station, long epoch) 
+void getPrediction(Dstr station, long epoch)
 {
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
@@ -161,7 +161,7 @@ void getPrediction(Dstr station, long epoch)
 	value.print(data);
 }
 
-void getClock(Dstr station, long epoch) 
+void getClock(Dstr station, long epoch)
 {
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
@@ -177,7 +177,7 @@ void getClock(Dstr station, long epoch)
 	sa->print(data, ts, ts, Mode::clock, Format::SVG);
 }
 
-void getGraph(Dstr station, long epoch) 
+void getGraph(Dstr station, long epoch)
 {
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
@@ -193,7 +193,7 @@ void getGraph(Dstr station, long epoch)
 	sa->print(data, ts, ts, Mode::graph, Format::SVG);
 }
 
-void getData(Dstr station, long epoch, Mode::Mode mode) 
+void getData(Dstr station, long epoch, Mode::Mode mode)
 {
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
@@ -227,7 +227,7 @@ void getData(Dstr station, long epoch, Mode::Mode mode)
 	sa->print(data, starttime, endtime, mode, Format::text);
 }
 
-void getTimestamp(Dstr station, long epoch) 
+void getTimestamp(Dstr station, long epoch)
 {
 	StationRef *sr = si.getStationRefByName(station);
 	Station *sa = sr->load();
@@ -237,7 +237,7 @@ void getTimestamp(Dstr station, long epoch)
 	t.print(data, sa->timezone);
 }
 
-void loadHarmonics(const char* path) 
+void loadHarmonics(const char* path)
 {
 	si.addHarmonicsFile(path);
 }

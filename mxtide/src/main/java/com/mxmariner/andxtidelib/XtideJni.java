@@ -61,7 +61,7 @@ public class XtideJni {
 	public synchronized native String getStationGraphSvg(String pStation, long epoch);
 
 	static {
-		System.loadLibrary("AndXTideLib");
+		System.loadLibrary("andxtide");
 	}
 
 }
