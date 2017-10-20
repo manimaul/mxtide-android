@@ -2,18 +2,9 @@ package com.mxmariner.andxtidelib;
 
 import com.mxmariner.andxtidelib.remote.UnitType;
 
-public class XtideJni {
-    
-    private static final XtideJni instance = new XtideJni();
+public enum  XtideJni {
 
-
-    public static XtideJni getInstance() {
-        return instance;
-    }
-
-	private XtideJni() {
-	}
-
+	INSTANCE;
 
 	public String[] getStationPlainDataSa(String pStation, long epoch) {
 		String[] data = getStationPlainData(pStation, epoch).split("\n");
@@ -43,13 +34,13 @@ public class XtideJni {
 	public synchronized native void loadHarmonics(String pPath);
 
 	private synchronized native void setUnits(int pPath);
-	
+
 	public synchronized native String[] getStationIndex();
 
 	public synchronized native String getStationAbout(String pStation, long epoch);
 
 	private synchronized native String getStationRawData(String pStation, long epoch);
-	
+
 	private synchronized native String getStationPlainData(String pStation, long epoch);
 
 	private synchronized native String getStationPrediction(String pStation, long epoch);

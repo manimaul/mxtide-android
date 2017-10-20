@@ -1,4 +1,10 @@
-apply plugin: 'com.android.library'
+apply plugin: "com.android.library"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-android-extensions"
+
+androidExtensions {
+    experimental = true
+}
 
 android {
     compileSdkVersion sdk_version
@@ -18,8 +24,7 @@ android {
             }
         }
         ndk {
-            abiFilters 'x86', 'x86_64'
-//        abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+            abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a'
         }
     }
     buildTypes {
@@ -36,7 +41,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    // Kotlin
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     // Android Tests
     androidTestCompile("com.android.support.test.espresso:espresso-core:$espresso_version", {
