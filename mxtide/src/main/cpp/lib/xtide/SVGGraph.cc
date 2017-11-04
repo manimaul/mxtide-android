@@ -84,17 +84,6 @@ SVGGraph::SVGGraph (unsigned xSize,
     SVG += SVGcolorSpec;
     SVG += "}\n";
     SVG += "\t\t\t.";
-    
-    if (strcmp(Colors::colorarg[a],"fg") == 0) {
-      //SVG += Colors::colorarg[a];
-      SVG += "fgns {";
-      SVG += "fill:";
-      SVG += SVGcolorSpec;
-      SVG += ";stroke:none";
-      SVG += "}\n";
-      SVG += "\t\t\t.";
-    }
-
     SVG += Colors::colorarg[a];
     SVG += "nf {";
     if (gs == 's' && (a == Colors::flood || a == Colors::ebb)) {
@@ -211,7 +200,7 @@ void SVGGraph::drawHorizontalLineS (double xlo, double xhi, double y,
 
 
 void SVGGraph::centerStringSxPy (double x, int y, const Dstr &s) {
-  SVG += "<text class=\"fgns\" x=\"";
+  SVG += "<text x=\"";
   SVG += x;
   SVG += "\" y=\"";
   SVG += y + SVGfontBaselineAdjust;
@@ -222,7 +211,7 @@ void SVGGraph::centerStringSxPy (double x, int y, const Dstr &s) {
 
 
 void SVGGraph::rightJustifyStringS (double x, double y, const Dstr &s) {
-  SVG += "<text class=\"fgns\" x=\"";
+  SVG += "<text x=\"";
   SVG += x;
   SVG += "\" y=\"";
   SVG += y + SVGfontBaselineAdjust;

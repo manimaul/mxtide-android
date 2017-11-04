@@ -1,0 +1,177 @@
+   [1]<- Previous [2]Contents
+
+Icon News
+
+XTide 2.15 (2016-01-25)
+
+   The 2.15 revision of XTide makes xttpd work with IPv6 and [3]systemd
+   (neither one is a hard requirement) and catches up with the API changes
+   in Xaw3dXft ver. 1.6.2d.  See [4]Changelog for what else was done and
+   get it from [5]http://www.flaterco.com/xtide/files.html#xtide.
+
+harmonics-dwf-20151227
+
+   Data refresh available from
+   [6]http://www.flaterco.com/xtide/files.html#harmonicsfiles.
+
+libtcd 2.2.7 (2015-08-08)
+
+   Fix an out-of-bounds access.
+
+Harmgen 3.1.1 (2015-06-04)
+
+   This release fixes code rot due to changes in Octave.
+
+XTide code rot: Xaw3dXft ver. 1.6.2d (2015-01-19)
+
+   Xaw3dXft ver. 1.6.2d made breaking changes to the API.  XTide 2.15 will
+   work with 1.6.2d but no earlier version.  XTide 2.14 works with several
+   earlier versions but fails to build with 1.6.2d.  [7]This patch can be
+   applied to make it work.
+
+Android and iOS ports
+
+   [8]These ones are GPL.
+
+New icons
+
+   Another set of [9]improved icons for XTide has been contributed by
+   Kelly Bellis.
+
+tideEditor 1.4.3
+
+   tideEditor has finally been migrated from Qt 3 to Qt 4.  Available from
+   [10]http://www.flaterco.com/xtide/files.html#extras.
+
+   2012-10:  A person using Debian 6 had problems building tideEditor
+   because the relative paths that Qt headers used to include one another
+   had changed.  It was necessary to add -I/usr/include/qt4 to the list of
+   qt4 directories in CPPFLAGS (see the README) to make it build.
+   However, as of Slackware 14.0 and Qt 4.8.2, the example in the README
+   still works for me.  Is this a Debian nonconformity?
+
+End of maintenance for non-free data
+
+   For [11]various reasons, I have ended maintenance of the non-free data
+   set.  Anyone interested in generating new harmonic constants from
+   published data can find information and a list of data sources
+   [12]here.
+
+Mailing list
+
+   There is an announce-only mailing list to which I send notices of each
+   update to XTide or the harmonics data.  You can subscribe or read the
+   archives at
+   [13]http://ten.pairlist.net/mailman/listinfo/xtide-announce.
+
+   Please note:  If an announcement to you gets bounced by your mail
+   server, you fall off the list.  Some long-time contributors have fallen
+   off because, unbeknownst to them, their ISPs subscribed to a spam
+   blackholing service that blackholed all pair.com-hosted domains after
+   one of them sent out spam.
+
+To do list
+
+   Congen
+
+   Nit:  Fix parallel make race condition where congen link fails because
+   libcongen didn't exist yet.
+
+   Other:
+
+   Without context, somebody sent a NOAA-looking YEARDATA.DAT file and a
+   decoding thereof which indicated that the phases of 3KM5, RP1, and KJ2
+   were reversed relative to the output of Congen.
+
+   The notes in congen_input.txt rev. 2004/08/16 assert that RP1 and PSI1
+   differ by a 180 degree shift and that KJ2 and ETA2 are nearly
+   indistinguishable.  The SP 98 glossary says that RP1 and PSI1 are the
+   same (p. 313).  Congen formulates 3KM5 as a compound constituent, which
+   leaves no place to just flip the sign.
+
+   A review of historical data indicates that these three minor
+   constituents have never gotten much amplitude at any station.  The only
+   impacted station in 2014 harmonics-dwf is Anchorage, with an amplitude
+   of 0.036 ft for 3KM5.  The maximum possible difference is a measly 1.2
+   inches, but reversing the phase of 3KM5 does appear to reduce the
+   numerical differences with NOAA predictions from
+   [14]http://tidesandcurrents.noaa.gov/.
+
+   To do:  Check archives for alternate formulations of the constituents
+   and compare results.  Check Congen code to see if there is room for a
+   fault in the phase calculation.  Close the loop with someone at NOAA.
+   Note the issue in congen input files.
+
+   XTide
+
+   The XML parser should be bundled under the libxtide namespace but
+   isn't.
+
+   Major things to do in XTide 3 if life turns out not to be too short
+   after all:
+     * Renovate programming practices again (exceptions, checked and const
+       operations, strings).
+     * On exceptions:  get the application-specific error messages OUT of
+       libxtide.
+     * Move from Latin-1 to UTF-8 (requires libtcd revision).
+     * Harmonize the globe location chooser with the way that Google Earth
+       operates.  Use OpenGL of course.
+     * Find a way to put an end to the infinite number of customization
+       settings for graph mode, such as by dumping ALL of the data,
+       metadata, and events to a single-file format that an external
+       graphing app will read.
+     * Migrate to the windowing system that replaces X.
+
+   The following graph mode wish list was submitted by Kirby Vandivort in
+   2016-01.
+     * Print the prediction value below the time.
+     * Print the times of sunrise/sunset.
+     * Suppress the location line.
+     * Repeat the scale on the right side.
+     * Subdued color/linestyle (c.f. gnuplot) when using tenths.
+
+   harmgen
+     * Use liboctave instead of a script file or convert to R.
+
+   libtcd
+
+   Remember to update the version strings in the pre-generated DOS/tcd.h
+   and VS/tcd.h files.
+
+   Remember to update the DOS and VS build instructions in the
+   documentation and in VS/README.txt.
+
+   Things to do in the next major revision, if there ever is one:
+     * UTF-8.
+     * Add header field to flag tides versus currents.
+     * Add depth field for currents.
+     * Get rid of internal state; fix inability to have more than one
+       database open.
+     * Remove gratuitous complexity in the encoding of speeds, equilibrium
+       arguments, and node factors; make speeds 32-bit unsigned with no
+       offset.
+     * Possibly permit node factors to be specified for intervals shorter
+       than 1 year and/or support apps that use libcongen to generate the
+       node factors themselves.
+     __________________________________________________________________
+
+   [15]<- Previous [16]Contents
+
+References
+
+   1. http://www.flaterco.com/xtide/changelog.html
+   2. http://www.flaterco.com/xtide/xtide.html#contents
+   3. http://www.freedesktop.org/wiki/Software/systemd/
+   4. http://www.flaterco.com/xtide/changelog.html
+   5. http://www.flaterco.com/xtide/files.html#xtide
+   6. http://www.flaterco.com/xtide/files.html#harmonicsfiles
+   7. ftp://ftp.flaterco.com/xtide/xtide-2.14-Demailly.patch
+   8. http://www.flaterco.com/xtide/ports.html
+   9. http://www.flaterco.com/xtide/files.html#icons
+  10. http://www.flaterco.com/xtide/files.html#extras
+  11. http://www.flaterco.com/xtide/faq.html#renaissance
+  12. http://www.flaterco.com/xtide/harmonics.html#harmgen
+  13. http://ten.pairlist.net/mailman/listinfo/xtide-announce
+  14. http://tidesandcurrents.noaa.gov/
+  15. http://www.flaterco.com/xtide/changelog.html
+  16. http://www.flaterco.com/xtide/xtide.html#contents

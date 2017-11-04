@@ -461,7 +461,7 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "xml_l.ll"
-/*  $Id: xml_l.cc 5753 2014-10-13 17:30:15Z flaterco $
+/*  $Id: xml_l.ll 5748 2014-10-11 19:38:53Z flaterco $
 
     xml_l.ll  Flex file for limited XML parser (just tags, no text).
 

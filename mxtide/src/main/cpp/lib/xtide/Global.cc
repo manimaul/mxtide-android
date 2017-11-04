@@ -1,4 +1,4 @@
-// $Id: Global.cc 5748 2014-10-11 19:38:53Z flaterco $
+// $Id: Global.cc 6184 2016-01-11 01:47:14Z flaterco $
 
 /*  Global  Global variables and functions.
 
@@ -499,6 +499,15 @@ providing a usable port number (e.g., 8080) as the first command-line\n\
 argument, or (2) there is already something running on the specified port,\n\
 such as another web server.";
     break;
+  case Error::SYSTEMD_NO_SOCKET:
+    text_out += "SYSTEMD_NO_SOCKET\n\
+Xttpd did not receive a socket from systemd as expected.";
+    break;
+  case Error::CANT_GET_HOST:
+    text_out += "CANT_GET_HOST\n\
+Xttpd was unable to determine the official name of the host machine.  The\n\
+gethostbyname function returned failure when asked to resolve the node name.";
+    break;
   case Error::ABSURD_OFFSETS:
     text_out += "ABSURD_OFFSETS\n\
 A subordinate station's offsets were so nonsensical as to cause\n\
@@ -543,10 +552,6 @@ S (sunrise), s (sunset), M (moonrise), and m (moonset), or it may be x\n\
 The -b and -e command line switches expect timestamps to be in the format\n\
 \"YYYY-MM-DD HH:MM\".  Example:  tide -b \"1998-01-01 13:00\"";
     break;
-  case Error::BAD_IP_ADDRESS:
-    text_out += "BAD_IP_ADDRESS\n\
-The IP address given to xttpd was not a valid IPv4 dotted-decimal string.";
-    break;
   case Error::BAD_BOOL:
     text_out += "BAD_BOOL\n\
 A boolean parameter was set to some value other than 'y' or 'n'.";
@@ -584,6 +589,14 @@ that took effect in 2007).";
 reasonably modern version of the time zone database that is available from\n\
 http://www.iana.org/time-zones.";
 #endif
+    break;
+  case Error::ADDRESS_FAIL:
+    text_out += "ADDRESS_FAIL\n\
+Xttpd attempted to parse an address from the command line, but it failed.";
+    break;
+  case Error::PORT_FAIL:
+    text_out += "PORT_FAIL\n\
+Xttpd attempted to parse a port number from the command line, but it failed.";
     break;
   default:
     assert (false);

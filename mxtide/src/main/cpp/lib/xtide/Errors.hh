@@ -1,4 +1,4 @@
-// $Id: Errors.hh 5748 2014-10-11 19:38:53Z flaterco $
+// $Id: Errors.hh 6184 2016-01-11 01:47:14Z flaterco $
 
 // Enums for errors.
 
@@ -45,20 +45,23 @@ namespace Error {
                   NOT_A_NUMBER,
                   PNG_WRITE_FAILURE,
                   CANT_GET_SOCKET,
+                  SYSTEMD_NO_SOCKET,
+                  CANT_GET_HOST,
                   ABSURD_OFFSETS,
                   NUMBER_RANGE_ERROR,
                   BAD_MODE,
                   BAD_FORMAT,
                   BAD_GRAPHSTYLE,
                   BAD_TIMESTAMP,
-                  BAD_IP_ADDRESS,
                   BAD_BOOL,
                   BAD_TEXT,
                   BAD_EVENTMASK,
                   BAD_OR_AMBIGUOUS_COMMAND_LINE,
                   CANT_LOAD_FONT,
                   NO_SYSLOG,
-                  BROKEN_ZONEINFO};
+                  BROKEN_ZONEINFO,
+                  ADDRESS_FAIL,
+                  PORT_FAIL};
 
   enum ErrType {fatal, nonfatal};
 

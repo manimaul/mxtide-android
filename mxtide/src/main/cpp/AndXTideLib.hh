@@ -18,7 +18,7 @@
 using namespace libxtide;
 using namespace std;
 
-extern "C" {              //com.mxmariner.andxtidelib.XtideJni.loadHarmonics(Native Method)
+extern "C" {
 JNIEXPORT void JNICALL Java_com_mxmariner_andxtidelib_XtideJni_loadHarmonics( JNIEnv *env, jobject obj, jstring pPath );
 JNIEXPORT void JNICALL Java_com_mxmariner_andxtidelib_XtideJni_setUnits( JNIEnv *env, jobject obj, jint pUnit );
 JNIEXPORT jobjectArray JNICALL Java_com_mxmariner_andxtidelib_XtideJni_getStationIndex( JNIEnv *env, jobject obj );

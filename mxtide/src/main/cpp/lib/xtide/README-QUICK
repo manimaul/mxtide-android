@@ -1,0 +1,51 @@
+   [1]<- Previous [2]-> Next [3]Contents
+
+Icon Quick install instructions
+
+    1. XTide 2 is Copyright (C) 1998 by David Flater, comes with
+       absolutely no warranty, and is provided under the GNU General
+       Public License.  See the verbose documentation for all of the
+       relevant disclaimers.
+    2. XTide 2 requires:
+          + [4]libXpm
+          + [5]libpng
+          + [6]zlib (a.k.a. libz)
+          + [7]libtcd
+    3. You must download at least one harmonics file.  See
+       [8]http://www.flaterco.com/xtide/files.html#harmonicsfiles.
+    4. You must set the environment variable HFILE_PATH to point to the
+       harmonics files that you downloaded.  Example:
+
+export HFILE_PATH=/usr/local/share/xtide/harmonics-free.tcd:/usr/local/share/xti
+de/harmonics-nonfree.tcd
+
+    5. ./configure; make
+    6. You should now have three binaries:
+          + xtide, the interactive X-windows client
+          + tide, the non-interactive TTY client
+          + xttpd, the web server
+    7. The X-windows client is easy to use.  Go for it.
+    8. tide does a few things that xtide doesn't do.  Run it with nothing
+       on the command line and read the usage info.
+    9. xttpd is a self-contained web server.  su root, fire it up and
+       browse away.  If it doesn't run, check your logs for errors and see
+       [9]http://www.flaterco.com/xtide/installation.html for
+       configuration help.
+     __________________________________________________________________
+
+   [10]<- Previous [11]-> Next [12]Contents
+
+References
+
+   1. http://www.flaterco.com/xtide/xtide1diff.html
+   2. http://www.flaterco.com/xtide/changelog.html
+   3. http://www.flaterco.com/xtide/xtide.html#contents
+   4. http://www.x.org/
+   5. http://www.libpng.org/pub/png/libpng.html
+   6. http://www.zlib.net/
+   7. http://www.flaterco.com/xtide/files.html#libtcd
+   8. http://www.flaterco.com/xtide/files.html#harmonicsfiles
+   9. http://www.flaterco.com/xtide/installation.html
+  10. http://www.flaterco.com/xtide/xtide1diff.html
+  11. http://www.flaterco.com/xtide/changelog.html
+  12. http://www.flaterco.com/xtide/xtide.html#contents

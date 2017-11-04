@@ -1,0 +1,142 @@
+   [1]<- Previous [2]-> Next [3]Contents
+
+   [4]Sunset over L.A. Dunton, Mystic, Connecticut, 1998-06-06
+
+Credits
+
+   Very few of the ideas and very little of the know-how implemented in
+   XTide originated with me.  I just took the ideas and knowledge of
+   others and turned them into software.
+
+   Underneath all the fluff, the central tide prediction algorithm
+   implemented by XTide is by the book, specifically U.S. Coast and
+   Geodetic Survey Special Publication 98 by Paul Schureman.  It was
+   originally published in 1924.  Fans of retrocomputing might be
+   interested to know that tide graphs of the style produced by XTide were
+   once produced by machines that implemented the algorithm in hardware,
+   in the hardest sense of the word (see Figure 1, or read all about them
+   at [5]http://tidesandcurrents.noaa.gov/predmach.html).
+
+                           tide-predicting machine
+
+                  Figure 1.  Tide-Predicting Machine No. 2
+
+   Since we do it on a computer now, we had to make it a lot more
+   complicated by handling subordinate stations, time zones, umpteen
+   different output modes and formats, etc.  For those complications, I
+   thank my colleagues ;-)
+
+   XTide 1 began as nothing but a tide clock with no other modes and very
+   few details.  It grew like a weed with code and ideas being contributed
+   by a small but industrious group of people.  Actually, "weed-like" is a
+   very accurate description of how it grew.  Clone-and-hack was all the
+   discipline we had.  Before long, the command line was cluttered with
+   poorly factored, specialized switches, and you couldn't change anything
+   without changing the same thing in nine places.  In short, the weeds
+   took over the lawn.
+
+   XTide 2 was the result of a unilateral crusade to impose a coherent
+   architecture so that the thing would become maintainable again.  Since
+   that rewrite, outside contributions have been less frequent, but no
+   less important.
+
+   In terms of actual source code in XTide 2, the people who contributed
+   big chunks were:
+
+     Jan C. Depner was prolific in delivering the flat map, the World
+     Vector Shoreline code, libtcd, tcd-utils, and inferred
+     constituents.  Most of his work was paid for by the U.S. Naval
+     Oceanographic Office, making them the first organizational sponsor
+     of XTide development.  Thanks!
+
+     John Thorstensen allowed me to reuse code from his skycal
+     distribution ([6]ftp://iraf.noao.edu/contrib/skycal.tar.Z) to get
+     the sun and moon calculations.
+
+     Geoffrey T. Dairiki's fast root-finding code survives in XTide 2
+     with only a C++ veneer.
+
+     Jack Greenbaum contributed the original patch to add SVG support.
+
+   For the "black magic" of Congen and Harmgen, I had some mentors:
+
+     The late Edward P. Wallner was a mentor for several years.  With his
+     assistance, I was able to fill in enough of the gaps in my
+     understanding of SP 98 to write the Congen program.  Along with Hugh
+     Casement, he helped to sort out differences in the tidal
+     constituents used in various countries.  Ed's own tide-predicting
+     shareware (now freeware) is archived for posterity at
+     [7]ftp://ftp.flaterco.com/wallner/.
+
+     Charles Read and Björn Brill provided the tutoring required for me
+     to write the Harmgen program.
+
+     The support for Doodson style constituents in Congen was
+     accomplished by reading and learning from Michael Foreman's
+     publications and software, which at the time were freely available
+     on the web.
+
+   Other contributions in no particular order:
+
+     Thanks to Walt Bilofsky, August Hahn and Bob Kenney for
+     miscellaneous help with data maintenance.
+
+     Thanks to everyone mentioned in the [8]changelog for various
+     patches, enhancements, and bug fixes.
+
+     Thanks to those who [9]packaged XTide for Linux distributions and
+     built contrib packages.
+
+     Thanks to those who [10]ported XTide to other operating systems.
+
+     Thanks to Alan Eugene Davis for especially diligent beta testing.
+
+   The XTide 1 contributions are summarized below.  I apologize if anyone
+   has been forgotten.
+
+     People who submitted big chunks of code:  Jeff Dairiki, Jack
+     Greenbaum, Dean Pentcheff, and Jef Poskanzer.
+
+     People who submitted bug fixes, portability patches, and the like:
+     Simon Burge, Jeff Dairiki, Andrew Davidson, Geoff Kuenning, Rob
+     Miracle, Stan Uno, and Eric Rosen.
+
+     People who ported XTide to other platforms:  Walt Bilofsky, Dale
+     DePriest, Mikhail Fridberg, Mike Hopper, Paul C. Roberts and "Alex"
+     somebody.
+
+     People who suggested features and/or beta tested:  Bruce Bowler,
+     Alan Eugene Davis, Dale DePriest, Jack Greenbaum, Phil Hughes, Bob
+     Kenney, Dean Pentcheff, Jef Poskanzer, Graeme Rae, Greg Seidman,
+     Jeff Small, Tom Varga, and Georg Vollmers.
+
+     People who supplied data:  Tom Brown, Edward J. Corbett, Karl Hahn,
+     Scott Hemphill, Jean-Pierre Lapointe, Dean Pentcheff, Frank Smith,
+     Toru Suzuki, Ed Wallner, and "George" somebody.
+
+     The original interpolation algorithm for subordinate stations with
+     unequal offsets was contributed by Jean-Pierre Lapointe.
+
+     Jeff Small wrote the original XTide man page.
+
+   Finally, thanks to all the other testers and folks who complain when
+   something breaks--you know who you are :-)
+     __________________________________________________________________
+
+   [11]<- Previous [12]-> Next [13]Contents
+
+References
+
+   1. http://www.flaterco.com/xtide/design.html
+   2. http://www.flaterco.com/xtide/bibliography.html
+   3. http://www.flaterco.com/xtide/xtide.html#contents
+   4. http://www.flaterco.com/
+   5. http://tidesandcurrents.noaa.gov/predmach.html
+   6. ftp://iraf.noao.edu/contrib/skycal.tar.Z
+   7. ftp://ftp.flaterco.com/wallner/
+   8. http://www.flaterco.com/xtide/changelog.html
+   9. http://www.flaterco.com/xtide/files.html#contrib
+  10. http://www.flaterco.com/xtide/ports.html
+  11. http://www.flaterco.com/xtide/design.html
+  12. http://www.flaterco.com/xtide/bibliography.html
+  13. http://www.flaterco.com/xtide/xtide.html#contents

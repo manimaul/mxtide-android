@@ -1,4 +1,4 @@
-/* $Id: Settings.cc 5748 2014-10-11 19:38:53Z flaterco $ */
+/* $Id: Settings.cc 6197 2016-01-14 01:10:19Z flaterco $ */
 
 /*  Settings  XTide global settings
 
@@ -955,7 +955,7 @@ void Settings::applyCommandLine (int argc, constStringArray argv) {
                          it != commandLineArgs.end();
                          ++it)
     if (it->switchName == "v" && it->arg == "y") {
-      fprintf (stderr, "%s\n", XTideVersionString);
+      Global::log (XTideVersionString, LOG_INFO);
       exit (0);
     }
 
