@@ -119,7 +119,6 @@
 #include <time.h>
 #include <ctype.h>
 #include <errno.h>
-#include <png/png.h>
 #include <limits.h>
 
 #ifdef HAVE_SYSLOG_H
@@ -143,12 +142,6 @@
 #include <memory>
 #include "SafeVector.hh"
 #include "BetterMap.hh"
-
-
-#if PNG_LIBPNG_VER < 96
-#error Sorry, you must have libpng version 0.96 or newer.
-#endif
-
 
 // This must be done before including the XTide headers.
 // The new configure script promises that we will have an int64_t.

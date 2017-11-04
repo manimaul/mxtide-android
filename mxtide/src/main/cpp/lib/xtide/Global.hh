@@ -59,7 +59,7 @@ namespace Global {
   // the term lunar day is also used, but that term is ambiguous.
   extern const Interval tidalDay;
 
-  // The period of M4, or ¼ of a tidal day.  This is the average time
+  // The period of M4, or ï¿½ of a tidal day.  This is the average time
   // between tide events for a semidiurnal location, used to estimate
   // deltas for obtaining more tide events.
   extern const Interval halfCycle;
@@ -104,7 +104,7 @@ namespace Global {
 
   // If TERM is vt100 or vt102, this will be the character sequence to
   // produce a degree sign on such terminals when G1 = Special Graphics.
-  // Otherwise, it will be the single Latin-1 character °.
+  // Otherwise, it will be the single Latin-1 character ï¿½.
   extern constCharPointer degreeSign;
   inline const bool needDegrees() { return degreeSign[1]; }
 
@@ -157,15 +157,10 @@ namespace Global {
   // Return true if eventMask is a valid event mask, false if not.
   const bool isValidEventMask (const Dstr &eventMask);
 
-  // Function for libpng.  See also PNGFile.
-  void writePNGToFile (png_structp png_ptr,
-		       png_bytep b_ptr,
-		       png_size_t sz);
-
   // Rounding functions that round to the nearest integer and round
   // halfway cases toward positive infinity.  Oddly enough, none of
   // the C99 rounding functions will do that.
-  // n                    -2½ -2¼ -2  -1¾ -1½ -1¼ -1  -0¾ -0½ -0¼  0   0¼  0½  0¾  1   1¼  1½  1¾  2   2¼  2½
+  // n                    -2ï¿½ -2ï¿½ -2  -1ï¿½ -1ï¿½ -1ï¿½ -1  -0ï¿½ -0ï¿½ -0ï¿½  0   0ï¿½  0ï¿½  0ï¿½  1   1ï¿½  1ï¿½  1ï¿½  2   2ï¿½  2ï¿½
   // cast to int          -2  -2  -2  -1  -1  -1  -1   0   0   0   0   0   0   0   1   1   1   1   2   2   2
   // lrint FE_TONEAREST   -2  -2  -2  -2  -2  -1  -1  -1   0   0   0   0   0   1   1   1   2   2   2   2   2
   // lround               -3  -2  -2  -2  -2  -1  -1  -1  -1   0   0   0   1   1   1   1   2   2   2   2   3

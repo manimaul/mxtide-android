@@ -109,7 +109,6 @@ const unsigned Global::dialogLastYear
 Settings Global::settings;
 Dstr Global::codeset;
 constCharPointer Global::degreeSign ("�");
-FILE *Global::PNGFile = NULL;
 
 static bool _disclaimerDisabled;
 static Dstr disclaimerFileName;
@@ -117,16 +116,6 @@ static StationIndex *_stationIndex = NULL;
 static bool daemonMode = false;
 static void (*_errorCallback) (const Dstr &errorMessage,
                                Error::ErrType fatality) = NULL;
-
-
-void Global::writePNGToFile (png_structp png_ptr unusedParameter,
-                             png_bytep b_ptr,
-                             png_size_t sz) {
-  size_t fwriteReturn (fwrite (b_ptr, 1, sz, Global::PNGFile));
-  if (fwriteReturn < sz)
-    Global::barf (Error::PNG_WRITE_FAILURE);
-}
-
 
 static void initDisclaimer() {
   static bool disclaimerInit = false;

@@ -672,7 +672,7 @@ void Station::aboutMode (Dstr &text_out,
       if (codeset == "VT100" && (tmp1 == "Coordinates" ||
 				 tmp1 == "Flood direction" ||
 				 tmp1 == "Ebb direction"))
-        tmp2.repstr ("°", Global::degreeSign);
+        tmp2.repstr ("ï¿½", Global::degreeSign);
       tmp1.pad (maximumNameLength+2);
       tmp2.getline (tmp3);
       tmp1 += tmp3;
@@ -818,7 +818,7 @@ METHOD:PUBLISH\r\n";
 	Dstr t;
 	coordinates.print (t);
 	if (form == Format::text && Global::needDegrees())
-	  t.repstr ("°", Global::degreeSign);
+	  t.repstr ("ï¿½", Global::degreeSign);
 	text_out += t;
 	text_out += '\n';
       }
@@ -832,7 +832,7 @@ METHOD:PUBLISH\r\n";
 	Dstr tmpbuf;
 	maxCurrentBearing.print (tmpbuf);
 	if (form == Format::text && Global::needDegrees())
-	  tmpbuf.repstr ("°", Global::degreeSign);
+	  tmpbuf.repstr ("ï¿½", Global::degreeSign);
 	text_out += tmpbuf;
 	text_out += '\n';
       }
@@ -843,7 +843,7 @@ METHOD:PUBLISH\r\n";
 	Dstr tmpbuf;
 	minCurrentBearing.print (tmpbuf);
 	if (form == Format::text && Global::needDegrees())
-	  tmpbuf.repstr ("°", Global::degreeSign);
+	  tmpbuf.repstr ("ï¿½", Global::degreeSign);
 	text_out += tmpbuf;
 	text_out += '\n';
       }
@@ -1148,25 +1148,6 @@ void Station::clockMode (Dstr &text_out, Format::Format form) {
     assert (false);
   }
 }
-
-
-void Station::graphModePNG (FILE *fp, Timestamp startTime) {
-  RGBGraph g (Global::settings["gw"].u, Global::settings["gh"].u);
-  g.drawTides (this, startTime);
-  Global::PNGFile = fp;
-  g.writeAsPNG (Global::writePNGToFile);
-}
-
-
-void Station::clockModePNG (FILE *fp) {
-  RGBGraph g (Global::settings["cw"].u,
-	      Global::settings["gh"].u,
-	      Graph::clock);
-  g.drawTides (this, (time_t)time(NULL));
-  Global::PNGFile = fp;
-  g.writeAsPNG (Global::writePNGToFile);
-}
-
 
 void Station::print (Dstr &text_out,
                      Timestamp startTime,

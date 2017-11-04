@@ -24,8 +24,6 @@ class RGBGraph: public PixelatedGraph {
 public:
   RGBGraph (unsigned xSize, unsigned ySize, GraphStyle style = normal);
 
-  void writeAsPNG (png_rw_ptr write_data_fn);
-
   // xSize * ySize pixels, row major, starting at upper left.
   // One pixel = 8 bits R, 8 bits G, 8 bits B.
   // Same as a raw PPM, without the header.
