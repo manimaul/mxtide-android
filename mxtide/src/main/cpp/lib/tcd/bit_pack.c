@@ -1,4 +1,4 @@
-/* $Id: bit_pack.c 1805 2007-01-22 15:36:20Z flaterco $ */
+/* $Id: bit_pack.c 6020 2015-08-08 21:45:47Z flaterco $ */
 
 #include <math.h>
 #include <stdio.h>
@@ -176,16 +176,20 @@ NV_INT32 value)
        	}
 
 
-       	/*  For the last byte we mask out anything after the end bit.       */
+	if (end_bit > 0)
+	{
+	    /*  For the last byte we mask out anything after the end bit.   */
 
-        buffer[start_byte] &= notmask[end_bit];
+	    buffer[start_byte] &= notmask[end_bit];
 
 
-        /*  Get the last part of the value and stuff it in the end byte.    */
-        /*  The left shift effectively erases anything above 8 - end_bit    */
-        /*  bits in the value so that it will fit in the last byte.         */
+	    /*  Get the last part of the value and stuff it in the end      */
+	    /*  byte.  The left shift effectively erases anything above     */
+            /*  8 - end_bit bits in the value so that it will fit in the    */
+            /*  last byte.                                                  */
 
-        buffer[start_byte] |= (value << (8 - end_bit));
+	    buffer[start_byte] |= (value << (8 - end_bit));
+	}
     }
 }
 
@@ -287,8 +291,11 @@ NV_U_INT32 bit_unpack (NV_U_BYTE buffer[], NV_U_INT32 start, NV_U_INT32 numbits)
        	/*  For the last byte we mask out anything after the end bit and    */
        	/*  then shift to the right (8 - end_bit) bits.                     */
 
-        value += (NV_U_INT32) (buffer[start_byte] & mask[end_bit]) >>
-            (8 - end_bit);
+	if (end_bit > 0)
+	{
+            value += (NV_U_INT32) (buffer[start_byte] & mask[end_bit]) >>
+                (8 - end_bit);
+	}
     }
 
     return (value);

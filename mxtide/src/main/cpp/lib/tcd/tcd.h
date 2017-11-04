@@ -1,4 +1,4 @@
-/* $Id: tcd.h 5422 2014-02-23 21:11:04Z flaterco $ */
+/* $Id: tcd.h 6245 2016-01-25 17:29:12Z flaterco $ */
 /* tcd.h.  Generated from tcd.h.in by configure. */
 
 #ifndef __OAML_TIDES_H__
@@ -29,7 +29,7 @@
 
 /* Generated includes */
 #include <sys/types.h>
-#include <stdint.h>
+#include <inttypes.h>
 
 /* Generated data types */
 #define NV_BYTE    int8_t
@@ -57,7 +57,7 @@
 #define NV_INT16_MAX    32767
 
 
-#define LIBTCD_VERSION   "PFM Software - libtcd v2.2.6 - 2014-02-23"
+#define LIBTCD_VERSION   "PFM Software - libtcd v2.2.7 - 2015-08-09"
 #define LIBTCD_MAJOR_REV 2
 #define LIBTCD_MINOR_REV 2
 
@@ -73,7 +73,7 @@
 #undef COMPAT114
 
 /* Select #warning versus #pragma message (whichever works) */
-#undef USE_PRAGMA_MESSAGE
+#define USE_PRAGMA_MESSAGE
 
 #ifdef COMPAT114
 #ifdef USE_PRAGMA_MESSAGE
