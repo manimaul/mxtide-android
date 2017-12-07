@@ -20,6 +20,7 @@ android {
                 arguments '-DANDROID_STL=c++_shared',
                         '-DANDROID_TOOLCHAIN=clang',
                         '-DANDROID_PLATFORM=android-23'
+                cppFlags '-std=c++14 -frtti -fexceptions'
             }
         }
         ndk {
@@ -34,7 +35,7 @@ android {
     }
     externalNativeBuild {
         cmake {
-            path "CMakeLists.txt"
+            path "../mxtide-core/CMakeLists.txt"
         }
     }
 }

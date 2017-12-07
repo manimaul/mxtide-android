@@ -1,7 +1,5 @@
 package com.mxmariner.andxtidelib;
 
-import com.mxmariner.andxtidelib.remote.UnitType;
-
 public enum  XtideJni {
 
 	INSTANCE;
@@ -25,10 +23,6 @@ public enum  XtideJni {
 
 	public String getStationPredictionS(String pStation, long epoch) {
 		return getStationPrediction(pStation, epoch).trim();
-	}
-
-	public void setUnitsS(UnitType unitType) {
-		setUnits(unitType.ordinal());
 	}
 
 	public synchronized native void loadHarmonics(String pPath);
