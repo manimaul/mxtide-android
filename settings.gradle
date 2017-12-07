@@ -1,1 +1,1 @@
-include ':mxtide'
+include ':mxtide', ':app'
