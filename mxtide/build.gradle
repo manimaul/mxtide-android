@@ -1,10 +1,5 @@
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
-apply plugin: "kotlin-android-extensions"
-
-androidExtensions {
-    experimental = true
-}
 
 android {
     compileSdkVersion sdk_version
@@ -46,7 +41,7 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     // Android Tests
-    androidTestCompile("com.android.support.test.espresso:espresso-core:$espresso_version", {
+    androidTestImplementation("com.android.support.test.espresso:espresso-core:$espresso_version", {
         exclude group: "com.android.support", module: "support-annotations"
     })
 
