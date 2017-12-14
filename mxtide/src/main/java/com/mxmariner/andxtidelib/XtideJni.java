@@ -4,22 +4,22 @@ public enum  XtideJni {
 
 	INSTANCE;
 
-	public String[] getStationPlainDataSa(String pStation, long epoch) {
-		String[] data = getStationPlainData(pStation, epoch).split("\n");
-		for (int i=0; i<data.length; i++) {
-			//remove date prefix e.g. 2015-01-01 or 2015/01/01
-			data[i] = data[i].replaceFirst("\\d{4}(-|/)\\d{2}(-|/)\\d{2}", "");
-		}
-		return data;
-	}
-
-	public String[] getStationRawDataSa(String pStation, long epoch) {
-		String[] data = getStationRawData(pStation, epoch).split("\n");
-		for (int i=0; i<data.length; i++) {
-			data[i] = data[i].trim();
-		}
-		return data;
-	}
+//	public String[] getStationPlainDataSa(String pStation, long epoch) {
+//		String[] data = getStationPlainData(pStation, epoch).split("\n");
+//		for (int i=0; i<data.length; i++) {
+//			//remove date prefix e.g. 2015-01-01 or 2015/01/01
+//			data[i] = data[i].replaceFirst("\\d{4}(-|/)\\d{2}(-|/)\\d{2}", "");
+//		}
+//		return data;
+//	}
+//
+//	public String[] getStationRawDataSa(String pStation, long epoch) {
+//		String[] data = getStationRawData(pStation, epoch).split("\n");
+//		for (int i=0; i<data.length; i++) {
+//			data[i] = data[i].trim();
+//		}
+//		return data;
+//	}
 
 	public String getStationPredictionS(String pStation, long epoch) {
 		return getStationPrediction(pStation, epoch).trim();
