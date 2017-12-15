@@ -1,10 +1,30 @@
 @file:Suppress("unused")
 
-package com.mxmariner.andxtidelib
+package com.mxmariner.mxtide.api
 
 import android.location.Location
 
-class MXLatLng {
+class LatLng {
+
+    constructor(location: Location? = null) {
+        location?.let {
+            latitude = it.latitude
+            longitude = it.longitude
+            altitude = it.altitude
+        }
+    }
+
+    constructor(lat: Double? = null,
+                lng: Double? = null) {
+        lat?.let { latitude = it }
+        lng?.let { longitude = it }
+    }
+
+    constructor(latE6: Int? = null,
+                lngE6: Int? = null) {
+        latE6?.let { latitudeE6 = it }
+        lngE6?.let { longitudeE6 = it }
+    }
 
     var latitude = 0.0
         set(value) {
@@ -17,7 +37,6 @@ class MXLatLng {
         }
 
     var altitude = 0.0
-
 
     val latitudeCardinal: Cardinal
         get() = if (latitude < 0) {
@@ -70,26 +89,6 @@ class MXLatLng {
         set(lngE6) {
             longitude = lngE6.toDouble() / 1E6
         }
-
-    constructor(location: Location?) {
-        if (location != null) {
-            latitude = location.latitude
-            longitude = location.longitude
-            altitude = location.altitude
-        }
-    }
-
-    constructor(lat: Double,
-                lng: Double) {
-        latitude = lat
-        longitude = lng
-    }
-
-    constructor(latE6: Int,
-                lngE6: Int) {
-        latitudeE6 = latE6
-        longitudeE6 = lngE6
-    }
 
     fun setLatitude(latitude: Double,
                     cardinal: Cardinal) {
@@ -194,11 +193,11 @@ class MXLatLng {
                 .round((getDecimalMinutes(coordinate) - getMinutes(coordinate)) * 60 * 1000).toDouble() / 1000
     }
 
-    fun bearingTo(endPoint: MXLatLng): Double {
+    fun bearingTo(endPoint: LatLng): Double {
         return bearingToPoint(this, endPoint)
     }
 
-    fun distanceToPoint(endPoint: MXLatLng): Int {
+    fun distanceToPoint(endPoint: LatLng): Int {
         return distanceToPoint(latitude, longitude, endPoint.latitude, endPoint.latitude)
     }
 
@@ -299,9 +298,9 @@ enum class Cardinal(val cardinal: Char, val direction: String) {
                 westOrSouth = true
 
             return if (parallel == Parallel.LATITUDE) {
-                if (westOrSouth) Cardinal.SOUTH else Cardinal.NORTH
+                if (westOrSouth) SOUTH else NORTH
             } else {
-                if (westOrSouth) Cardinal.WEST else Cardinal.EAST
+                if (westOrSouth) WEST else EAST
             }
         }
     }
@@ -314,8 +313,8 @@ const val MIN_LONGITUDE = -180.0
 const val MAX_LONGITUDE = 180.0
 const val DEG2RAD = (Math.PI / 180.0).toFloat()
 
-fun fromCenterBetween(startPoint: MXLatLng, endPoint: MXLatLng): MXLatLng {
-    return MXLatLng((startPoint.latitude + endPoint.latitude) / 2,
+fun fromCenterBetween(startPoint: LatLng, endPoint: LatLng): LatLng {
+    return LatLng((startPoint.latitude + endPoint.latitude) / 2,
             (startPoint.longitude + endPoint.longitude) / 2)
 }
 
@@ -323,7 +322,7 @@ fun fromCenterBetween(startPoint: MXLatLng, endPoint: MXLatLng): MXLatLng {
  * @return bearing in degrees
  * @see (http://groups.google.com/group/osmdroid/browse_thread/thread/d22c4efeb9188fe9/bc7f9b3111158dd)
  */
-fun bearingToPoint(startPoint: MXLatLng, endPoint: MXLatLng): Double {
+fun bearingToPoint(startPoint: LatLng, endPoint: LatLng): Double {
     val lat1 = Math.toRadians(startPoint.latitude)
     val long1 = Math.toRadians(startPoint.longitude)
     val lat2 = Math.toRadians(endPoint.latitude)
@@ -338,7 +337,7 @@ fun bearingToPoint(startPoint: MXLatLng, endPoint: MXLatLng): Double {
 /**
  * Calculate a point that is the specified distance and bearing away from this point.
  */
-fun destinationPoint(startPoint: MXLatLng, aDistanceInMeters: Double, aBearingInDegrees: Float): MXLatLng {
+fun destinationPoint(startPoint: LatLng, aDistanceInMeters: Double, aBearingInDegrees: Float): LatLng {
     return destinationPoint(startPoint.latitude, startPoint.longitude, aDistanceInMeters, aBearingInDegrees)
 }
 
@@ -348,7 +347,7 @@ fun destinationPoint(startPoint: MXLatLng, aDistanceInMeters: Double, aBearingIn
  * @see (http://www.movable-type.co.uk/scripts/latlong.html)
  * @see (http://www.movable-type.co.uk/scripts/latlon.js)
  */
-fun destinationPoint(startLat: Double, startLng: Double, aDistanceInMeters: Double, aBearingInDegrees: Float): MXLatLng {
+fun destinationPoint(startLat: Double, startLng: Double, aDistanceInMeters: Double, aBearingInDegrees: Float): LatLng {
     // convert distance to angular distance
     val dist = aDistanceInMeters / RADIUS_EARTH_METERS
 
@@ -364,7 +363,7 @@ fun destinationPoint(startLat: Double, startLng: Double, aDistanceInMeters: Doub
     val lon2 = lon1 + Math.atan2(Math.sin(brg.toDouble()) * Math.sin(dist) * Math.cos(lat1), Math.cos(dist) - Math.sin(lat1) * Math.sin(lat2))
     val lat2deg = lat2 / DEG2RAD
     val lon2deg = lon2 / DEG2RAD
-    return MXLatLng(lat2deg, lon2deg)
+    return LatLng(lat2deg, lon2deg)
 }
 
 /**
