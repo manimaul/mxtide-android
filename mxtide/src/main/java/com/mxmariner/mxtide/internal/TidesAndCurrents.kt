@@ -1,5 +1,7 @@
 package com.mxmariner.mxtide.internal
 
+import android.content.Context
+import android.support.annotation.RawRes
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.ITidesAndCurrents
 import com.mxmariner.mxtide.api.StationType
@@ -20,6 +22,10 @@ internal class TidesAndCurrents : ITidesAndCurrents {
 
     private val nativePtr: Long = create()
 
+    override fun addHarmonicsFile(context: Context, @RawRes resId: Int) {
+        addHarmonicsFile(context.rawResourceAsCacheFile(resId))
+    }
+
     override fun addHarmonicsFile(file: File) {
         addHarmonicsFile(nativePtr, file.absolutePath)
     }
@@ -34,11 +40,17 @@ internal class TidesAndCurrents : ITidesAndCurrents {
         return null
     }
 
-    override fun findNearestStation(lat: Double, lng: Double, type: StationType): IStation? {
+    override fun findNearestStation(lat: Double,
+                                    lng: Double,
+                                    type: StationType): IStation? {
         return null
     }
 
-    override fun findStationInBounds(northLat: Double, eastLng: Double, westLng: Double, type: StationType): List<IStation> {
+    override fun findStationInBounds(northLat: Double,
+                                     southLat: Double,
+                                     eastLng: Double,
+                                     westLng: Double,
+                                     type: StationType): List<IStation> {
         return emptyList()
     }
 
