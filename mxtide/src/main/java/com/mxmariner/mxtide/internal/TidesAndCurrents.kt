@@ -18,6 +18,7 @@ internal class TidesAndCurrents : ITidesAndCurrents {
         @JvmStatic external fun delete(ptr: Long)
         @JvmStatic external fun addHarmonicsFile(ptr: Long, path: String)
         @JvmStatic external fun stationCount(ptr: Long): Int
+        @JvmStatic external fun stationNames(ptr: Long): List<String>
     }
 
     private val nativePtr: Long = create()
@@ -34,7 +35,7 @@ internal class TidesAndCurrents : ITidesAndCurrents {
         get() = stationCount(nativePtr)
 
     override val stationNames: List<String>
-        get() = emptyList()
+        get() = stationNames(nativePtr)
 
     override fun findStationByName(name: String?): IStation? {
         return null

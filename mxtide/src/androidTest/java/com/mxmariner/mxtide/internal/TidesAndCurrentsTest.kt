@@ -3,7 +3,6 @@ package com.mxmariner.mxtide.internal
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import com.mxmariner.andxtidelib.R
-import com.mxmariner.mxtide.api.ITidesAndCurrents
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.mxtide.api.createTidesAndCurrents
 import org.junit.Assert.*
@@ -14,11 +13,11 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class TidesAndCurrentsTest {
 
-    private lateinit var subject: ITidesAndCurrents
+    private lateinit var subject: TidesAndCurrents
 
     @Before
     fun beforeEach() {
-        subject = createTidesAndCurrents()
+        subject = createTidesAndCurrents() as TidesAndCurrents
         subject.addHarmonicsFile(InstrumentationRegistry.getTargetContext(), R.raw.harmonics_dwf_20161231_free_tcd)
     }
 
@@ -29,7 +28,8 @@ class TidesAndCurrentsTest {
 
     @Test
     fun getStationNames() {
-        assertTrue(subject.stationNames.isNotEmpty())
+        val names = subject.stationNames
+        assertTrue(names.isNotEmpty())
     }
 
     @Test
