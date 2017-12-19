@@ -4,12 +4,10 @@ import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.IStationPrediction
 import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.mxtide.api.StationType
-import java.time.Duration
-import java.util.*
+import org.joda.time.DateTime
+import org.joda.time.Duration
 
 internal class Station(private val nativePtr: Long) : IStation {
-
-
     companion object {
         init {
             System.loadLibrary("mxtide")
@@ -19,8 +17,25 @@ internal class Station(private val nativePtr: Long) : IStation {
         @JvmStatic external fun longitude(nativePtr: Long): Double
         @JvmStatic external fun timeZone(nativePtr: Long): String
         @JvmStatic external fun name(nativePtr: Long): String
-        @JvmStatic external fun stationLocalTime(nativePtr: Long, epoch: Long): String
         @JvmStatic external fun type(nativePtr: Long): String
+        @JvmStatic external fun stationLocalTime(nativePtr: Long,
+                                                 epoch: Long): String
+
+        @JvmStatic external fun getPredictionRaw(nativePtr: Long,
+                                                 epoch: Long,
+                                                 duration: Long,
+                                                 measureUnit: String): List<IStationPrediction<Float>>
+
+        @JvmStatic external fun getPredictionPlain(nativePtr: Long,
+                                                   epoch: Long,
+                                                   duration: Long,
+                                                   measureUnit: String): List<IStationPrediction<String>>
+
+        @JvmStatic external fun getPredictionClockSVG(nativePtr: Long,
+                                                      epoch: Long,
+                                                      duration: Long,
+                                                      measureUnit: String): String
+
         @JvmStatic external fun deleteStation(ptr: Long)
     }
 
@@ -41,21 +56,30 @@ internal class Station(private val nativePtr: Long) : IStation {
             }
         }
 
-    override fun getStationLocalTime(date: Date) : String {
-        val unixTimeSeconds = date.time / 1000
-        return stationLocalTime(nativePtr, unixTimeSeconds)
+    override fun getStationLocalTime(): String {
+        return stationLocalTime(nativePtr, DateTime().unixTimeSeconds)
     }
 
-    override fun getPredictionRaw(date: Date, duration: Duration, measureUnit: MeasureUnit): IStationPrediction<Float> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getStationLocalTime(date: DateTime): String {
+        return stationLocalTime(nativePtr, date.unixTimeSeconds)
     }
 
-    override fun getPredictionPlain(date: Date, duration: Duration, measureUnit: MeasureUnit): IStationPrediction<String> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getPredictionRaw(date: DateTime,
+                                  duration: Duration,
+                                  measureUnit: MeasureUnit): List<IStationPrediction<Float>> {
+        return getPredictionRaw(nativePtr, date.unixTimeSeconds, duration.standardSeconds, measureUnit.toString())
     }
 
-    override fun getPredictionClockSVG(date: Date, duration: Duration, measureUnit: MeasureUnit): String? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getPredictionPlain(date: DateTime,
+                                    duration: Duration,
+                                    measureUnit: MeasureUnit): List<IStationPrediction<String>> {
+        return getPredictionPlain(nativePtr, date.unixTimeSeconds, duration.standardSeconds, measureUnit.toString())
+    }
+
+    override fun getPredictionClockSVG(date: DateTime,
+                                       duration: Duration,
+                                       measureUnit: MeasureUnit): String {
+        return getPredictionClockSVG(nativePtr, date.unixTimeSeconds, duration.standardSeconds, measureUnit.toString())
     }
 
     @Suppress("unused")

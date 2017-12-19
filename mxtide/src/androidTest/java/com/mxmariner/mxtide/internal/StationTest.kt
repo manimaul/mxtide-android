@@ -55,7 +55,6 @@ class StationTest {
                 56,
                 0,
                 DateTimeZone.forTimeZone(TimeZone.getTimeZone("America/Los_Angeles")))
-                .toDate()
         assertEquals("2017-12-17 02:56 PM PST", subject.getStationLocalTime(date))
     }
 
