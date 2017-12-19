@@ -3,16 +3,16 @@ package com.mxmariner.mxtide.internal
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import com.mxmariner.andxtidelib.R
+import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.mxtide.api.createTidesAndCurrents
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
-import org.junit.Assert.assertEquals
-import org.junit.Assert.fail
+import org.joda.time.Duration
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.*
 
 @RunWith(AndroidJUnit4::class)
 class StationTest {
@@ -38,24 +38,12 @@ class StationTest {
 
     @Test
     fun getTimeZone() {
-        assertEquals(":America/Los_Angeles", subject.timeZone)
+        assertEquals(DateTimeZone.forID("America/Los_Angeles"), subject.timeZone)
     }
 
     @Test
     fun getName() {
         assertEquals("Seattle, Puget Sound, Washington", subject.name)
-    }
-
-    @Test
-    fun getTimeStamp() {
-        val date = DateTime(2017,
-                12,
-                17,
-                14,
-                56,
-                0,
-                DateTimeZone.forTimeZone(TimeZone.getTimeZone("America/Los_Angeles")))
-        assertEquals("2017-12-17 02:56 PM PST", subject.getStationLocalTime(date))
     }
 
     @Test
@@ -65,7 +53,11 @@ class StationTest {
 
     @Test
     fun getPredictionRaw() {
-        fail()
+        val duration = Duration.standardHours(24)
+        val date = DateTime(2017, 12, 17, 14,
+                56,0, DateTimeZone.forID("America/Los_Angeles"))
+        val prediction = subject.getPredictionRaw(date, duration, MeasureUnit.FEET)
+        assertTrue(prediction.isNotEmpty())
     }
 
     @Test
@@ -75,7 +67,11 @@ class StationTest {
 
     @Test
     fun getPredictionClockSVG() {
-        fail()
+        val duration = Duration.standardHours(24)
+        val date = DateTime(2017, 12, 17, 14,
+                56,0, DateTimeZone.forID("America/Los_Angeles"))
+        val prediction = subject.getPredictionClockSVG(date, duration, MeasureUnit.FEET)
+        assertTrue(prediction.isNotEmpty())
     }
 
 }

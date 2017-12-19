@@ -5,6 +5,7 @@ import com.mxmariner.mxtide.api.IStationPrediction
 import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.mxtide.api.StationType
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.joda.time.Duration
 
 internal class Station(private val nativePtr: Long) : IStation {
@@ -18,8 +19,6 @@ internal class Station(private val nativePtr: Long) : IStation {
         @JvmStatic external fun timeZone(nativePtr: Long): String
         @JvmStatic external fun name(nativePtr: Long): String
         @JvmStatic external fun type(nativePtr: Long): String
-        @JvmStatic external fun stationLocalTime(nativePtr: Long,
-                                                 epoch: Long): String
 
         @JvmStatic external fun getPredictionRaw(nativePtr: Long,
                                                  epoch: Long,
@@ -43,8 +42,11 @@ internal class Station(private val nativePtr: Long) : IStation {
         get() = latitude(nativePtr)
     override val longitude: Double
         get() = longitude(nativePtr)
-    override val timeZone: String
-        get() = timeZone(nativePtr)
+    override val timeZone: DateTimeZone
+        get() {
+            val id = timeZone(nativePtr)
+            return DateTimeZone.forID(id)
+        }
     override val name: String
         get() = name(nativePtr)
     override val type: StationType
@@ -55,14 +57,6 @@ internal class Station(private val nativePtr: Long) : IStation {
                 else -> throw RuntimeException("invalid station type")
             }
         }
-
-    override fun getStationLocalTime(): String {
-        return stationLocalTime(nativePtr, DateTime().unixTimeSeconds)
-    }
-
-    override fun getStationLocalTime(date: DateTime): String {
-        return stationLocalTime(nativePtr, date.unixTimeSeconds)
-    }
 
     override fun getPredictionRaw(date: DateTime,
                                   duration: Duration,

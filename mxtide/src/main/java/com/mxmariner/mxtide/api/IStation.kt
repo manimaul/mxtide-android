@@ -1,6 +1,7 @@
 package com.mxmariner.mxtide.api
 
 import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
 import org.joda.time.Duration
 
 interface IStation {
@@ -18,7 +19,7 @@ interface IStation {
     /**
      * The station's local time zone.
      */
-    val timeZone: String
+    val timeZone: DateTimeZone
 
     /**
      * The station's name
@@ -29,18 +30,6 @@ interface IStation {
      * The station's type
      */
     val type: StationType
-
-    /**
-     * The stations's formatted local time now.
-     */
-    fun getStationLocalTime(): String
-
-    /**
-     * The station's formatted local time.
-     *
-     * @param - the date to convert to station local time.
-     */
-    fun getStationLocalTime(date: DateTime): String
 
     /**
      * Create a tidal prediction for a given date and duration represented by a list of dates and [Float] values.
