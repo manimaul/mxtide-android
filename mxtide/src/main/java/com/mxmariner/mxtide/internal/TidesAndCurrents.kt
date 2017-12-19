@@ -19,6 +19,7 @@ internal class TidesAndCurrents : ITidesAndCurrents {
         @JvmStatic external fun addHarmonicsFile(ptr: Long, path: String)
         @JvmStatic external fun stationCount(ptr: Long): Int
         @JvmStatic external fun stationNames(ptr: Long): List<String>
+        @JvmStatic external fun findStationByName(ptr: Long, name: String): Long
     }
 
     private val nativePtr: Long = create()
@@ -38,7 +39,13 @@ internal class TidesAndCurrents : ITidesAndCurrents {
         get() = stationNames(nativePtr)
 
     override fun findStationByName(name: String?): IStation? {
-        return null
+        return name?.let {
+            findStationByName(nativePtr, it).takeIf {
+                it != 0L
+            }?.let {
+                Station(it)
+            }
+        }
     }
 
     override fun findNearestStation(lat: Double,
