@@ -34,8 +34,11 @@ class TidesAndCurrentsTest {
 
     @Test
     fun findStationByName() {
-        val station = subject.findStationByName("Seattle, Puget Sound, Washington")
-        assertNotNull(station)
+        subject.stationNames.map {
+            Pair(it, subject.findStationByName(it))
+        }.forEach {
+            assertNotNull("${it.first} was null", it.second)
+        }
     }
 
     @Test
