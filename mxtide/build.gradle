@@ -30,7 +30,7 @@ android {
     }
     externalNativeBuild {
         cmake {
-            path "../mxtide-core/CMakeLists.txt"
+            path "CMakeLists.txt"
         }
     }
 }

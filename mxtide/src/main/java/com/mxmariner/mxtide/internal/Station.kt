@@ -11,8 +11,10 @@ import org.joda.time.Duration
 internal class Station(private val nativePtr: Long) : IStation {
     companion object {
         init {
-            System.loadLibrary("mxtide")
+            System.loadLibrary("jmxtide")
         }
+
+        // JNI Functions implemented in JniStation.cpp
 
         @JvmStatic external fun latitude(nativePtr: Long): Double
         @JvmStatic external fun longitude(nativePtr: Long): Double

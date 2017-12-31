@@ -11,7 +11,7 @@ internal class TidesAndCurrents : ITidesAndCurrents {
 
     companion object {
         init {
-            System.loadLibrary("mxtide")
+            System.loadLibrary("jmxtide")
         }
 
         @JvmStatic external fun create(): Long
