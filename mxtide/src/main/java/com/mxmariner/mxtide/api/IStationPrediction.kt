@@ -1,9 +1,8 @@
 package com.mxmariner.mxtide.api
 
-import java.util.*
+import org.joda.time.DateTime
 
 interface IStationPrediction<out T> {
-    val date: Date
-    val formattedTime: String
+    val date: DateTime
     val value: T
 }

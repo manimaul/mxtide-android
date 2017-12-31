@@ -54,15 +54,23 @@ class StationTest {
     @Test
     fun getPredictionRaw() {
         val duration = Duration.standardHours(24)
+        val timeZone = DateTimeZone.forID("America/Los_Angeles")
         val date = DateTime(2017, 12, 17, 14,
-                56,0, DateTimeZone.forID("America/Los_Angeles"))
+                56,0, timeZone)
         val prediction = subject.getPredictionRaw(date, duration, MeasureUnit.FEET)
         assertTrue(prediction.isNotEmpty())
+        assertEquals(timeZone, prediction.first().date.zone)
     }
 
     @Test
     fun getPredictionPlain() {
-        fail()
+        val duration = Duration.standardHours(24)
+        val timeZone = DateTimeZone.forID("America/Los_Angeles")
+        val date = DateTime(2017, 12, 17, 14,
+                56,0, timeZone)
+        val prediction = subject.getPredictionPlain(date, duration, MeasureUnit.FEET)
+        assertTrue(prediction.isNotEmpty())
+        assertEquals(timeZone, prediction.first().date.zone)
     }
 
     @Test

@@ -1,4 +1,4 @@
-@file:JvmName("Factory")
+@file:JvmName("MXTideFactory")
 
 package com.mxmariner.mxtide.api
 
