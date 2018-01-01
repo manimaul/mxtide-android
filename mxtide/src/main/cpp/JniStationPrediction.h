@@ -1,7 +1,7 @@
 #pragma once
 
 #include <jni.h>
-#include "../StationPrediction.h"
+#include <StationPrediction.h>
 
 namespace mdr {
     class JniStationPrediction {

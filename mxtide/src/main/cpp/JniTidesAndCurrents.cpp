@@ -3,7 +3,8 @@
 #include <locale>
 #include "JniArrayList.h"
 #include "JniString.h"
-#include "../TidesAndCurrents.h"
+#include "JniStationType.h"
+#include <TidesAndCurrents.h>
 
 extern "C" {
 
@@ -63,6 +64,26 @@ Java_com_mxmariner_mxtide_internal_TidesAndCurrents_findStationByName(JNIEnv *en
     auto stationName = mdr::JniString::fromJni(env, name);
     mdr::TidesAndCurrents *tidesAndCurrents = reinterpret_cast<mdr::TidesAndCurrents *>(ptr);
     auto station = tidesAndCurrents->findStationByName(stationName.c_str());
+    jlong retVal = 0;
+    station.let([&retVal](mdr::Station &stn) {
+        mdr::Station *s = new mdr::Station(stn);
+        retVal = reinterpret_cast<jlong>(s);
+    });
+    return retVal;
+}
+
+JNIEXPORT jlong JNICALL
+Java_com_mxmariner_mxtide_internal_TidesAndCurrents_findNearestStation(JNIEnv *env,
+                                                                       jclass clazz,
+                                                                       jlong ptr,
+                                                                       jdouble lat,
+                                                                       jdouble lng,
+                                                                       jstring type) {
+    mdr::TidesAndCurrents *tidesAndCurrents = reinterpret_cast<mdr::TidesAndCurrents *>(ptr);
+    auto stationType = mdr::stationTypeFromJavaString(env, type);
+    auto station = tidesAndCurrents->findNearestStation(static_cast<double>(lat),
+                                                        static_cast<double>(lng),
+                                                        stationType);
     jlong retVal = 0;
     station.let([&retVal](mdr::Station &stn) {
         mdr::Station *s = new mdr::Station(stn);

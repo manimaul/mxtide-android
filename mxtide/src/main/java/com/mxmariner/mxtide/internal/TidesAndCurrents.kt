@@ -20,6 +20,7 @@ internal class TidesAndCurrents : ITidesAndCurrents {
         @JvmStatic external fun stationCount(ptr: Long): Int
         @JvmStatic external fun stationNames(ptr: Long): List<String>
         @JvmStatic external fun findStationByName(ptr: Long, name: String): Long
+        @JvmStatic external fun findNearestStation(ptr: Long, lat: Double, lng: Double, type: String): Long
     }
 
     private val nativePtr: Long = create()
@@ -51,7 +52,11 @@ internal class TidesAndCurrents : ITidesAndCurrents {
     override fun findNearestStation(lat: Double,
                                     lng: Double,
                                     type: StationType): IStation? {
-        return null
+        return findNearestStation(nativePtr, lat, lng, type.nativeStringValue).takeUnless {
+            it == 0L
+        }?.let {
+            Station(it)
+        }
     }
 
     override fun findStationInBounds(northLat: Double,

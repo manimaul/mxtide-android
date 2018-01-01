@@ -45,10 +45,16 @@ class TidesAndCurrentsTest {
     fun findNearestStation() {
         val tideStation = subject.findNearestStation(47.603962, -122.33071, StationType.TIDES)
         assertNotNull(tideStation)
+        assertEquals("Seattle, Puget Sound, Washington", tideStation?.name)
+        assertEquals(47.6026, tideStation?.latitude)
+        assertEquals(-122.3393, tideStation?.longitude)
         assertEquals(tideStation?.type, StationType.TIDES)
 
         val currentStation = subject.findNearestStation(47.603962, -122.33071, StationType.CURRENTS)
         assertNotNull(currentStation)
+        assertEquals("Off Pleasant Beach, Rich Passage, Puget Sound, Washington Current", currentStation?.name)
+        assertEquals(47.58333, currentStation?.latitude)
+        assertEquals(-122.53333, currentStation?.longitude)
         assertEquals(currentStation?.type, StationType.CURRENTS)
     }
 

@@ -1,6 +1,6 @@
 #include <jni.h>
 #include "JniStation.h"
-#include "../Station.h"
+#include <Station.h>
 #include "JniString.h"
 #include "JniArrayList.h"
 #include "JniStationPrediction.h"

@@ -13,12 +13,13 @@ set(SOURCE_SET
     src/main/cpp/JniFloat.h
     src/main/cpp/JniStation.cpp
     src/main/cpp/JniStation.h
-    src/main/cpp/JniString.h
+    src/main/cpp/JniStationPrediction.cpp
+    src/main/cpp/JniStationPrediction.h
+    src/main/cpp/JniStationType.h
     src/main/cpp/JniString.cpp
+    src/main/cpp/JniString.h
     src/main/cpp/JniTidesAndCurrents.cpp
     src/main/cpp/JniTidesAndCurrents.h
-    src/main/cpp/JniStationPrediction.h
-    src/main/cpp/JniStationPrediction.cpp
 )
 
 add_library(jmxtide SHARED ${SOURCE_SET})
