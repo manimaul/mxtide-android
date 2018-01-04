@@ -7,10 +7,9 @@
 
 extern "C" {
 
-
 JNIEXPORT jdouble JNICALL
 Java_com_mxmariner_mxtide_internal_Station_latitude(JNIEnv *env,
-                                                    jclass obj,
+                                                    jclass clazz,
                                                     jlong ptr) {
     mdr::Station *station = reinterpret_cast<mdr::Station *>(ptr);
     return station->getLatitude();
@@ -18,7 +17,7 @@ Java_com_mxmariner_mxtide_internal_Station_latitude(JNIEnv *env,
 
 JNIEXPORT jdouble JNICALL
 Java_com_mxmariner_mxtide_internal_Station_longitude(JNIEnv *env,
-                                                     jclass obj,
+                                                     jclass clazz,
                                                      jlong ptr) {
     mdr::Station *station = reinterpret_cast<mdr::Station *>(ptr);
     return station->getLongitude();
@@ -26,7 +25,7 @@ Java_com_mxmariner_mxtide_internal_Station_longitude(JNIEnv *env,
 
 JNIEXPORT jstring JNICALL
 Java_com_mxmariner_mxtide_internal_Station_timeZone(JNIEnv *env,
-                                                    jclass obj,
+                                                    jclass clazz,
                                                     jlong ptr) {
     mdr::Station *station = reinterpret_cast<mdr::Station *>(ptr);
     auto timeZone = station->timeZone();
@@ -35,7 +34,7 @@ Java_com_mxmariner_mxtide_internal_Station_timeZone(JNIEnv *env,
 
 JNIEXPORT jstring JNICALL
 Java_com_mxmariner_mxtide_internal_Station_name(JNIEnv *env,
-                                                jclass obj,
+                                                jclass clazz,
                                                 jlong ptr) {
     mdr::Station *station = reinterpret_cast<mdr::Station *>(ptr);
     auto name = station->name();
@@ -44,7 +43,7 @@ Java_com_mxmariner_mxtide_internal_Station_name(JNIEnv *env,
 
 JNIEXPORT jstring JNICALL
 Java_com_mxmariner_mxtide_internal_Station_type(JNIEnv *env,
-                                                jclass obj,
+                                                jclass clazz,
                                                 jlong ptr) {
     mdr::Station *station = reinterpret_cast<mdr::Station *>(ptr);
     auto value = station->type().toString();
@@ -53,14 +52,14 @@ Java_com_mxmariner_mxtide_internal_Station_type(JNIEnv *env,
 
 JNIEXPORT jobject JNICALL
 Java_com_mxmariner_mxtide_internal_Station_getPredictionRaw(JNIEnv *env,
-                                                            jclass obj,
+                                                            jclass clazz,
                                                             jlong ptr,
                                                             jlong epoch,
                                                             jlong duration,
                                                             jstring units) {
     auto station = reinterpret_cast<mdr::Station *>(ptr);
     auto dur = DurationSeconds(duration);
-    TimePoint timePoint { DurationSeconds(epoch) };
+    TimePoint timePoint{DurationSeconds(epoch)};
     auto unitsStr = mdr::JniString::fromJni(env, units);
     auto measureUnit = mdr::MeasureUnitFromString(unitsStr);
     auto prediction = station->getPredictionRaw(timePoint, dur, measureUnit);
@@ -79,14 +78,14 @@ Java_com_mxmariner_mxtide_internal_Station_getPredictionRaw(JNIEnv *env,
 
 JNIEXPORT jobject JNICALL
 Java_com_mxmariner_mxtide_internal_Station_getPredictionPlain(JNIEnv *env,
-                                                              jclass obj,
+                                                              jclass clazz,
                                                               jlong ptr,
                                                               jlong epoch,
                                                               jlong duration,
                                                               jstring units) {
     auto station = reinterpret_cast<mdr::Station *>(ptr);
     auto dur = DurationSeconds(duration);
-    TimePoint timePoint { DurationSeconds(epoch) };
+    TimePoint timePoint{DurationSeconds(epoch)};
     auto unitsStr = mdr::JniString::fromJni(env, units);
     auto measureUnit = mdr::MeasureUnitFromString(unitsStr);
     auto prediction = station->getPredictionPlain(timePoint, dur, measureUnit);
@@ -105,14 +104,14 @@ Java_com_mxmariner_mxtide_internal_Station_getPredictionPlain(JNIEnv *env,
 
 JNIEXPORT jobject JNICALL
 Java_com_mxmariner_mxtide_internal_Station_getPredictionClockSVG(JNIEnv *env,
-                                                                 jclass obj,
+                                                                 jclass clazz,
                                                                  jlong ptr,
                                                                  jlong epoch,
                                                                  jlong duration,
                                                                  jstring units) {
     auto station = reinterpret_cast<mdr::Station *>(ptr);
     auto dur = DurationSeconds(duration);
-    TimePoint timePoint { DurationSeconds(epoch) };
+    TimePoint timePoint{DurationSeconds(epoch)};
     auto unitsStr = mdr::JniString::fromJni(env, units);
     auto measureUnit = mdr::MeasureUnitFromString(unitsStr);
     auto svg = station->getPredictionClockSVG(timePoint, dur, measureUnit);
@@ -121,7 +120,7 @@ Java_com_mxmariner_mxtide_internal_Station_getPredictionClockSVG(JNIEnv *env,
 
 JNIEXPORT void JNICALL
 Java_com_mxmariner_mxtide_internal_Station_deleteStation(JNIEnv *env,
-                                                         jclass obj,
+                                                         jclass clazz,
                                                          jlong ptr) {
     auto station = reinterpret_cast<mdr::Station *>(ptr);
     //todo:

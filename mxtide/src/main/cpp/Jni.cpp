@@ -4,6 +4,7 @@
 #include "JniString.h"
 #include "JniStationPrediction.h"
 #include "JniFloat.h"
+#include "JniLong.h"
 
 void mdr::Jni::checkException(JNIEnv *env, bool terminal) {
     if (env->ExceptionCheck()) {
@@ -36,6 +37,7 @@ JNI_OnLoad(JavaVM *vm, void *reserved) {
     mdr::JniString::registerNative(env);
     mdr::JniStationPrediction::registerNative(env);
     mdr::JniFloat::registerNative(env);
+    mdr::JniLong::registerNative(env);
     return JNI_VERSION_1_6;
 }
 

@@ -19,8 +19,26 @@ internal class TidesAndCurrents : ITidesAndCurrents {
         @JvmStatic external fun addHarmonicsFile(ptr: Long, path: String)
         @JvmStatic external fun stationCount(ptr: Long): Int
         @JvmStatic external fun stationNames(ptr: Long): List<String>
-        @JvmStatic external fun findStationByName(ptr: Long, name: String): Long
-        @JvmStatic external fun findNearestStation(ptr: Long, lat: Double, lng: Double, type: String): Long
+        @JvmStatic external fun findStationByName(ptr: Long,
+                                                  name: String): Long
+
+        @JvmStatic external fun findNearestStation(ptr: Long,
+                                                   lat: Double,
+                                                   lng: Double,
+                                                   type: String): Long
+
+        @JvmStatic external fun findStationsInCircle(ptr: Long,
+                                                     centerLat: Double,
+                                                     centerLng: Double,
+                                                     radius: Double,
+                                                     type: String): List<Long>?
+
+        @JvmStatic external fun findStationsInBounds(ptr: Long,
+                                                     northLat: Double,
+                                                     eastLng: Double,
+                                                     southLat: Double,
+                                                     westLng: Double,
+                                                     type: String): List<Long>?
     }
 
     private val nativePtr: Long = create()
@@ -59,11 +77,20 @@ internal class TidesAndCurrents : ITidesAndCurrents {
         }
     }
 
-    override fun findStationInBounds(northLat: Double,
-                                     southLat: Double,
-                                     eastLng: Double,
-                                     westLng: Double,
-                                     type: StationType): List<IStation> {
+    override fun findStationsInCircle(lat: Double,
+                                      lng: Double,
+                                      radius: Double,
+                                      type: StationType): List<IStation> {
+        return findStationsInCircle(nativePtr, lat, lng, radius, type.nativeStringValue)?.map {
+            Station(it)
+        } ?: emptyList()
+    }
+
+    override fun findStationsInBounds(northLat: Double,
+                                      eastLng: Double,
+                                      southLat: Double,
+                                      westLng: Double,
+                                      type: StationType): List<IStation> {
         return emptyList()
     }
 

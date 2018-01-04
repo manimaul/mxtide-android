@@ -59,11 +59,20 @@ class TidesAndCurrentsTest {
     }
 
     @Test
-    fun findStationInBounds() {
-        val tideStations = subject.findStationInBounds(49.0, -117.0, 45.4, -125.0, StationType.TIDES)
+    fun findStationsInCircle() {
+        val tideStations = subject.findStationsInCircle(47.0, -122.0, 100000.0, StationType.TIDES)
         assertTrue(tideStations.isNotEmpty())
 
-        val currentStations = subject.findStationInBounds(49.0, -117.0, 45.4, -125.0, StationType.CURRENTS)
+        val currentStations = subject.findStationsInCircle(47.0, -122.0, 100000.0, StationType.CURRENTS)
+        assertTrue(currentStations.isNotEmpty())
+    }
+
+    @Test
+    fun findStatiosnInBounds() {
+        val tideStations = subject.findStationsInBounds(49.0, -117.0, 45.4, -125.0, StationType.TIDES)
+        assertTrue(tideStations.isNotEmpty())
+
+        val currentStations = subject.findStationsInBounds(49.0, -117.0, 45.4, -125.0, StationType.CURRENTS)
         assertTrue(currentStations.isNotEmpty())
     }
 

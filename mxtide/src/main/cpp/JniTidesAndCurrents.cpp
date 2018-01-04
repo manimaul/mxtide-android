@@ -4,26 +4,27 @@
 #include "JniArrayList.h"
 #include "JniString.h"
 #include "JniStationType.h"
+#include "JniLong.h"
 #include <TidesAndCurrents.h>
 
 extern "C" {
 
 JNIEXPORT jlong JNICALL
 Java_com_mxmariner_mxtide_internal_TidesAndCurrents_create(JNIEnv *env,
-                                                           jclass obj) {
+                                                           jclass clazz) {
     return reinterpret_cast<jlong>(new mdr::TidesAndCurrents());
 }
 
 JNIEXPORT void JNICALL
 Java_com_mxmariner_mxtide_internal_TidesAndCurrents_delete(JNIEnv *env,
-                                                           jclass obj,
+                                                           jclass clazz,
                                                            jlong ptr) {
     delete reinterpret_cast<mdr::TidesAndCurrents *>(ptr);
 }
 
 JNIEXPORT void JNICALL
 Java_com_mxmariner_mxtide_internal_TidesAndCurrents_addHarmonicsFile(JNIEnv *env,
-                                                                     jclass type,
+                                                                     jclass clazz,
                                                                      jlong ptr,
                                                                      jstring pPath) {
     const char *path = env->GetStringUTFChars(pPath, NULL);
@@ -34,7 +35,7 @@ Java_com_mxmariner_mxtide_internal_TidesAndCurrents_addHarmonicsFile(JNIEnv *env
 
 JNIEXPORT jint JNICALL
 Java_com_mxmariner_mxtide_internal_TidesAndCurrents_stationCount(JNIEnv *env,
-                                                                 jclass type,
+                                                                 jclass clazz,
                                                                  jlong ptr) {
     mdr::TidesAndCurrents *tidesAndCurrents = reinterpret_cast<mdr::TidesAndCurrents *>(ptr);
     return static_cast<jint>(tidesAndCurrents->stationCount());
@@ -42,7 +43,7 @@ Java_com_mxmariner_mxtide_internal_TidesAndCurrents_stationCount(JNIEnv *env,
 
 JNIEXPORT jobject JNICALL
 Java_com_mxmariner_mxtide_internal_TidesAndCurrents_stationNames(JNIEnv *env,
-                                                                 jclass type,
+                                                                 jclass clazz,
                                                                  jlong ptr) {
     mdr::TidesAndCurrents *tidesAndCurrents = reinterpret_cast<mdr::TidesAndCurrents *>(ptr);
     auto names = tidesAndCurrents->stationNames();
@@ -58,7 +59,7 @@ Java_com_mxmariner_mxtide_internal_TidesAndCurrents_stationNames(JNIEnv *env,
 
 JNIEXPORT jlong JNICALL
 Java_com_mxmariner_mxtide_internal_TidesAndCurrents_findStationByName(JNIEnv *env,
-                                                                      jclass type,
+                                                                      jclass clazz,
                                                                       jlong ptr,
                                                                       jstring name) {
     auto stationName = mdr::JniString::fromJni(env, name);
@@ -90,6 +91,52 @@ Java_com_mxmariner_mxtide_internal_TidesAndCurrents_findNearestStation(JNIEnv *e
         retVal = reinterpret_cast<jlong>(s);
     });
     return retVal;
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_mxmariner_mxtide_internal_TidesAndCurrents_findStationsInCircle(JNIEnv *env,
+                                                                         jclass clazz,
+                                                                         jlong nativePtr,
+                                                                         jdouble lat,
+                                                                         jdouble lng,
+                                                                         jdouble radius,
+                                                                         jstring type) {
+    mdr::TidesAndCurrents *tidesAndCurrents = reinterpret_cast<mdr::TidesAndCurrents *>(nativePtr);
+    mdr::StationType stationType = mdr::stationTypeFromJavaString(env, type);
+    double centerLat = static_cast<double>(lat);
+    double centerLng = static_cast<double>(lng);
+    double radiusMeters = static_cast<double>(radius);
+    std::vector<mdr::Station> values = tidesAndCurrents->findStationsInCircle(centerLat,
+                                                         centerLng,
+                                                         radiusMeters,
+                                                         stationType);
+    jobject retVal = nullptr;
+    if (values.size() > 0) {
+        auto jniList = mdr::JniArrayList(env, values.size());
+        std::for_each(values.begin(), values.end(), [&jniList, env](mdr::Station &stn) {
+            mdr::Station *s = new mdr::Station(stn);
+            jobject jLong = mdr::JniLong::toJni(env, reinterpret_cast<long>(s));
+            jniList.add(env, jLong);
+        });
+        retVal = jniList.getArrayList();
+    }
+    return retVal;
+}
+
+
+JNIEXPORT jobject JNICALL
+Java_com_mxmariner_mxtide_internal_TidesAndCurrents_findStationsInBounds(JNIEnv *env,
+                                                                         jclass clazz,
+                                                                         jlong ptr,
+                                                                         jdouble nLat,
+                                                                         jdouble eLng,
+                                                                         jdouble sLat,
+                                                                         jdouble wLng,
+                                                                         jstring type) {
+    mdr::TidesAndCurrents *tidesAndCurrents = reinterpret_cast<mdr::TidesAndCurrents *>(ptr);
+    auto stationType = mdr::stationTypeFromJavaString(env, type);
+
+    return nullptr;
 }
 
 }
