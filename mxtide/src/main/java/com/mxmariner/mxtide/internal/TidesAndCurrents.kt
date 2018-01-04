@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.annotation.RawRes
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.ITidesAndCurrents
+import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.mxtide.api.StationType
 import java.io.File
 
@@ -80,8 +81,13 @@ internal class TidesAndCurrents : ITidesAndCurrents {
     override fun findStationsInCircle(lat: Double,
                                       lng: Double,
                                       radius: Double,
+                                      measureUnit: MeasureUnit,
                                       type: StationType): List<IStation> {
-        return findStationsInCircle(nativePtr, lat, lng, radius, type.nativeStringValue)?.map {
+        val radiusMeters = when(measureUnit) {
+            MeasureUnit.METERS -> radius
+            MeasureUnit.FEET -> radius * 0.3048
+        }
+        return findStationsInCircle(nativePtr, lat, lng, radiusMeters, type.nativeStringValue)?.map {
             Station(it)
         } ?: emptyList()
     }

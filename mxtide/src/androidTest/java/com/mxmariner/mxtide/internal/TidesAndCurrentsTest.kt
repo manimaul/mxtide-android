@@ -3,6 +3,7 @@ package com.mxmariner.mxtide.internal
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import com.mxmariner.andxtidelib.R
+import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.mxtide.api.createTidesAndCurrents
 import org.junit.Assert.*
@@ -60,10 +61,12 @@ class TidesAndCurrentsTest {
 
     @Test
     fun findStationsInCircle() {
-        val tideStations = subject.findStationsInCircle(47.0, -122.0, 100000.0, StationType.TIDES)
+        val tideStations = subject.findStationsInCircle(47.0, -122.0, 100000.0,
+                MeasureUnit.METERS, StationType.TIDES)
         assertTrue(tideStations.isNotEmpty())
 
-        val currentStations = subject.findStationsInCircle(47.0, -122.0, 100000.0, StationType.CURRENTS)
+        val currentStations = subject.findStationsInCircle(47.0, -122.0, 100000.0,
+                MeasureUnit.METERS, StationType.CURRENTS)
         assertTrue(currentStations.isNotEmpty())
     }
 

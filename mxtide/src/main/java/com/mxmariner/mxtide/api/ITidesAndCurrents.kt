@@ -54,13 +54,15 @@ interface ITidesAndCurrents {
      *
      * @param lat your latitude
      * @param lng your longitude
-     * @param radius the circle radius in meters
+     * @param radius the circle radius
+     * @param measureUnit the radius measurement
      * @param type the type of the station to find
      * @return the stations within the specified geographic circle
      */
     fun findStationsInCircle(lat: Double,
                              lng: Double,
                              radius: Double,
+                             measureUnit: MeasureUnit,
                              type: StationType): List<IStation>
 
     /**
