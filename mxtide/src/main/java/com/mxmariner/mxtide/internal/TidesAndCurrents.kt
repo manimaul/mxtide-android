@@ -11,7 +11,7 @@ internal class TidesAndCurrents : ITidesAndCurrents {
 
     companion object {
         init {
-            System.loadLibrary("jmxtide")
+            System.loadLibrary("mxtide")
         }
 
         @JvmStatic external fun create(): Long
@@ -91,7 +91,10 @@ internal class TidesAndCurrents : ITidesAndCurrents {
                                       southLat: Double,
                                       westLng: Double,
                                       type: StationType): List<IStation> {
-        return emptyList()
+        return findStationsInBounds(nativePtr, northLat, eastLng, southLat, westLng,
+                type.nativeStringValue)?.map {
+            Station(it)
+        } ?: emptyList()
     }
 
     @Suppress("unused")

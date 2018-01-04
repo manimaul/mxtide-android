@@ -1,26 +1,27 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-PROJECT(jmxtide)
+set(MX_TIDE_CORE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../mxtide-core)
+set(LIB_DIR ${MX_TIDE_CORE_DIR}/src/main/cpp/lib/)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../mxtide-core ${CMAKE_CURRENT_BINARY_DIR}/../mxtide-core)
+set(xtide_DIR ${LIB_DIR})
+find_package(xtide REQUIRED)
 
-set(SOURCE_SET
-    src/main/cpp/Jni.cpp
-    src/main/cpp/Jni.h
-    src/main/cpp/JniArrayList.cpp
-    src/main/cpp/JniArrayList.h
-    src/main/cpp/JniFloat.cpp
-    src/main/cpp/JniFloat.h
-    src/main/cpp/JniStation.cpp
-    src/main/cpp/JniStation.h
-    src/main/cpp/JniStationPrediction.cpp
-    src/main/cpp/JniStationPrediction.h
-    src/main/cpp/JniStationType.h
-    src/main/cpp/JniString.cpp
-    src/main/cpp/JniString.h
-    src/main/cpp/JniTidesAndCurrents.cpp
-    src/main/cpp/JniTidesAndCurrents.h
-)
+include_directories(src/main/cpp/include)
 
-add_library(jmxtide SHARED ${SOURCE_SET})
-target_link_libraries(jmxtide mxtide)
+file(GLOB SOURCE_SET
+        "${MX_TIDE_CORE_DIR}/src/main/cpp/*.cpp"
+        "${MX_TIDE_CORE_DIR}/src/main/cpp/*.h"
+        "${MX_TIDE_CORE_DIR}/src/main/cpp/include/*.h"
+        "src/main/cpp/*.cpp"
+        "src/main/cpp/*.h"
+        )
+
+list(REMOVE_ITEM SOURCE_SET ${MX_TIDE_CORE_DIR}/src/main/cpp/main.cpp)
+list(REMOVE_ITEM SOURCE_SET ${MX_TIDE_CORE_DIR}/src/main/cpp/PerfTimer.h)
+
+set(LINK_LIBS mxtide xtide)
+
+add_library(mxtide SHARED ${SOURCE_SET})
+target_include_directories(mxtide PUBLIC ${MX_TIDE_CORE_DIR}/src/main/cpp/include)
+
+target_link_libraries(${LINK_LIBS})

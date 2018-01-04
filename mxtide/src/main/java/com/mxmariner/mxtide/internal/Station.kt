@@ -11,7 +11,7 @@ import org.joda.time.Duration
 internal class Station(private val nativePtr: Long) : IStation {
     companion object {
         init {
-            System.loadLibrary("jmxtide")
+            System.loadLibrary("mxtide")
         }
 
         // JNI Functions implemented in JniStation.cpp
