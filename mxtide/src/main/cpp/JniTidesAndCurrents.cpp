@@ -103,13 +103,7 @@ Java_com_mxmariner_mxtide_internal_TidesAndCurrents_findStationsInCircle(JNIEnv 
                                                                          jstring type) {
     mdr::TidesAndCurrents *tidesAndCurrents = reinterpret_cast<mdr::TidesAndCurrents *>(nativePtr);
     mdr::StationType stationType = mdr::stationTypeFromJavaString(env, type);
-    double centerLat = static_cast<double>(lat);
-    double centerLng = static_cast<double>(lng);
-    double radiusMeters = static_cast<double>(radius);
-    std::vector<mdr::Station> values = tidesAndCurrents->findStationsInCircle(centerLat,
-                                                         centerLng,
-                                                         radiusMeters,
-                                                         stationType);
+    std::vector<mdr::Station> values = tidesAndCurrents->findStationsInCircle(lat, lng, radius, stationType);
     jobject retVal = nullptr;
     if (values.size() > 0) {
         auto jniList = mdr::JniArrayList(env, values.size());
@@ -135,8 +129,18 @@ Java_com_mxmariner_mxtide_internal_TidesAndCurrents_findStationsInBounds(JNIEnv 
                                                                          jstring type) {
     mdr::TidesAndCurrents *tidesAndCurrents = reinterpret_cast<mdr::TidesAndCurrents *>(ptr);
     auto stationType = mdr::stationTypeFromJavaString(env, type);
-
-    return nullptr;
+    std::vector<mdr::Station> values = tidesAndCurrents->findStationsInBounds(nLat, eLng, sLat, wLng, stationType);
+    jobject retVal = nullptr;
+    if (values.size() > 0) {
+        auto jniList = mdr::JniArrayList(env, values.size());
+        std::for_each(values.begin(), values.end(), [&jniList, env](mdr::Station &stn) {
+            mdr::Station *s = new mdr::Station(stn);
+            jobject jLong = mdr::JniLong::toJni(env, reinterpret_cast<long>(s));
+            jniList.add(env, jLong);
+        });
+        retVal = jniList.getArrayList();
+    }
+    return retVal;
 }
 
 }
