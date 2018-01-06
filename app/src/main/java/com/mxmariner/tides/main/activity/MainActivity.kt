@@ -1,30 +1,29 @@
 package com.mxmariner.tides.main.activity
 
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
 import com.mxmariner.tides.R
+import com.mxmariner.tides.currents.fragment.CurrentsFragment
 import com.mxmariner.tides.main.util.PerfTimer
+import com.mxmariner.tides.settings.fragment.SettingsFragment
+import com.mxmariner.tides.tides.fragment.TidesFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+    private val bottomNavigationHandler = { item: MenuItem ->
         when (item.itemId) {
-            R.id.navigation_tides -> {
-                message.setText(R.string.title_tides)
-                true
-            }
-            R.id.navigation_currents -> {
-                message.setText(R.string.title_currents)
-                true
-            }
-            R.id.navigation_settings -> {
-                message.setText(R.string.title_settings)
-                true
-            }
-            else -> false
-        }
+            R.id.navigation_tides -> TidesFragment()
+            R.id.navigation_currents -> CurrentsFragment()
+            R.id.navigation_settings -> SettingsFragment()
+            else -> null
+        }?.let {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, it)
+                    .commit()
+            true
+        } ?: false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        navigation.setOnNavigationItemSelectedListener(bottomNavigationHandler)
 
         PerfTimer.markEventStop("MainActivity.onCreate()")
         PerfTimer.printLogOfCapturedEvents(true)
