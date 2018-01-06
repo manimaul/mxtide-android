@@ -1,34 +1,41 @@
-package com.mxmariner.tides
+package com.mxmariner.tides.main.activity
 
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
+import com.mxmariner.tides.R
+import com.mxmariner.tides.main.util.PerfTimer
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
-            R.id.navigation_home -> {
+            R.id.navigation_tides -> {
                 message.setText(R.string.title_tides)
-                return@OnNavigationItemSelectedListener true
+                true
             }
-            R.id.navigation_dashboard -> {
+            R.id.navigation_currents -> {
                 message.setText(R.string.title_currents)
-                return@OnNavigationItemSelectedListener true
+                true
             }
-            R.id.navigation_notifications -> {
+            R.id.navigation_settings -> {
                 message.setText(R.string.title_settings)
-                return@OnNavigationItemSelectedListener true
+                true
             }
+            else -> false
         }
-        false
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        PerfTimer.markEventStop("Between")
+        PerfTimer.markEventStart("MainActivity.onCreate()")
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        PerfTimer.markEventStop("MainActivity.onCreate()")
+        PerfTimer.printLogOfCapturedEvents(true)
     }
 }
