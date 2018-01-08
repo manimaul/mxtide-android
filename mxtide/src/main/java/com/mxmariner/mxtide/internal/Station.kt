@@ -4,6 +4,7 @@ import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.IStationPrediction
 import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.mxtide.api.StationType
+import com.mxmariner.mxtide.internal.extensions.unixTimeSeconds
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.Duration

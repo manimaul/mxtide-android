@@ -6,6 +6,8 @@ import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.ITidesAndCurrents
 import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.mxtide.api.StationType
+import com.mxmariner.mxtide.internal.extensions.nativeStringValue
+import com.mxmariner.mxtide.internal.extensions.rawResourceAsCacheFile
 import java.io.File
 
 internal class TidesAndCurrents : ITidesAndCurrents {

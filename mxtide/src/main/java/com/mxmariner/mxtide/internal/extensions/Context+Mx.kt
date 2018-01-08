@@ -1,4 +1,4 @@
-package com.mxmariner.mxtide.internal
+package com.mxmariner.mxtide.internal.extensions
 
 import android.content.Context
 import android.support.annotation.RawRes
