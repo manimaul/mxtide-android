@@ -27,16 +27,42 @@ android {
 
 dependencies {
     implementation project(":mxtide")
+
+    /**
+     * Kotlin
+     */
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    /**
+     * Support Libraries
+     */
     implementation "com.android.support:appcompat-v7:$android_support_version"
     implementation "com.android.support:design:$android_support_version"
+    implementation "com.android.support:support-v13:$android_support_version"
     implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
+
+    /**
+     * Android Architectural Components
+     */
+    implementation "android.arch.lifecycle:extensions:1.0.0"
+    kapt "android.arch.lifecycle:compiler:1.0.0"
+
+    /**
+     * Testing
+     */
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "com.android.support.test:runner:1.0.1"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_version"
 
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    /**
+     * Rx
+     */
+    implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
+    implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
+    implementation "io.reactivex.rxjava2:rxandroid:$rx_android_version"
 
-    implementation "android.arch.lifecycle:extensions:1.0.0"
-    kapt "android.arch.lifecycle:compiler:1.0.0"
+    /**
+     * Chart UI
+     */
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 }
