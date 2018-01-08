@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
             R.id.navigation_settings -> SettingsFragment()
             else -> null
         }?.let {
-            fragmentManager.beginTransaction()
+            supportFragmentManager.beginTransaction()
                     .replace(R.id.container, it)
                     .commit()
             true

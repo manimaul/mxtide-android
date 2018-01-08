@@ -1,6 +1,5 @@
 package com.mxmariner.tides.map.fragment
 
-import android.app.Fragment
+import android.support.v4.app.Fragment
 
-class MapFragment : Fragment() {
-}
+class MapFragment : Fragment()
