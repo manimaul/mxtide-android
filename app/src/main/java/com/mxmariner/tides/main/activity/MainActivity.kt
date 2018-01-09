@@ -1,6 +1,7 @@
 package com.mxmariner.tides.main.activity
 
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.mxmariner.tides.R
@@ -9,9 +10,20 @@ import com.mxmariner.tides.main.util.PerfTimer
 import com.mxmariner.tides.map.fragment.MapFragment
 import com.mxmariner.tides.settings.fragment.SettingsFragment
 import com.mxmariner.tides.tides.fragment.TidesFragment
+import dagger.android.AndroidInjection
+import dagger.android.AndroidInjector
+import dagger.android.DispatchingAndroidInjector
+import dagger.android.support.HasSupportFragmentInjector
 import kotlinx.android.synthetic.main.activity_main.*
+import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
+
+    @Inject lateinit var dispatchingInjector: DispatchingAndroidInjector<Fragment>
+
+    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
+        return dispatchingInjector
+    }
 
     private val bottomNavigationHandler = { item: MenuItem ->
         when (item.itemId) {
@@ -33,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         PerfTimer.markEventStart("MainActivity.onCreate()")
 
         super.onCreate(savedInstanceState)
+        AndroidInjection.inject(this)
         setContentView(R.layout.activity_main)
         navigation.setOnNavigationItemSelectedListener(bottomNavigationHandler)
 

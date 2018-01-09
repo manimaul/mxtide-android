@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.mxmariner.tides.R
 import com.mxmariner.tides.tides.viewmodel.TidesViewModel
+import dagger.android.support.AndroidSupportInjection
 import kotlinx.android.synthetic.main.layout_tides_fragment.*
 
 class TidesFragment : Fragment() {
@@ -19,6 +20,7 @@ class TidesFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidSupportInjection.inject(this)
         viewModel.initialize()
     }
 

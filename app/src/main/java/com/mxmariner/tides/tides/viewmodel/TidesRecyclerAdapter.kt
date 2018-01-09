@@ -11,7 +11,7 @@ class TidesRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return 0
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
