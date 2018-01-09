@@ -2,7 +2,6 @@ package com.mxmariner.tides.main.application
 
 import android.app.Activity
 import android.app.Application
-import android.os.AsyncTask
 import com.mxmariner.tides.di.components.DaggerApplicationComponent
 import com.mxmariner.tides.main.repository.HarmonicsRepo
 import com.mxmariner.tides.main.util.PerfTimer
@@ -15,6 +14,7 @@ import javax.inject.Inject
 class MxTidesApplication : Application(), HasActivityInjector {
 
     @Inject lateinit var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
+    @Inject lateinit var harmonicsRepo: HarmonicsRepo
 
     override fun onCreate() {
         PerfTimer.markEventStart("MxTidesApplication.onCreate()")
@@ -25,11 +25,7 @@ class MxTidesApplication : Application(), HasActivityInjector {
                 .build()
                 .inject(this)
 
-        AsyncTask.execute {
-            PerfTimer.markEventStart("HarmonicsRepo.initialize()")
-            HarmonicsRepo.initialize(this)
-            PerfTimer.markEventStop("HarmonicsRepo.initialize()")
-        }
+        harmonicsRepo.initializeAsync()
 
         PerfTimer.markEventStop("MxTidesApplication.onCreate()")
         PerfTimer.markEventStart("Between")

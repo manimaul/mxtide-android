@@ -7,8 +7,10 @@ import com.mxmariner.tides.di.modules.FragmentBinderModule
 import com.mxmariner.tides.main.application.MxTidesApplication
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Singleton
 
 
+@Singleton
 @Component(modules = [AndroidModule::class,
     ActivityBinderModule::class,
     FragmentBinderModule::class])
