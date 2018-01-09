@@ -16,7 +16,8 @@ import dagger.android.ContributesAndroidInjector
 @Module
 internal interface ActivityBinderModule {
     @ActivityScope
-    @ContributesAndroidInjector(modules = [ActivityAndroidModule::class])
+    @ContributesAndroidInjector(modules = [ActivityAndroidModule::class,
+        ActivityImplementationModule::class])
     fun mainActivity(): MainActivity
 
     @Binds
@@ -26,18 +27,22 @@ internal interface ActivityBinderModule {
 @Module
 internal interface FragmentBinderModule {
     @FragmentScope
-    @ContributesAndroidInjector(modules = [FragmentAndroidModule::class])
+    @ContributesAndroidInjector(modules = [FragmentAndroidModule::class,
+        FragmentImplementationModule::class])
     fun tideFragment(): TidesFragment
 
     @FragmentScope
-    @ContributesAndroidInjector(modules = [FragmentAndroidModule::class])
+    @ContributesAndroidInjector(modules = [FragmentAndroidModule::class,
+        FragmentImplementationModule::class])
     fun mapFragment(): MapFragment
 
     @FragmentScope
-    @ContributesAndroidInjector(modules = [FragmentAndroidModule::class])
+    @ContributesAndroidInjector(modules = [FragmentAndroidModule::class,
+        FragmentImplementationModule::class])
     fun currentsFragment(): CurrentsFragment
 
     @FragmentScope
-    @ContributesAndroidInjector(modules = [FragmentAndroidModule::class])
+    @ContributesAndroidInjector(modules = [FragmentAndroidModule::class,
+        FragmentImplementationModule::class])
     fun settingsFragment(): SettingsFragment
 }
