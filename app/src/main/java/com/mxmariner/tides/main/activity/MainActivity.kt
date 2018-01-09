@@ -2,6 +2,7 @@ package com.mxmariner.tides.main.activity
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.mxmariner.tides.R
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     @Inject lateinit var dispatchingInjector: DispatchingAndroidInjector<Fragment>
+    @Inject lateinit var fragmentManager: FragmentManager
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
         return dispatchingInjector
@@ -33,7 +35,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
             R.id.navigation_settings -> SettingsFragment()
             else -> null
         }?.let {
-            supportFragmentManager.beginTransaction()
+            fragmentManager.beginTransaction()
                     .replace(R.id.container, it)
                     .commit()
             true

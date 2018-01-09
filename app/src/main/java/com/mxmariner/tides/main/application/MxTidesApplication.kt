@@ -1,16 +1,15 @@
 package com.mxmariner.tides.main.application
 
+import android.app.Activity
 import android.app.Application
 import android.os.AsyncTask
+import com.mxmariner.tides.di.components.DaggerApplicationComponent
 import com.mxmariner.tides.main.repository.HarmonicsRepo
 import com.mxmariner.tides.main.util.PerfTimer
-import android.app.Activity
-import com.mxmariner.tides.di.components.DaggerApplicationComponent
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import javax.inject.Inject
-
 
 
 class MxTidesApplication : Application(), HasActivityInjector {
@@ -21,7 +20,10 @@ class MxTidesApplication : Application(), HasActivityInjector {
         PerfTimer.markEventStart("MxTidesApplication.onCreate()")
         super.onCreate()
 
-        DaggerApplicationComponent.create().inject(this)
+        DaggerApplicationComponent.builder()
+                .application(this)
+                .build()
+                .inject(this)
 
         AsyncTask.execute {
             PerfTimer.markEventStart("HarmonicsRepo.initialize()")

@@ -1,7 +1,9 @@
 package com.mxmariner.tides.di.modules
 
 import android.animation.ArgbEvaluator
+import android.app.Activity
 import android.app.Application
+import android.app.FragmentManager
 import android.app.NotificationManager
 import android.content.ClipboardManager
 import android.content.Context
@@ -13,19 +15,26 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Handler
 import android.preference.PreferenceManager
+import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
 import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
+import android.view.LayoutInflater
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import com.mxmariner.tides.di.scopes.ActivityScope
+import com.mxmariner.tides.di.scopes.FragmentScope
 import dagger.Module
 import dagger.Provides
 import java.util.*
+import javax.inject.Named
+import javax.inject.Singleton
 
+/**
+ * [Singleton] scope Android dependencies
+ */
 @Module
-class AndroidModule(private val application: Application) {
-
-    @Provides
-    fun provideApplication(): Application = application
+class AndroidModule {
 
     @Provides
     fun provideArgbEvaluator(): ArgbEvaluator = ArgbEvaluator()
@@ -78,5 +87,50 @@ class AndroidModule(private val application: Application) {
             .getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
     @Provides
-    fun provideContext(): Context = application.applicationContext
+    fun provideContext(application: Application): Context = application.applicationContext
+}
+
+/**
+ * [ActivityScope] scope Android dependencies
+ */
+@Module
+internal class ActivityAndroidModule {
+
+    @ActivityScope
+    @Provides
+    fun provideLayoutInflater(activity: Activity) : LayoutInflater {
+        return activity.layoutInflater
+    }
+
+    @ActivityScope
+    @Provides
+    fun provideFragmentManager(activity: Activity): FragmentManager {
+        return activity.fragmentManager
+    }
+
+    @ActivityScope
+    @Provides
+    fun provideSupportFragmentManager(appCompatActivity: AppCompatActivity): android.support.v4.app.FragmentManager {
+        return appCompatActivity.supportFragmentManager
+    }
+}
+
+/**
+ * [FragmentScope] scope Android dependencies
+ */
+@Module
+internal class FragmentAndroidModule {
+
+    @FragmentScope
+    @Provides
+    fun provideLayoutInflater(fragment: Fragment) : LayoutInflater {
+        return fragment.layoutInflater
+    }
+
+    @Named("childFragmentManager")
+    @FragmentScope
+    @Provides
+    fun provideChildFragmentManager(fragment: Fragment) : android.support.v4.app.FragmentManager{
+        return fragment.childFragmentManager
+    }
 }

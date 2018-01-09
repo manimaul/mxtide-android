@@ -1,5 +1,6 @@
 package com.mxmariner.tides.di.modules
 
+import android.support.v7.app.AppCompatActivity
 import com.mxmariner.tides.currents.fragment.CurrentsFragment
 import com.mxmariner.tides.di.scopes.ActivityScope
 import com.mxmariner.tides.di.scopes.FragmentScope
@@ -7,31 +8,36 @@ import com.mxmariner.tides.main.activity.MainActivity
 import com.mxmariner.tides.map.fragment.MapFragment
 import com.mxmariner.tides.settings.fragment.SettingsFragment
 import com.mxmariner.tides.tides.fragment.TidesFragment
+import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
+
 @Module
-internal abstract class ActivityBinderModule {
+internal interface ActivityBinderModule {
     @ActivityScope
-    @ContributesAndroidInjector
-    internal abstract fun mainActivity(): MainActivity
+    @ContributesAndroidInjector(modules = [ActivityAndroidModule::class])
+    fun mainActivity(): MainActivity
+
+    @Binds
+    fun appCompatActivity(mainActivity: MainActivity): AppCompatActivity
 }
 
 @Module
-internal abstract class FragmentBinderModule {
+internal interface FragmentBinderModule {
     @FragmentScope
-    @ContributesAndroidInjector
-    internal abstract fun tideFragment(): TidesFragment
+    @ContributesAndroidInjector(modules = [FragmentAndroidModule::class])
+    fun tideFragment(): TidesFragment
 
     @FragmentScope
-    @ContributesAndroidInjector
-    internal abstract fun mapFragment(): MapFragment
+    @ContributesAndroidInjector(modules = [FragmentAndroidModule::class])
+    fun mapFragment(): MapFragment
 
     @FragmentScope
-    @ContributesAndroidInjector
-    internal abstract fun currentsFragment(): CurrentsFragment
+    @ContributesAndroidInjector(modules = [FragmentAndroidModule::class])
+    fun currentsFragment(): CurrentsFragment
 
     @FragmentScope
-    @ContributesAndroidInjector
-    internal abstract fun settingsFragment(): SettingsFragment
+    @ContributesAndroidInjector(modules = [FragmentAndroidModule::class])
+    fun settingsFragment(): SettingsFragment
 }
