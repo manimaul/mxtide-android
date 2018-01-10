@@ -23,7 +23,6 @@ interface ActivityImplementationModule {
     fun bindRxLocation(rxLocationImpl: RxLocationImpl): RxLocation
 }
 
-
 /**
  * [FragmentScope] scope protocol implementations
  */

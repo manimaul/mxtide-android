@@ -27,7 +27,6 @@ interface RxLocation {
 class RxLocationImpl @Inject constructor(private val context: Context,
                                          private val locationManager: LocationManager,
                                          private val fragmentManager: FragmentManager) : RxLocation {
-
     override fun maybeRecentLocation(): Maybe<Location> {
         return locationPermission(fragmentManager).flatMapMaybe { isPermissionGranted ->
             if (isPermissionGranted) {
@@ -58,5 +57,4 @@ class RxLocationImpl @Inject constructor(private val context: Context,
             }, null)
         }
     }
-
 }

@@ -52,7 +52,6 @@ fun requestPermissions(fragmentManager: FragmentManager,
  * Headless retain fragment for brokering an Observable result from requesting permissions.
  */
 class PermissionRequestBroker : Fragment() {
-
     private val resultSubject = SingleSubject.create<List<PermissionRequestResult>>()
     val resultObservable: Single<List<PermissionRequestResult>>
         get() = resultSubject

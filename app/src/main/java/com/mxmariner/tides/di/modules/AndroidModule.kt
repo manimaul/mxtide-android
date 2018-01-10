@@ -35,7 +35,6 @@ import javax.inject.Singleton
  */
 @Module
 class AndroidModule {
-
     @Provides
     fun provideArgbEvaluator(): ArgbEvaluator = ArgbEvaluator()
 
@@ -95,7 +94,6 @@ class AndroidModule {
  */
 @Module
 internal class ActivityAndroidModule {
-
     @ActivityScope
     @Provides
     fun provideLayoutInflater(activity: Activity) : LayoutInflater {
@@ -120,7 +118,6 @@ internal class ActivityAndroidModule {
  */
 @Module
 internal class FragmentAndroidModule {
-
     @FragmentScope
     @Provides
     fun provideLayoutInflater(fragment: Fragment) : LayoutInflater {

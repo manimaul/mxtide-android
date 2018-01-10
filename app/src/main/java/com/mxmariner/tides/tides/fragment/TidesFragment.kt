@@ -17,7 +17,6 @@ import kotlinx.android.synthetic.main.layout_tides_fragment.*
 import javax.inject.Inject
 
 class TidesFragment : Fragment() {
-
     @Inject lateinit var rxLocation: RxLocation
 
     private val viewModel: TidesViewModel by lazy {
