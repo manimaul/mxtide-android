@@ -1,5 +1,6 @@
 package com.mxmariner.tides.di.modules
 
+import android.app.Activity
 import android.support.v7.app.AppCompatActivity
 import com.mxmariner.tides.currents.fragment.CurrentsFragment
 import com.mxmariner.tides.di.scopes.ActivityScope
@@ -12,16 +13,19 @@ import dagger.Binds
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
-
 @Module
 internal interface ActivityBinderModule {
     @ActivityScope
     @ContributesAndroidInjector(modules = [ActivityAndroidModule::class,
+        FragmentBinderModule::class,
         ActivityImplementationModule::class])
     fun mainActivity(): MainActivity
 
     @Binds
     fun appCompatActivity(mainActivity: MainActivity): AppCompatActivity
+
+    @Binds
+    fun activity(mainActivity: MainActivity): Activity
 }
 
 @Module

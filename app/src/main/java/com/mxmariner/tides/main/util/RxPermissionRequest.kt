@@ -38,6 +38,7 @@ fun requestPermissions(fragmentManager: FragmentManager,
                        permissions: Array<String>): Single<List<PermissionRequestResult>> {
     return Single.defer {
         val broker = PermissionRequestBroker()
+        broker.arguments = Bundle()
         broker.arguments?.putStringArray(PermissionRequestBroker.KEY_PERMISSIONS, permissions)
         broker.arguments?.putInt(PermissionRequestBroker.KEY_REQUEST_CODE, rand16BitInt())
         fragmentManager.beginTransaction()

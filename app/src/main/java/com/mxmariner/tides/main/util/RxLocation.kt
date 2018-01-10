@@ -12,17 +12,23 @@ import android.os.Bundle
 import android.support.v4.content.PermissionChecker
 import io.reactivex.Maybe
 import io.reactivex.Single
+import javax.inject.Inject
 
 private val locationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
         Manifest.permission.ACCESS_COARSE_LOCATION)
 
-class RxLocation(private val context: Context) {
+interface RxLocation {
+    /**
+     * Retrieves a location signal asking permission if necessary.
+     */
+    fun maybeRecentLocation(): Maybe<Location>
+}
 
-    private val locationManager by lazy {
-        context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    }
+class RxLocationImpl @Inject constructor(private val context: Context,
+                                         private val locationManager: LocationManager,
+                                         private val fragmentManager: FragmentManager) : RxLocation {
 
-    fun maybeRecentLocation(fragmentManager: FragmentManager): Maybe<Location> {
+    override fun maybeRecentLocation(): Maybe<Location> {
         return locationPermission(fragmentManager).flatMapMaybe { isPermissionGranted ->
             if (isPermissionGranted) {
                 recentLocation()
