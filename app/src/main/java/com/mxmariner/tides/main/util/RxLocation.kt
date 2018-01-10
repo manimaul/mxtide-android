@@ -2,7 +2,6 @@ package com.mxmariner.tides.main.util
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.FragmentManager
 import android.content.Context
 import android.location.Criteria
 import android.location.Location
@@ -14,9 +13,6 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 import javax.inject.Inject
 
-private val locationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION)
-
 interface RxLocation {
     /**
      * Retrieves a location signal asking permission if necessary.
@@ -26,9 +22,9 @@ interface RxLocation {
 
 class RxLocationImpl @Inject constructor(private val context: Context,
                                          private val locationManager: LocationManager,
-                                         private val fragmentManager: FragmentManager) : RxLocation {
+                                         private val rxPermission: RxPermission) : RxLocation {
     override fun maybeRecentLocation(): Maybe<Location> {
-        return locationPermission(fragmentManager).flatMapMaybe { isPermissionGranted ->
+        return locationPermission().flatMapMaybe { isPermissionGranted ->
             if (isPermissionGranted) {
                 recentLocation()
             } else {
@@ -37,11 +33,11 @@ class RxLocationImpl @Inject constructor(private val context: Context,
         }
     }
 
-    private fun locationPermission(fragmentManager: FragmentManager): Single<Boolean> {
+    private fun locationPermission(): Single<Boolean> {
         return if (PermissionChecker.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED ||
                 PermissionChecker.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED) {
             Single.just(true)
-        } else requestPermissions(fragmentManager, locationPermissions).map {
+        } else rxPermission.requestPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION).map {
             it.first().grantResult == PermissionChecker.PERMISSION_GRANTED || it.last().grantResult == PermissionChecker.PERMISSION_GRANTED
         }
     }

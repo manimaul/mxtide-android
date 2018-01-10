@@ -11,6 +11,34 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.SingleSubject
 import java.security.SecureRandom
 import java.util.concurrent.ThreadLocalRandom
+import javax.inject.Inject
+
+interface RxPermission {
+
+    /**
+     * Request runtime permissions and get an Observable<List<[PermissionRequestResult]>> result.
+     *
+     * @param permissions The permissions to request
+     */
+    fun requestPermissions(vararg permissions: String): Single<List<PermissionRequestResult>>
+}
+
+class RxPermissionImpl @Inject constructor(private val fragmentManager: FragmentManager) : RxPermission {
+
+    override fun requestPermissions(vararg permissions: String): Single<List<PermissionRequestResult>> {
+        return Single.defer {
+            val broker = PermissionRequestBroker()
+            broker.arguments = Bundle()
+            broker.arguments?.putStringArray(PermissionRequestBroker.KEY_PERMISSIONS, permissions)
+            broker.arguments?.putInt(PermissionRequestBroker.KEY_REQUEST_CODE, rand16BitInt())
+            fragmentManager.beginTransaction()
+                    .add(broker, PermissionRequestBroker.TAG)
+                    .commit()
+            broker.resultObservable
+        }.subscribeOn(AndroidSchedulers.mainThread())
+    }
+
+}
 
 data class PermissionRequestResult(val permission: String, @PermissionChecker.PermissionResult val grantResult: Int)
 
@@ -25,27 +53,6 @@ private fun rand16BitInt(): Int {
     } else {
         SecureRandom().nextInt(MAX_16BIT_INT - MIN_16BIT_INT + 1) + MIN_16BIT_INT
     }
-}
-
-
-/**
- * Request runtime permissions and get an Observable<List<[PermissionRequestResult]>> result.
- *
- * @param fragmentManager The fragment manager
- * @param permissions The permissions to request
- */
-fun requestPermissions(fragmentManager: FragmentManager,
-                       permissions: Array<String>): Single<List<PermissionRequestResult>> {
-    return Single.defer {
-        val broker = PermissionRequestBroker()
-        broker.arguments = Bundle()
-        broker.arguments?.putStringArray(PermissionRequestBroker.KEY_PERMISSIONS, permissions)
-        broker.arguments?.putInt(PermissionRequestBroker.KEY_REQUEST_CODE, rand16BitInt())
-        fragmentManager.beginTransaction()
-                .add(broker, PermissionRequestBroker.TAG)
-                .commit()
-        broker.resultObservable
-    }.subscribeOn(AndroidSchedulers.mainThread())
 }
 
 /**

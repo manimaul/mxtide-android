@@ -4,6 +4,8 @@ import com.mxmariner.tides.di.scopes.ActivityScope
 import com.mxmariner.tides.di.scopes.FragmentScope
 import com.mxmariner.tides.main.util.RxLocation
 import com.mxmariner.tides.main.util.RxLocationImpl
+import com.mxmariner.tides.main.util.RxPermission
+import com.mxmariner.tides.main.util.RxPermissionImpl
 import dagger.Binds
 import dagger.Module
 import javax.inject.Singleton
@@ -19,8 +21,12 @@ interface ImplementationModule
  */
 @Module
 interface ActivityImplementationModule {
+    @ActivityScope
     @Binds
     fun bindRxLocation(rxLocationImpl: RxLocationImpl): RxLocation
+
+    @Binds
+    fun bindRxPermission(rxPermissionImpl: RxPermissionImpl): RxPermission
 }
 
 /**
