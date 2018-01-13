@@ -50,6 +50,17 @@ interface ITidesAndCurrents {
     fun findNearestStation(lat: Double, lng: Double, type: StationType): IStation?
 
     /**
+     * Find the nearest station sorted by distance
+     *
+     * @param lat your latitude
+     * @param lng your longitude
+     * @param type the type of the stations to find
+     * @param limit (optional) the maximum number of stations to return
+     * @return the list of closest station sorted by distance to the provided position
+     */
+    fun findNearestStations(lat: Double, lng: Double, type: StationType, limit: Int? = 0): List<IStation>
+
+    /**
      * Find stations residing in a geographic circle
      *
      * @param lat your latitude

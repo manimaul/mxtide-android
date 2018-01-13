@@ -3,13 +3,14 @@ package com.mxmariner.mxtide.internal
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import com.mxmariner.andxtidelib.R
+import com.mxmariner.mxtide.api.MXTideFactory.createTidesAndCurrents
 import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.mxtide.api.StationType
-import com.mxmariner.mxtide.api.createTidesAndCurrents
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.Duration
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -80,6 +80,10 @@ internal class TidesAndCurrents : ITidesAndCurrents {
         }
     }
 
+    override fun findNearestStations(lat: Double, lng: Double, type: StationType, limit: Int?): List<IStation> {
+        return emptyList()
+    }
+
     override fun findStationsInCircle(lat: Double,
                                       lng: Double,
                                       radius: Double,
