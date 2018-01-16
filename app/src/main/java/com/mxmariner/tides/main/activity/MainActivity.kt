@@ -8,7 +8,6 @@ import android.view.MenuItem
 import com.mxmariner.tides.R
 import com.mxmariner.tides.currents.fragment.CurrentsFragment
 import com.mxmariner.tides.main.util.PerfTimer
-import com.mxmariner.tides.main.util.RxLocation
 import com.mxmariner.tides.map.fragment.MapFragment
 import com.mxmariner.tides.settings.fragment.SettingsFragment
 import com.mxmariner.tides.tides.fragment.TidesFragment
@@ -23,7 +22,6 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
 
     @Inject lateinit var dispatchingInjector: DispatchingAndroidInjector<Fragment>
     @Inject lateinit var fragmentManager: FragmentManager
-    @Inject lateinit var rxLocation: RxLocation
 
     override fun supportFragmentInjector(): AndroidInjector<Fragment> {
         return dispatchingInjector
@@ -52,6 +50,12 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_main)
         navigation.setOnNavigationItemSelectedListener(bottomNavigationHandler)
+
+        setSupportActionBar(toolbar)
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, TidesFragment())
+                .commit()
 
         PerfTimer.markEventStop("MainActivity.onCreate()")
         PerfTimer.printLogOfCapturedEvents(true)

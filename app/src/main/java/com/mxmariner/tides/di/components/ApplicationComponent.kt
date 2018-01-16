@@ -10,9 +10,11 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AndroidModule::class,
+@Component(modules = [
+    AndroidModule::class,
     ActivityBinderModule::class,
-    ImplementationModule::class])
+    ImplementationModule::class
+])
 internal interface ApplicationComponent {
 
     @Component.Builder
