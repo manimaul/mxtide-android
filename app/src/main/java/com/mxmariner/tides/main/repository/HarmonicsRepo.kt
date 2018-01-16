@@ -2,7 +2,7 @@ package com.mxmariner.tides.main.repository
 
 import android.content.Context
 import android.os.AsyncTask
-import com.mxmariner.mxtide.api.createTidesAndCurrents
+import com.mxmariner.mxtide.api.MXTideFactory
 import com.mxmariner.tides.R
 import com.mxmariner.tides.main.util.PerfTimer
 import javax.inject.Inject
@@ -11,7 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class HarmonicsRepo @Inject constructor(private val context: Context) {
 
-    val tidesAndCurrents = createTidesAndCurrents()
+    val tidesAndCurrents = MXTideFactory.createTidesAndCurrents()
 
     fun initializeAsync() {
         AsyncTask.execute {
