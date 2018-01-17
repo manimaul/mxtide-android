@@ -20,6 +20,8 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
+                tools:title="@string/app_name"
+                app:titleTextColor="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize" />
 

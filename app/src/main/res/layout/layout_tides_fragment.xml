@@ -14,7 +14,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/loadingProgress"
-        tools:text="@string/could_not_deterine_location" />
+        tools:text="@string/finding_closest_tide_stations" />
 
     <ProgressBar
         android:id="@+id/loadingProgress"
