@@ -9,10 +9,11 @@ import com.mxmariner.tides.di.scopes.ActivityScope
 import com.mxmariner.tides.main.extensions.safeComplete
 import com.mxmariner.tides.main.extensions.safeError
 import com.mxmariner.tides.main.extensions.safeSuccess
+import com.mxmariner.tides.main.util.Variable
 import io.reactivex.Maybe
-import io.reactivex.Single
-import io.reactivex.SingleSource
-import io.reactivex.SingleTransformer
+import io.reactivex.Observable
+import io.reactivex.ObservableSource
+import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
 
@@ -25,15 +26,16 @@ class SnackbarController @Inject constructor(
         activity.findViewById<View>(R.id.coordinatorLayout)
     }
 
-    fun <T> showRetryIf(default: T, predicate: (T) -> Boolean) : SingleTransformer<T, T> {
-        return Transformer(predicate, this, default)
+    fun <T> showRetryIf(predicate: (T) -> Boolean): ObservableTransformer<T, T> {
+        return RetryTransformer(predicate, this)
     }
 
-    fun showTryAgain(message: String = activity.getString(R.string.try_again),
+    fun showTryAgain(message: String? = null,
                      throwable: Throwable? = null
-                     ): Maybe<Any> {
+    ): Maybe<Any> {
         return Maybe.create<Any> { emitter ->
-            Snackbar.make(rootView, message, Snackbar.LENGTH_INDEFINITE)
+            val msg = message ?: activity.getString(R.string.whoops)
+            Snackbar.make(rootView, msg, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.try_again) {
                         emitter.safeSuccess(Any())
                     }
@@ -51,25 +53,23 @@ class SnackbarController @Inject constructor(
     }
 }
 
-private class Transformer<T>(
+private class RetryTransformer<T>(
         private val predicate: (T) -> Boolean,
-        private val snackbarController: SnackbarController,
-        private val default: T
-) : SingleTransformer<T, T> {
-    override fun apply(upstream: Single<T>): SingleSource<T> {
+        private val snackbarController: SnackbarController
+) : ObservableTransformer<T, T> {
+    override fun apply(upstream: Observable<T>): ObservableSource<T> {
+        val capture = Variable<T>()
         return upstream.flatMap {
             if (predicate(it)) {
-                Single.error<T>(Throwable())
+                capture.value = it
+                Observable.error<T>(Throwable())
             } else {
-                Single.just(it)
+                Observable.just(it)
             }
-        }
-        .retryWhen {
-            it.flatMap {
-                snackbarController.showTryAgain(throwable = it).toFlowable()
+        }.retryWhen { errorObservable ->
+            errorObservable.flatMap { error ->
+                snackbarController.showTryAgain(throwable = error).toObservable()
             }
-        }
-        .onErrorReturnItem(default)
+        }.onErrorResumeNext(capture.observable.take(1))
     }
-
 }

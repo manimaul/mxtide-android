@@ -12,10 +12,9 @@ import com.mxmariner.tides.tides.adapter.TidesRecyclerAdapter
 import com.mxmariner.tides.tides.model.TidesViewState
 import com.mxmariner.tides.tides.model.TidesViewStateLoadingComplete
 import com.mxmariner.tides.tides.model.TidesViewStateLoadingStarted
-import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Provider
@@ -41,28 +40,23 @@ class TidesViewModel @Inject constructor(
     val recyclerAdapter: TidesRecyclerAdapter = TidesRecyclerAdapter()
 
     fun viewState(): Observable<TidesViewState> {
-        return loadStations().map<TidesViewState> {
-            if (it) {
-                TidesViewStateLoadingComplete()
-            } else {
-                val message = resources.getString(R.string.no_results)
-                TidesViewStateLoadingComplete(message)
-            }
-        }.toObservable().startWith(TidesViewStateLoadingStarted())
-    }
-
-    private fun loadStations(): Single<Boolean> {
+        val loadingCompleteNoLocation = TidesViewStateLoadingComplete(resources.getString(R.string.could_not_deterine_location))
+        val loadingStarted = TidesViewStateLoadingStarted(resources.getString(R.string.finding_closest_tide_stations))
         return rxLocation.maybeRecentLocation()
-                .timeout(3, TimeUnit.SECONDS, Maybe.empty())
-                .observeOn(AndroidSchedulers.mainThread())
+                .toObservable()
+                .observeOn(Schedulers.io())
                 .map {
-                    val stations = harmonicsRepo.tidesAndCurrents.findNearestStations(it.latitude, it.longitude, StationType.TIDES)
-                    recyclerAdapter.add(stations)
-                    stations.isNotEmpty()
+                    harmonicsRepo.tidesAndCurrents.findNearestStations(it.latitude, it.longitude, StationType.TIDES)
                 }
-                .toSingle(false)
-                .compose(snackbarController.showRetryIf(false) {
-                    !it // showing retry snackbar if we do not have a location
+                .observeOn(AndroidSchedulers.mainThread())
+                .map<TidesViewState> {
+                    recyclerAdapter.add(it)
+                    TidesViewStateLoadingComplete()
+                }
+                .timeout(5, TimeUnit.SECONDS, Observable.just(loadingCompleteNoLocation))
+                .compose(snackbarController.showRetryIf<TidesViewState> {
+                    it == loadingCompleteNoLocation
                 })
+                .startWith(loadingStarted)
     }
 }

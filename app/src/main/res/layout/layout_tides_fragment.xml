@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout"
@@ -7,18 +7,25 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/noResults"
+        android:id="@+id/messageTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        tools:text="@string/no_results" />
+        android:layout_margin="@dimen/default_margin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loadingProgress"
+        tools:text="@string/could_not_deterine_location" />
 
     <ProgressBar
-        android:id="@+id/loading"
+        android:id="@+id/loadingProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_margin="@dimen/default_margin"
         android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
     <android.support.v7.widget.RecyclerView
@@ -28,4 +35,4 @@
         android:layout_margin="@dimen/default_margin"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
 
-</FrameLayout>
+</android.support.constraint.ConstraintLayout>

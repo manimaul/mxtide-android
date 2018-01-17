@@ -3,6 +3,24 @@ package com.mxmariner.tides.main.extensions
 import android.util.Log
 import io.reactivex.*
 
+fun <T> ObservableEmitter<T>.safeComplete() {
+    if (!this.isDisposed) {
+        this.onComplete()
+    }
+}
+
+fun <T> ObservableEmitter<T>.safeError(error: Throwable) {
+    if (!this.isDisposed) {
+        this.onError(error)
+    }
+}
+
+fun <T> ObservableEmitter<T>.safeNext(next: T) {
+    if (!this.isDisposed) {
+        this.onNext(next)
+    }
+}
+
 fun <T> MaybeEmitter<T>.safeComplete() {
     if (!this.isDisposed) {
         this.onComplete()

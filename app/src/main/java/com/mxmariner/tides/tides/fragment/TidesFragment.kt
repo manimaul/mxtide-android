@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mxmariner.tides.R
-import com.mxmariner.tides.main.extensions.debug
 import com.mxmariner.tides.tides.model.TidesViewStateLoadingComplete
 import com.mxmariner.tides.tides.model.TidesViewStateLoadingStarted
 import com.mxmariner.tides.tides.viewmodel.TidesViewModel
@@ -41,14 +40,19 @@ class TidesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         recyclerView.adapter = viewModel.recyclerAdapter
         compositeDisposable.add(viewModel.viewState()
-                .debug("WBK view state")
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy {
                     when (it) {
-                        is TidesViewStateLoadingStarted -> loading.visibility = View.VISIBLE
+                        is TidesViewStateLoadingStarted -> loadingStarted(it.message)
                         is TidesViewStateLoadingComplete -> loadingComplete(it.errorMessage)
                     }
         })
+    }
+
+    private fun loadingStarted(message: String?) {
+        recyclerView.visibility = View.GONE
+        loadingProgress.visibility = View.VISIBLE
+        messageTextView.text = message
     }
 
     override fun onDestroyView() {
@@ -57,11 +61,14 @@ class TidesFragment : Fragment() {
     }
 
     private fun loadingComplete(errorMessage: String?) {
-        loading.visibility = View.GONE
+        loadingProgress.visibility = View.GONE
+
         errorMessage?.let {
-            noResults.text = it
+            messageTextView.text = it
+            recyclerView.visibility = View.GONE
         } ?: {
-            noResults.text = null
+            messageTextView.text = null
+            recyclerView.visibility = View.VISIBLE
         }()
     }
 }
