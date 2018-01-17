@@ -36,21 +36,31 @@ android {
 }
 
 dependencies {
-    // Support libraries
+    /**
+     * Support libraries
+     */
     compile "com.android.support:support-core-utils:$android_support_version"
 
-    // Kotlin
+    /**
+     * Kotlin
+     */
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
-    // Android Tests
+    /**
+     * Android Tests
+     */
     androidTestImplementation("com.android.support.test.espresso:espresso-core:$espresso_version", {
         exclude group: "com.android.support", module: "support-annotations"
     })
 
-    // Unit Tests
+    /**
+     * Unit Tests
+     */
     testImplementation "junit:junit:$junit_version"
 
-    // Joda Time
+    /**
+     * Joda Time
+     */
     implementation "joda-time:joda-time:$joda_time_version"
 }
