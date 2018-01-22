@@ -94,6 +94,36 @@ Java_com_mxmariner_mxtide_internal_TidesAndCurrents_findNearestStation(JNIEnv *e
 }
 
 JNIEXPORT jobject JNICALL
+Java_com_mxmariner_mxtide_internal_TidesAndCurrents_findNearestStations(JNIEnv *env,
+                                                                       jclass clazz,
+                                                                       jlong ptr,
+                                                                       jdouble lat,
+                                                                       jdouble lng,
+                                                                       jstring type,
+                                                                       jint limit) {
+    mdr::TidesAndCurrents *tidesAndCurrents = reinterpret_cast<mdr::TidesAndCurrents *>(ptr);
+    auto stationType = mdr::stationTypeFromJavaString(env, type);
+    auto stations = tidesAndCurrents->findNearestStations(static_cast<double>(lat),
+                                                          static_cast<double>(lng),
+                                                          stationType);
+    size_t end = stations.size();
+    if (limit > 0 && limit < stations.size()) {
+        end = static_cast<size_t>(limit);
+    }
+    jobject retVal = nullptr;
+    if (end > 0) {
+        auto jniList = mdr::JniArrayList(env, end);
+        std::for_each(stations.begin(), stations.begin() + end, [&jniList, env](mdr::Station &stn) {
+            mdr::Station *s = new mdr::Station(stn);
+            jobject jLong = mdr::JniLong::toJni(env, reinterpret_cast<long>(s));
+            jniList.add(env, jLong);
+        });
+        retVal = jniList.getArrayList();
+    }
+    return retVal;
+}
+
+JNIEXPORT jobject JNICALL
 Java_com_mxmariner_mxtide_internal_TidesAndCurrents_findStationsInCircle(JNIEnv *env,
                                                                          jclass clazz,
                                                                          jlong nativePtr,

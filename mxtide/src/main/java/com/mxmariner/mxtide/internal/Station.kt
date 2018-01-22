@@ -84,4 +84,8 @@ internal class Station(private val nativePtr: Long) : IStation {
         deleteStation(nativePtr)
     }
 
+    override fun toString(): String {
+        return "Station: $name : $type - $latitude, $longitude $timeZone\n"
+    }
+
 }

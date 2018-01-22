@@ -30,6 +30,12 @@ internal class TidesAndCurrents : ITidesAndCurrents {
                                                    lng: Double,
                                                    type: String): Long
 
+        @JvmStatic external fun findNearestStations(ptr: Long,
+                                                    lat: Double,
+                                                    lng: Double,
+                                                    type: String,
+                                                    limit: Int): List<Long>?
+
         @JvmStatic external fun findStationsInCircle(ptr: Long,
                                                      centerLat: Double,
                                                      centerLng: Double,
@@ -81,7 +87,9 @@ internal class TidesAndCurrents : ITidesAndCurrents {
     }
 
     override fun findNearestStations(lat: Double, lng: Double, type: StationType, limit: Int?): List<IStation> {
-        return emptyList()
+        return findNearestStations(nativePtr, lat, lng, type.nativeStringValue, limit ?: 0)?.map {
+            Station(it)
+        } ?: emptyList()
     }
 
     override fun findStationsInCircle(lat: Double,
