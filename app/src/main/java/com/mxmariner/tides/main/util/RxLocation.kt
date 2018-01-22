@@ -9,28 +9,36 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.support.v4.content.PermissionChecker
-import io.reactivex.Maybe
 import io.reactivex.Single
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+
+sealed class LocationPermissionResult
+class LocationResultNoPermission : LocationPermissionResult()
+class LocationResultTimeOut : LocationPermissionResult()
+data class LocationResultPermission(val location: Location) : LocationPermissionResult()
 
 interface RxLocation {
     /**
      * Retrieves a location signal asking permission if necessary.
      */
-    fun maybeRecentLocation(): Maybe<Location>
+    fun singleRecentLocationPermissionResult(): Single<LocationPermissionResult>
 }
 
 class RxLocationImpl @Inject constructor(private val context: Context,
                                          private val locationManager: LocationManager,
                                          private val rxPermission: RxPermission) : RxLocation {
-    override fun maybeRecentLocation(): Maybe<Location> {
-        return locationPermission().flatMapMaybe { isPermissionGranted ->
+
+    override fun singleRecentLocationPermissionResult(): Single<LocationPermissionResult> {
+        return locationPermission().flatMap { isPermissionGranted ->
             if (isPermissionGranted) {
-                recentLocation()
+                recentLocation().map {
+                    LocationResultPermission(it)
+                }
             } else {
-                Maybe.empty()
+                Single.just(LocationResultNoPermission())
             }
-        }
+        }.timeout(5, TimeUnit.SECONDS, Single.just(LocationResultTimeOut()))
     }
 
     private fun locationPermission(): Single<Boolean> {
@@ -43,8 +51,8 @@ class RxLocationImpl @Inject constructor(private val context: Context,
     }
 
     @SuppressLint("MissingPermission")
-    private fun recentLocation(): Maybe<Location> {
-        return Maybe.create { emitter ->
+    private fun recentLocation(): Single<Location> {
+        return Single.create { emitter ->
             locationManager.requestSingleUpdate(Criteria(), object : LocationListener {
                 override fun onLocationChanged(location: Location) = emitter.onSuccess(location)
                 override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}

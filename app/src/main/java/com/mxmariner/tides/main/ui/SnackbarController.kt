@@ -9,10 +9,8 @@ import com.mxmariner.tides.di.scopes.ActivityScope
 import com.mxmariner.tides.main.extensions.safeComplete
 import com.mxmariner.tides.main.extensions.safeError
 import com.mxmariner.tides.main.extensions.safeSuccess
-import com.mxmariner.tides.main.util.Variable
 import io.reactivex.Maybe
 import io.reactivex.Observable
-import io.reactivex.ObservableSource
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import javax.inject.Inject
@@ -26,8 +24,25 @@ class SnackbarController @Inject constructor(
         activity.findViewById<View>(R.id.coordinatorLayout)
     }
 
-    fun <T> showRetryIf(predicate: (T) -> Boolean): ObservableTransformer<T, T> {
-        return RetryTransformer(predicate, this)
+    /**
+     * Retry when a the user chooses to retry via snackbar until the Downstream signal type is encountered.
+     * @param Upstream the input sequence type
+     * @param Downstream the downstream sequence type
+     */
+    inline fun <Upstream, reified Downstream : Upstream> retryWhenSnackbarUntilType(): ObservableTransformer<Upstream, Downstream> {
+        return ObservableTransformer {
+            it.flatMap {
+                if (it is Downstream) {
+                    Observable.just<Downstream>(it)
+                } else {
+                    Observable.error<Downstream>(Throwable())
+                }.retryWhen { errorObservable ->
+                    errorObservable.flatMap { error ->
+                        showTryAgain(throwable = error).toObservable()
+                    }
+                }
+            }
+        }
     }
 
     fun showTryAgain(message: String? = null,
@@ -50,26 +65,5 @@ class SnackbarController @Inject constructor(
                     })
                     .show()
         }.subscribeOn(AndroidSchedulers.mainThread())
-    }
-}
-
-private class RetryTransformer<T>(
-        private val predicate: (T) -> Boolean,
-        private val snackbarController: SnackbarController
-) : ObservableTransformer<T, T> {
-    override fun apply(upstream: Observable<T>): ObservableSource<T> {
-        val capture = Variable<T>()
-        return upstream.flatMap {
-            if (predicate(it)) {
-                capture.value = it
-                Observable.error<T>(Throwable())
-            } else {
-                Observable.just(it)
-            }
-        }.retryWhen { errorObservable ->
-            errorObservable.flatMap { error ->
-                snackbarController.showTryAgain(throwable = error).toObservable()
-            }
-        }.onErrorResumeNext(capture.observable.take(1))
     }
 }

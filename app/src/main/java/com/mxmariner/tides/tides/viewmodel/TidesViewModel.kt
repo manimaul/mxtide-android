@@ -5,8 +5,11 @@ import android.arch.lifecycle.ViewModelProvider
 import android.content.res.Resources
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.tides.R
+import com.mxmariner.tides.main.extensions.debug
 import com.mxmariner.tides.main.repository.HarmonicsRepo
 import com.mxmariner.tides.main.ui.SnackbarController
+import com.mxmariner.tides.main.util.LocationPermissionResult
+import com.mxmariner.tides.main.util.LocationResultPermission
 import com.mxmariner.tides.main.util.RxLocation
 import com.mxmariner.tides.tides.adapter.TidesRecyclerAdapter
 import com.mxmariner.tides.tides.model.TidesViewState
@@ -15,7 +18,6 @@ import com.mxmariner.tides.tides.model.TidesViewStateLoadingStarted
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -40,23 +42,28 @@ class TidesViewModel @Inject constructor(
     val recyclerAdapter: TidesRecyclerAdapter = TidesRecyclerAdapter()
 
     fun viewState(): Observable<TidesViewState> {
-        val loadingCompleteNoLocation = TidesViewStateLoadingComplete(resources.getString(R.string.could_not_deterine_location))
         val loadingStarted = TidesViewStateLoadingStarted(resources.getString(R.string.finding_closest_tide_stations))
-        return rxLocation.maybeRecentLocation()
+        return rxLocation.singleRecentLocationPermissionResult()
                 .toObservable()
-                .observeOn(Schedulers.io())
+                .debug("WBK-location")
+                .compose(snackbarController.retryWhenSnackbarUntilType<LocationPermissionResult, LocationResultPermission>())
+                .observeOn(Schedulers.computation())
                 .map {
-                    harmonicsRepo.tidesAndCurrents.findNearestStations(it.latitude, it.longitude, StationType.TIDES)
+                    harmonicsRepo.tidesAndCurrents.findNearestStations(it.location.latitude, it.location.longitude, StationType.TIDES)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .map<TidesViewState> {
                     recyclerAdapter.add(it)
                     TidesViewStateLoadingComplete()
                 }
-                .timeout(5, TimeUnit.SECONDS, Observable.just(loadingCompleteNoLocation))
-                .compose(snackbarController.showRetryIf<TidesViewState> {
-                    it == loadingCompleteNoLocation
-                })
+                .onErrorReturn { TidesViewStateLoadingComplete(resources.getString(R.string.could_not_deterine_location)) }
                 .startWith(loadingStarted)
+                .takeUntil {
+                    when (it) {
+                        is TidesViewStateLoadingComplete -> true
+                        else -> false
+                    }
+                }
+                .debug("WBK-all")
     }
 }
