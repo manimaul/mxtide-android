@@ -3,23 +3,29 @@ package com.mxmariner.tides.tides.adapter
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import com.mxmariner.mxtide.api.IStation
+import com.mxmariner.tides.tides.view.TideStationListViewHolder
+import javax.inject.Inject
 
 
-class TidesRecyclerAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class TidesRecyclerAdapter @Inject constructor() : RecyclerView.Adapter<TideStationListViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    private val stationList = ArrayList<IStation>()
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TideStationListViewHolder {
+        return TideStationListViewHolder(parent)
     }
 
     override fun getItemCount(): Int {
-        return 0
+        return stationList.count()
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onBindViewHolder(holder: TideStationListViewHolder?, position: Int) {
+        holder?.apply(stationList[position])
     }
 
     fun add(stations: List<IStation>) {
-
+        val start = stationList.count()
+        stationList += stations
+        notifyItemRangeInserted(start, stations.count())
     }
 }

@@ -36,10 +36,9 @@ class TidesViewModel @Inject constructor(
         private val harmonicsRepo: HarmonicsRepo,
         private val rxLocation: RxLocation,
         private val resources: Resources,
-        private val snackbarController: SnackbarController
+        private val snackbarController: SnackbarController,
+        val recyclerAdapter: TidesRecyclerAdapter
 ) : ViewModel() {
-
-    val recyclerAdapter: TidesRecyclerAdapter = TidesRecyclerAdapter()
 
     fun viewState(): Observable<TidesViewState> {
         val loadingStarted = TidesViewStateLoadingStarted(resources.getString(R.string.finding_closest_tide_stations))
