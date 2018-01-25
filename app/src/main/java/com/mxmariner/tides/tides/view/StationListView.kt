@@ -3,6 +3,7 @@ package com.mxmariner.tides.tides.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.FrameLayout
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.tides.R
@@ -19,11 +20,22 @@ class StationListView : FrameLayout {
     init {
         LayoutInflater.from(context).inflate(R.layout.station_list_view, this, true)
         if (isInEditMode) {
-            stationNameTextView.text = "Station Name"
+            stationNameTextView.text = "Des Moines, East Passage, Puget Sound Washington"
         }
     }
 
     fun apply(station: IStation) {
         stationNameTextView.text = station.name
+        latitudeTextView.text = "${station.latitude}"
+        longitudeTextView.text = "${station.longitude}"
+        station.timeZone.toTimeZone()?.displayName?.let {
+            stationTzLabel.visibility = View.VISIBLE
+            stationTzTextView.visibility = View.VISIBLE
+            stationTzTextView.text = it
+        } ?: {
+            stationTzLabel.visibility = View.GONE
+            stationTzTextView.visibility = View.GONE
+        }()
+
     }
 }

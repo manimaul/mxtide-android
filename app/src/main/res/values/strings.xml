@@ -8,4 +8,8 @@
     <string name="could_not_deterine_location">I could not determine your location.</string>
     <string name="whoops">Whoops, something is awry!</string>
     <string name="finding_closest_tide_stations">Finding closest tide stations…</string>
+    <string name="name">Name</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="time_zone">Time Zone</string>
 </resources>

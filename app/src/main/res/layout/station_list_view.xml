@@ -1,13 +1,98 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="@dimen/double_margin">
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_tide" />
+
+    <TextView
+        android:id="@+id/stationNameLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        android:textStyle="bold"
+        android:text="@string/name" />
+
     <TextView
         android:id="@+id/stationNameTextView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        tools:text="Tide Station" />
+        android:layout_marginTop="@dimen/half_margin"
+        app:layout_constraintTop_toBottomOf="@+id/stationNameLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        tools:text="Des Moines, East Passage, Puget Sound Washington" />
+
+    <TextView
+        android:id="@+id/latLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin"
+        app:layout_constraintTop_toBottomOf="@+id/stationNameTextView"
+        app:layout_constraintEnd_toStartOf="@id/lngLabel"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        android:textStyle="bold"
+        android:text="@string/latitude" />
+
+    <TextView
+        android:id="@+id/lngLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin"
+        app:layout_constraintTop_toBottomOf="@+id/stationNameTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/latLabel"
+        android:textStyle="bold"
+        android:text="@string/longitude" />
+
+    <TextView
+        android:id="@+id/latitudeTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
+        app:layout_constraintTop_toBottomOf="@+id/latLabel"
+        app:layout_constraintEnd_toStartOf="@id/longitudeTextView"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        tools:text="47.00" />
+
+    <TextView
+        android:id="@+id/longitudeTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
+        app:layout_constraintTop_toBottomOf="@+id/lngLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/latitudeTextView"
+        tools:text="-122.0" />
+
+    <TextView
+        android:id="@+id/stationTzLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin"
+        app:layout_constraintTop_toBottomOf="@+id/longitudeTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        android:textStyle="bold"
+        android:text="@string/time_zone" />
+
+    <TextView
+        android:id="@+id/stationTzTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/half_margin"
+        app:layout_constraintTop_toBottomOf="@+id/stationTzLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        tools:text="Pacific" />
 
 </android.support.constraint.ConstraintLayout>

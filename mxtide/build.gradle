@@ -62,5 +62,5 @@ dependencies {
     /**
      * Joda Time
      */
-    implementation "joda-time:joda-time:$joda_time_version"
+    api "joda-time:joda-time:$joda_time_version"
 }
