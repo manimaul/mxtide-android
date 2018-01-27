@@ -36,8 +36,7 @@ class StationListView : FrameLayout {
 
     fun apply(station: IStation) {
         stationNameTextView.text = station.name
-        latitudeTextView.text = "${station.latitude}"
-        longitudeTextView.text = "${station.longitude}"
+        positionTextView.text = "${station.latitude}, ${station.longitude}"
         station.timeZone.toTimeZone()?.displayName?.let {
             stationTzLabel.visibility = View.VISIBLE
             stationTzTextView.visibility = View.VISIBLE
@@ -52,16 +51,24 @@ class StationListView : FrameLayout {
             Entry(hours, it.value)
         }
         val lineDataSet = LineDataSet(entries, "Feet")
-        lineDataSet.setColors(intArrayOf(R.color.colorAccent), context)
+        val color = ContextCompat.getColor(context, R.color.tideColor)
+        lineDataSet.setDrawValues(false)
+        lineDataSet.setColors(color)
         lineDataSet.setDrawCircles(false)
         lineDataSet.setDrawFilled(true)
-        lineDataSet.fillColor = ContextCompat.getColor(context, R.color.colorAccent)
+        lineDataSet.fillColor = color
         lineDataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
         val lineData = LineData(lineDataSet)
         lineChart.data = lineData
         lineChart.xAxis.granularity = 2.0f
+        lineChart.legend.isEnabled = false
         lineChart.xAxis.setValueFormatter { value, axis ->
-            "${value.toInt()}h"
+            val hr = value.toInt()
+            if (hr > 12) {
+                "${hr - 12}pm"
+            } else {
+                "${value.toInt()}am"
+            }
         }
 
         lineChart.description = description

@@ -58,7 +58,7 @@ class StationTest {
         val timeZone = DateTimeZone.forID("America/Los_Angeles")
         val date = DateTime(2017, 12, 17, 14,
                 56,0, timeZone)
-        val prediction = subject.getPredictionRaw(date, duration, MeasureUnit.FEET)
+        val prediction = subject.getPredictionRaw(date, duration, MeasureUnit.STATUTE)
         assertTrue(prediction.isNotEmpty())
         assertEquals(timeZone, prediction.first().date.zone)
     }
@@ -69,7 +69,7 @@ class StationTest {
         val timeZone = DateTimeZone.forID("America/Los_Angeles")
         val date = DateTime(2017, 12, 17, 14,
                 56,0, timeZone)
-        val prediction = subject.getPredictionPlain(date, duration, MeasureUnit.FEET)
+        val prediction = subject.getPredictionPlain(date, duration, MeasureUnit.STATUTE)
         assertTrue(prediction.isNotEmpty())
         assertEquals(timeZone, prediction.first().date.zone)
     }
@@ -79,7 +79,7 @@ class StationTest {
         val duration = Duration.standardHours(24)
         val date = DateTime(2017, 12, 17, 14,
                 56,0, DateTimeZone.forID("America/Los_Angeles"))
-        val prediction = subject.getPredictionClockSVG(date, duration, MeasureUnit.FEET)
+        val prediction = subject.getPredictionClockSVG(date, duration, MeasureUnit.STATUTE)
         assertTrue(prediction.isNotEmpty())
     }
 

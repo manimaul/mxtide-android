@@ -98,8 +98,8 @@ internal class TidesAndCurrents : ITidesAndCurrents {
                                       measureUnit: MeasureUnit,
                                       type: StationType): List<IStation> {
         val radiusMeters = when(measureUnit) {
-            MeasureUnit.METERS -> radius
-            MeasureUnit.FEET -> radius * 0.3048
+            MeasureUnit.METRIC -> radius
+            MeasureUnit.NAUTICAL, MeasureUnit.STATUTE -> radius * 0.3048
         }
         return findStationsInCircle(nativePtr, lat, lng, radiusMeters, type.nativeStringValue)?.map {
             Station(it)

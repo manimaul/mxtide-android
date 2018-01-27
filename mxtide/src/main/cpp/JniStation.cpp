@@ -5,6 +5,16 @@
 #include "JniArrayList.h"
 #include "JniStationPrediction.h"
 
+static mdr::MeasureUnit measureUnitFromString(std::string &str) {
+    if (str == "METRIC") {
+        return mdr::MeasureUnit::metric;
+    } else if (str == "STATUTE") {
+        return mdr::MeasureUnit::statute;
+    } else {
+        return mdr::MeasureUnit::nautical;
+    }
+}
+
 extern "C" {
 
 JNIEXPORT jdouble JNICALL
@@ -61,7 +71,7 @@ Java_com_mxmariner_mxtide_internal_Station_getPredictionRaw(JNIEnv *env,
     auto dur = DurationSeconds(duration);
     TimePoint timePoint{DurationSeconds(epoch)};
     auto unitsStr = mdr::JniString::fromJni(env, units);
-    auto measureUnit = mdr::MeasureUnitFromString(unitsStr);
+    auto measureUnit = measureUnitFromString(unitsStr);
     auto prediction = station->getPredictionRaw(timePoint, dur, measureUnit);
     auto jniPredictionList = mdr::JniArrayList(env, prediction.size());
     auto tz = station->timeZone();
@@ -87,7 +97,7 @@ Java_com_mxmariner_mxtide_internal_Station_getPredictionPlain(JNIEnv *env,
     auto dur = DurationSeconds(duration);
     TimePoint timePoint{DurationSeconds(epoch)};
     auto unitsStr = mdr::JniString::fromJni(env, units);
-    auto measureUnit = mdr::MeasureUnitFromString(unitsStr);
+    auto measureUnit = measureUnitFromString(unitsStr);
     auto prediction = station->getPredictionPlain(timePoint, dur, measureUnit);
     auto jniPredictionList = mdr::JniArrayList(env, prediction.size());
     auto tz = station->timeZone();
@@ -113,7 +123,7 @@ Java_com_mxmariner_mxtide_internal_Station_getPredictionClockSVG(JNIEnv *env,
     auto dur = DurationSeconds(duration);
     TimePoint timePoint{DurationSeconds(epoch)};
     auto unitsStr = mdr::JniString::fromJni(env, units);
-    auto measureUnit = mdr::MeasureUnitFromString(unitsStr);
+    auto measureUnit = measureUnitFromString(unitsStr);
     auto svg = station->getPredictionClockSVG(timePoint, dur, measureUnit);
     return mdr::JniString::toJni(env, svg);
 }

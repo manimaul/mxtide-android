@@ -62,11 +62,11 @@ class TidesAndCurrentsTest {
     @Test
     fun findStationsInCircle() {
         val tideStations = subject.findStationsInCircle(47.0, -122.0, 100000.0,
-                MeasureUnit.METERS, StationType.TIDES)
+                MeasureUnit.METRIC, StationType.TIDES)
         assertTrue(tideStations.isNotEmpty())
 
         val currentStations = subject.findStationsInCircle(47.0, -122.0, 100000.0,
-                MeasureUnit.METERS, StationType.CURRENTS)
+                MeasureUnit.METRIC, StationType.CURRENTS)
         assertTrue(currentStations.isNotEmpty())
     }
 
