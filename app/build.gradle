@@ -19,8 +19,19 @@ android {
 
     buildTypes {
         release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+        debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+
+    splits {
+        abi {
+            enable true
+            universalApk false
         }
     }
 }
@@ -40,6 +51,7 @@ dependencies {
     implementation "com.android.support:design:$android_support_version"
     implementation "com.android.support:support-v13:$android_support_version"
     implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
+    implementation "com.android.support:preference-v14:$android_support_version"
 
     /**
      * Android Architectural Components

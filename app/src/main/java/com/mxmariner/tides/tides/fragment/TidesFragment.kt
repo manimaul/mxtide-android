@@ -3,6 +3,7 @@ package com.mxmariner.tides.tides.fragment
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DividerItemDecoration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +21,8 @@ import javax.inject.Inject
 
 class TidesFragment : Fragment() {
 
-    @Inject lateinit var viewModelFactory: TidesViewModelFactory
+    @Inject
+    lateinit var viewModelFactory: TidesViewModelFactory
     private val viewModel: TidesViewModel by lazy {
         ViewModelProviders.of(this, viewModelFactory).get(TidesViewModel::class.java)
     }
@@ -39,6 +41,7 @@ class TidesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         recyclerView.adapter = viewModel.recyclerAdapter
+        recyclerView.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
         compositeDisposable.add(viewModel.viewState()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy {
@@ -46,7 +49,7 @@ class TidesFragment : Fragment() {
                         is TidesViewStateLoadingStarted -> loadingStarted(it.message)
                         is TidesViewStateLoadingComplete -> loadingComplete(it.errorMessage)
                     }
-        })
+                })
     }
 
     private fun loadingStarted(message: String?) {

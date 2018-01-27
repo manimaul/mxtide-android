@@ -2,115 +2,113 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="@dimen/double_margin">
+    android:layout_margin="@dimen/default_margin"
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/startColumn"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/half_margin"
-        android:src="@drawable/ic_tide"
+        android:layout_marginStart="@dimen/default_margin"
+        android:layout_marginTop="@dimen/default_margin"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/lineChart"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/nameLabel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/half_margin"
-        android:text="@string/name"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/lineChart"
-        app:layout_constraintStart_toStartOf="@id/imageView"
-        app:layout_constraintTop_toBottomOf="@id/imageView" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_tide" />
 
-    <TextView
-        android:id="@+id/stationNameTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@id/nameLabel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nameLabel"
-        tools:text="Des Moines, East Passage, Puget Sound Washington" />
+        <TextView
+            android:id="@+id/nameLabel"
+            style="@style/TitleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin"
+            android:text="@string/name"/>
+
+        <TextView
+            android:id="@+id/stationNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Des Moines, East Passage" />
+
+        <TextView
+            android:id="@+id/positionLabel"
+            style="@style/TitleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin"
+            android:text="@string/position"
+            app:layout_constraintEnd_toEndOf="@id/nameLabel"
+            app:layout_constraintStart_toStartOf="@+id/imageView"
+            app:layout_constraintTop_toBottomOf="@+id/stationNameTextView" />
+
+        <TextView
+            android:id="@+id/positionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            tools:text="47.00, -122.0" />
+
+        <TextView
+            android:id="@+id/stationTzLabel"
+            style="@style/TitleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/default_margin"
+            android:text="@string/time_zone" />
+
+        <TextView
+            android:id="@+id/stationTzTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/half_margin"
+            tools:text="Pacific" />
+    </LinearLayout>
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/lineChart"
-        android:layout_width="120dp"
-        android:layout_height="match_parent"
+        android:layout_width="136dp"
+        android:layout_height="256dp"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_margin"
+        app:layout_constraintBottom_toTopOf="@id/detailsButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/mapButton"
+        style="@style/TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/map"
+        android:visibility="invisible"
+        app:layout_constraintBaseline_toBaselineOf="@id/detailsButton"
+        app:layout_constraintEnd_toStartOf="@+id/detailsButton" />
+
+    <TextView
+        android:id="@+id/detailsButton"
+        style="@style/TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="@dimen/default_margin"
         android:layout_marginStart="8dp"
+        android:text="@string/details"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/latLabel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/default_margin"
-        android:text="@string/latitude"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/nameLabel"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/stationNameTextView" />
-
-
-    <TextView
-        android:id="@+id/latitudeTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/half_margin"
-        app:layout_constraintEnd_toEndOf="@id/nameLabel"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/latLabel"
-        tools:text="47.00" />
-
-    <TextView
-        android:id="@+id/lngLabel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/half_margin"
-        android:layout_marginTop="@dimen/default_margin"
-        android:text="@string/longitude"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/nameLabel"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/latitudeTextView" />
-
-    <TextView
-        android:id="@+id/longitudeTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/half_margin"
-        android:layout_marginTop="@dimen/half_margin"
-        app:layout_constraintEnd_toEndOf="@id/nameLabel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lngLabel"
-        tools:text="-122.0" />
-
-    <TextView
-        android:id="@+id/stationTzLabel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/half_margin"
-        android:layout_marginTop="@dimen/default_margin"
-        android:text="@string/time_zone"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@id/nameLabel"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/longitudeTextView" />
-
-    <TextView
-        android:id="@+id/stationTzTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/half_margin"
-        android:layout_marginTop="@dimen/half_margin"
-        app:layout_constraintEnd_toEndOf="@id/nameLabel"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/stationTzLabel"
-        tools:text="Pacific" />
+        app:layout_constraintTop_toBottomOf="@+id/lineChart" />
 
 </android.support.constraint.ConstraintLayout>

@@ -8,6 +8,24 @@
         <item name="colorAccent">@color/colorAccent</item>
 
         <item name="android:navigationBarColor">@color/colorPrimary</item>
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+    </style>
+    
+    <style name="TitleText">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextButton">
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:paddingTop">@dimen/default_margin</item>
+        <item name="android:paddingBottom">@dimen/default_margin</item>
+        <item name="android:paddingStart">@dimen/double_margin</item>
+        <item name="android:paddingEnd">@dimen/double_margin</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:clickable">true</item>
     </style>
 
 </resources>

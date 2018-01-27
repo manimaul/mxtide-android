@@ -2,7 +2,9 @@
 <resources>
     <color name="colorPrimary">#148271</color>
     <color name="colorPrimaryDark">#0e5b4f</color>
-    <color name="colorAccent">#142482</color>
-    <color name="colorAccent2">#1d8214</color>
+    <color name="colorAccent">#BF1A2F</color>
+    <color name="tideColor">#454E9E</color>
+    <color name="currentColor">#E53D00</color>
     <color name="white">#fff</color>
+    <color name="black">#000</color>
 </resources>

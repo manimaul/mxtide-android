@@ -46,8 +46,8 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         PerfTimer.markEventStop("Between")
         PerfTimer.markEventStart("MainActivity.onCreate()")
 
-        super.onCreate(savedInstanceState)
         AndroidInjection.inject(this)
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         navigation.setOnNavigationItemSelectedListener(bottomNavigationHandler)
 
