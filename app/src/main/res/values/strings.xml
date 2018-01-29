@@ -11,27 +11,12 @@
     <string name="name">Name</string>
     <string name="position">Position</string>
     <string name="time_zone">Time Zone</string>
-    <string name="pref_measure_units_title">Measurements</string>
-    <string name="title_tide_level">Tide Prediction Levels</string>
-    <string name="summary_tide_level">Tide prediction measurements</string>
+    <string name="details">details</string>
 
     <string name="feet">Feet</string>
     <string name="meters">Meters</string>
-    <string name="title_current_level">Current Prediction Speeds</string>
-    <array name="measure_units_level">
-        <item>@string/feet</item>
-        <item>@string/meters</item>
-    </array>
-
-    <string name="kts">Kts</string>
-    <string name="kph">Kph</string>
-    <string name="mph">Mph</string>
-    <array name="measure_units_speed">
-        <item>@string/kts</item>
-        <item>@string/kph</item>
-        <item>@string/mph</item>
-    </array>
-
-    <string name="details">details</string>
+    <string name="kts">Knots</string>
+    <string name="kph">Kilometers Per Hour</string>
+    <string name="mph">Miles Per Hour</string>
 
 </resources>

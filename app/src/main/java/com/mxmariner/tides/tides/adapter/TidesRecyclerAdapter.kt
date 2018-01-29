@@ -3,11 +3,14 @@ package com.mxmariner.tides.tides.adapter
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import com.mxmariner.mxtide.api.IStation
+import com.mxmariner.tides.settings.Preferences
 import com.mxmariner.tides.tides.view.TideStationListViewHolder
+import org.joda.time.DateTime
+import org.joda.time.Duration
 import javax.inject.Inject
 
 
-class TidesRecyclerAdapter @Inject constructor() : RecyclerView.Adapter<TideStationListViewHolder>() {
+class TidesRecyclerAdapter @Inject constructor(private val preferences: Preferences) : RecyclerView.Adapter<TideStationListViewHolder>() {
 
     private val stationList = ArrayList<IStation>()
 
@@ -20,7 +23,8 @@ class TidesRecyclerAdapter @Inject constructor() : RecyclerView.Adapter<TideStat
     }
 
     override fun onBindViewHolder(holder: TideStationListViewHolder?, position: Int) {
-        holder?.apply(stationList[position])
+        val prediction = stationList[position].getPredictionRaw(DateTime.now().minusHours(3), Duration.standardHours(6), preferences.predictionLevels)
+        holder?.apply(stationList[position], prediction)
     }
 
     fun add(stations: List<IStation>) {

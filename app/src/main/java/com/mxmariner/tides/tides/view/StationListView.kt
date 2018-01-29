@@ -11,11 +11,9 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.mxmariner.mxtide.api.IStation
-import com.mxmariner.mxtide.api.MeasureUnit
+import com.mxmariner.mxtide.api.IStationPrediction
 import com.mxmariner.tides.R
 import kotlinx.android.synthetic.main.station_list_view.view.*
-import org.joda.time.DateTime
-import org.joda.time.Duration
 
 
 class StationListView : FrameLayout {
@@ -28,25 +26,23 @@ class StationListView : FrameLayout {
 
     init {
         LayoutInflater.from(context).inflate(R.layout.station_list_view, this, true)
-        if (isInEditMode) {
-            stationNameTextView.text = "Des Moines, East Passage, Puget Sound Washington"
-        }
         description.text = ""
     }
 
-    fun apply(station: IStation) {
-        stationNameTextView.text = station.name
-        positionTextView.text = "${station.latitude}, ${station.longitude}"
+    fun apply(station: IStation, prediction: List<IStationPrediction<Float>>) {
+        stationName.text = station.name
+        position.text = "${station.latitude}, ${station.longitude}"
         station.timeZone.toTimeZone()?.displayName?.let {
-            stationTzLabel.visibility = View.VISIBLE
-            stationTzTextView.visibility = View.VISIBLE
-            stationTzTextView.text = it
+            stationTimeZoneTitle.visibility = View.VISIBLE
+            stationTimeZone.visibility = View.VISIBLE
+            stationTimeZone.text = it
         } ?: {
-            stationTzLabel.visibility = View.GONE
-            stationTzTextView.visibility = View.GONE
+            stationTimeZoneTitle.visibility = View.GONE
+            stationTimeZone.visibility = View.GONE
         }()
 
-        val entries = station.getPredictionRaw(DateTime.now().minusHours(3), Duration.standardHours(6), MeasureUnit.FEET).map {
+        val entries = prediction.map {
+            //todo: convert to seconds for spanning midnight
             val hours = it.date.hourOfDay.toFloat() + it.date.minuteOfHour.toFloat() / 60.0f
             Entry(hours, it.value)
         }
@@ -62,7 +58,7 @@ class StationListView : FrameLayout {
         lineChart.data = lineData
         lineChart.xAxis.granularity = 2.0f
         lineChart.legend.isEnabled = false
-        lineChart.xAxis.setValueFormatter { value, axis ->
+        lineChart.xAxis.setValueFormatter { value, _ ->
             val hr = value.toInt()
             if (hr > 12) {
                 "${hr - 12}pm"

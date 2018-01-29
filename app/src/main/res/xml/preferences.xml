@@ -2,24 +2,23 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="@string/pref_measure_units_title"
-        android:key="pref_key_storage_settings">
+        android:title="@string/pref_measure_units_title">
         <ListPreference
-            android:key="pref_tide_level"
+            android:key="@string/PREF_KEY_TIDE_LEVEL"
             android:title="@string/title_tide_level"
             android:summary="%s"
-            android:entries="@array/measure_units_level"
-            android:entryValues="@array/measure_units_level"
-            android:defaultValue="@string/meters"
+            android:entries="@array/measure_units_level_entries"
+            android:entryValues="@array/MEASURE_UNITS_LEVEL_VALUES"
+            android:defaultValue="@string/METRIC"
             android:dialogTitle="@string/title_tide_level" />
 
         <ListPreference
-            android:key="pref_current_level"
+            android:key="@string/PREF_KEY_CURRENT_SPEED"
             android:title="@string/title_current_level"
             android:summary="%s"
-            android:entries="@array/measure_units_speed"
-            android:entryValues="@array/measure_units_speed"
-            android:defaultValue="@string/kph"
+            android:entries="@array/measure_units_speed_entries"
+            android:entryValues="@array/MEASURE_UNITS_SPEED_VALUES"
+            android:defaultValue="@string/METRIC"
             android:dialogTitle="@string/title_current_level" />
     </PreferenceCategory>
 

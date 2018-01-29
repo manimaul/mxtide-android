@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Measurements -->
+    <string name="pref_measure_units_title">Measurements</string>
+
+    <!-- MeasureUnit enum -->
+    <string name="METRIC">METRIC</string>
+    <string name="STATUTE">STATUTE</string>
+    <string name="NAUTICAL">NAUTICAL</string>
+
+    <!--Tide Level -->
+    <string name="PREF_KEY_TIDE_LEVEL">PREF_KEY_TIDE_LEVEL</string>
+    <string name="title_tide_level">Tide Predictions Measurement Levels</string>
+    <array name="measure_units_level_entries">
+        <item>@string/meters</item>
+        <item>@string/feet</item>
+    </array>
+    <array name="MEASURE_UNITS_LEVEL_VALUES">
+        <item>@string/METRIC</item>
+        <item>@string/STATUTE</item>
+    </array>
+
+    <!-- Current Level -->
+    <string name="PREF_KEY_CURRENT_SPEED">PREF_KEY_CURRENT_SPEED</string>
+    <string name="title_current_level">Current Predictions Measurement Speed</string>
+    <array name="measure_units_speed_entries">
+        <item>@string/kph</item>
+        <item>@string/mph</item>
+        <item>@string/kts</item>
+    </array>
+    <array name="MEASURE_UNITS_SPEED_VALUES">
+        <item>@string/METRIC</item>
+        <item>@string/STATUTE</item>
+        <item>@string/NAUTICAL</item>
+    </array>
+
+</resources>

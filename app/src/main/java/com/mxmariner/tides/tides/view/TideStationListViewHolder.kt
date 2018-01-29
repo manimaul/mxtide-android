@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mxmariner.mxtide.api.IStation
+import com.mxmariner.mxtide.api.IStationPrediction
 import com.mxmariner.tides.R
 
 private fun inflateView(parent: ViewGroup) : View {
@@ -19,7 +20,7 @@ class TideStationListViewHolder(
         itemView.findViewById<StationListView>(R.id.stationListView)
     }
 
-    fun apply(station: IStation) {
-        stationListView.apply(station)
+    fun apply(station: IStation, prediction: List<IStationPrediction<Float>>) {
+        stationListView.apply(station, prediction)
     }
 }
