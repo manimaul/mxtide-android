@@ -23,7 +23,8 @@ class TidesRecyclerAdapter @Inject constructor(private val preferences: Preferen
     }
 
     override fun onBindViewHolder(holder: TideStationListViewHolder?, position: Int) {
-        val prediction = stationList[position].getPredictionRaw(DateTime.now().minusHours(3), Duration.standardHours(6), preferences.predictionLevels)
+        val prediction = stationList[position].getPredictionRaw(DateTime.now().minusHours(3),
+                Duration.standardHours(6), preferences.predictionLevels)
         holder?.apply(stationList[position], prediction)
     }
 

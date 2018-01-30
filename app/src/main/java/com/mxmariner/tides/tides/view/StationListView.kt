@@ -13,6 +13,8 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.IStationPrediction
 import com.mxmariner.tides.R
+import com.mxmariner.tides.main.extensions.hoursToDateTime
+import com.mxmariner.tides.main.extensions.unixTimeHours
 import kotlinx.android.synthetic.main.station_list_view.view.*
 
 
@@ -42,11 +44,10 @@ class StationListView : FrameLayout {
         }()
 
         val entries = prediction.map {
-            //todo: convert to seconds for spanning midnight
-            val hours = it.date.hourOfDay.toFloat() + it.date.minuteOfHour.toFloat() / 60.0f
+            val hours = it.date.unixTimeHours
             Entry(hours, it.value)
         }
-        val lineDataSet = LineDataSet(entries, "Feet")
+        val lineDataSet = LineDataSet(entries, "")
         val color = ContextCompat.getColor(context, R.color.tideColor)
         lineDataSet.setDrawValues(false)
         lineDataSet.setColors(color)
@@ -58,15 +59,15 @@ class StationListView : FrameLayout {
         lineChart.data = lineData
         lineChart.xAxis.granularity = 2.0f
         lineChart.legend.isEnabled = false
+        val timeZone = station.timeZone
         lineChart.xAxis.setValueFormatter { value, _ ->
-            val hr = value.toInt()
-            if (hr > 12) {
-                "${hr - 12}pm"
-            } else {
-                "${value.toInt()}am"
+            val hr = value.hoursToDateTime(timeZone).hourOfDay
+            when {
+                hr == 0 -> "12 am"
+                hr > 12 -> "${hr - 12}pm"
+                else -> "${hr}am"
             }
         }
-
         lineChart.description = description
         lineChart.setTouchEnabled(false)
         lineChart.invalidate()
