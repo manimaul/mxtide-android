@@ -10,11 +10,10 @@ import com.github.mikephil.charting.components.Description
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.mxmariner.mxtide.api.IStation
-import com.mxmariner.mxtide.api.IStationPrediction
 import com.mxmariner.tides.R
 import com.mxmariner.tides.main.extensions.hoursToDateTime
 import com.mxmariner.tides.main.extensions.unixTimeHours
+import com.mxmariner.tides.tides.model.StationListViewPresentation
 import kotlinx.android.synthetic.main.station_list_view.view.*
 
 
@@ -31,10 +30,10 @@ class StationListView : FrameLayout {
         description.text = ""
     }
 
-    fun apply(station: IStation, prediction: List<IStationPrediction<Float>>) {
-        stationName.text = station.name
-        position.text = "${station.latitude}, ${station.longitude}"
-        station.timeZone.toTimeZone()?.displayName?.let {
+    fun apply(presentation: StationListViewPresentation, selection: () -> Unit) {
+        stationName.text = presentation.name
+        position.text = presentation.position
+        presentation.timeZone.toTimeZone()?.displayName?.let {
             stationTimeZoneTitle.visibility = View.VISIBLE
             stationTimeZone.visibility = View.VISIBLE
             stationTimeZone.text = it
@@ -43,7 +42,7 @@ class StationListView : FrameLayout {
             stationTimeZone.visibility = View.GONE
         }()
 
-        val entries = prediction.map {
+        val entries = presentation.prediction.map {
             val hours = it.date.unixTimeHours
             Entry(hours, it.value)
         }
@@ -59,7 +58,7 @@ class StationListView : FrameLayout {
         lineChart.data = lineData
         lineChart.xAxis.granularity = 2.0f
         lineChart.legend.isEnabled = false
-        val timeZone = station.timeZone
+        val timeZone = presentation.timeZone
         lineChart.xAxis.setValueFormatter { value, _ ->
             val hr = value.hoursToDateTime(timeZone).hourOfDay
             when {
@@ -71,5 +70,6 @@ class StationListView : FrameLayout {
         lineChart.description = description
         lineChart.setTouchEnabled(false)
         lineChart.invalidate()
+        detailsButton.setOnClickListener { selection() }
     }
 }
