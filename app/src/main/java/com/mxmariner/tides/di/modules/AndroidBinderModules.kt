@@ -18,7 +18,8 @@ internal interface ActivityBinderModule {
     @ActivityScope
     @ContributesAndroidInjector(modules = [ActivityAndroidModule::class,
         FragmentBinderModule::class,
-        ActivityImplementationModule::class])
+        ActivityAndroidModule::class,
+        ActivityImplementationBinderModule::class])
     fun mainActivity(): MainActivity
 
     @Binds
