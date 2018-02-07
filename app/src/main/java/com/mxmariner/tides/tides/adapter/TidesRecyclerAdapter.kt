@@ -3,13 +3,16 @@ package com.mxmariner.tides.tides.adapter
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import com.mxmariner.mxtide.api.IStation
+import com.mxmariner.tides.main.routing.RouteStationDetails
+import com.mxmariner.tides.main.routing.Router
 import com.mxmariner.tides.tides.StationListViewPresentationFactory
 import com.mxmariner.tides.tides.view.TideStationListViewHolder
 import javax.inject.Inject
 
 
 class TidesRecyclerAdapter @Inject constructor(
-        private val presentationFactory: StationListViewPresentationFactory
+        private val presentationFactory: StationListViewPresentationFactory,
+        private val router: Router
 ) : RecyclerView.Adapter<TideStationListViewHolder>() {
 
     private val stationList = ArrayList<IStation>()
@@ -23,8 +26,10 @@ class TidesRecyclerAdapter @Inject constructor(
     }
 
     override fun onBindViewHolder(holder: TideStationListViewHolder?, position: Int) {
-        holder?.apply(presentationFactory.createPresentation(stationList[position])) {
-
+        val station = stationList[position]
+        val name = station.name
+        holder?.apply(presentationFactory.createPresentation(station)) {
+            router.routeTo(RouteStationDetails(name))
         }
     }
 

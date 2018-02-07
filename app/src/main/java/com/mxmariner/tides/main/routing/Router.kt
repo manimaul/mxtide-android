@@ -1,41 +1,51 @@
 package com.mxmariner.tides.main.routing
 
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
-import io.reactivex.Single
-import java.io.Serializable
+import com.mxmariner.tides.main.extensions.addParams
+import javax.inject.Inject
 
-const val baseUri = "https://tides.mxmariner.com"
+const val authority = "tides.mxmariner.com"
+const val scheme = "https"
+const val routerIntentAction = "$authority.ACTION_ROUTE"
 
-
-abstract class Route<out T : Serializable>(
+abstract class Route(
         private val uriPath: String,
-        val value: T? = null
+        private val params: Map<Any, Any>? = null
 ) {
     val uri: Uri by lazy {
         Uri.Builder()
-                .scheme("https")
-                .authority("tides.mxmariner.com")
+                .scheme(scheme)
+                .authority(authority)
                 .path(uriPath)
+                .addParams(params)
                 .build()
     }
 }
 
-object MainActivityRoutes {
-    class NearbyTides : Route<Serializable>("/main/nearby_tides")
-    class NearbyCurrents : Route<Serializable>("/main/nearby_tides")
-    class Map : Route<Serializable>("/main/map")
-    class Settings : Route<Serializable>("/main/settings")
-    class StationDetails : Route<Serializable>("details/station")
-}
+// region MainActivity
 
-interface Router {
-    fun <T : Serializable> routeTo(route: Route<T>)
-    fun <T : Serializable, R> routeToForResult(route: Route<T>): Single<R>
-    fun back()
-}
+class RouteNearbyTides : Route("/main/nearby_tides")
+class RouteNearbyCurrents : Route("/main/nearby_currents")
+class RouteMap : Route("/main/map")
+class RouteSettings : Route("/main/settings")
 
-class EmptyRouter : Router {
-    override fun <T : Serializable> routeTo(route: Route<T>) = Unit
-    override fun <T : Serializable, R> routeToForResult(route: Route<T>): Single<R> = Single.error(Throwable("Router Not Implemented"))
-    override fun back() = Unit
+// endregion
+
+
+// region DetailsActivity
+
+class RouteStationDetails(stationName: String) : Route("/details/station", mapOf("stationName" to stationName))
+
+// endregion
+
+class Router @Inject constructor(
+        private val activity: Activity
+) {
+
+    fun routeTo(route: Route) {
+        val intent = Intent(routerIntentAction, route.uri)
+        activity.startActivityIfNeeded(intent, 0)
+    }
 }

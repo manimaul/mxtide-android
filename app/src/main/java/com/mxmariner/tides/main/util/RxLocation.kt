@@ -32,13 +32,13 @@ class RxLocationImpl @Inject constructor(private val context: Context,
     override fun singleRecentLocationPermissionResult(): Single<LocationPermissionResult> {
         return locationPermission().flatMap { isPermissionGranted ->
             if (isPermissionGranted) {
-                recentLocation().map {
+                recentLocation().map<LocationPermissionResult> {
                     LocationResultPermission(it)
-                }
+                }.timeout(5, TimeUnit.SECONDS, Single.just(LocationResultTimeOut()))
             } else {
                 Single.just(LocationResultNoPermission())
             }
-        }.timeout(5, TimeUnit.SECONDS, Single.just(LocationResultTimeOut()))
+        }
     }
 
     private fun locationPermission(): Single<Boolean> {
@@ -53,12 +53,16 @@ class RxLocationImpl @Inject constructor(private val context: Context,
     @SuppressLint("MissingPermission")
     private fun recentLocation(): Single<Location> {
         return Single.create { emitter ->
-            locationManager.requestSingleUpdate(Criteria(), object : LocationListener {
-                override fun onLocationChanged(location: Location) = emitter.onSuccess(location)
-                override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-                override fun onProviderEnabled(provider: String?) {}
-                override fun onProviderDisabled(provider: String?) {}
-            }, null)
+            val location = Location("fake")
+            location.latitude = 47.0
+            location.longitude = -122.0
+            emitter.onSuccess(location)
+//            locationManager.requestSingleUpdate(Criteria(), object : LocationListener {
+//                override fun onLocationChanged(location: Location) = emitter.onSuccess(location)
+//                override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+//                override fun onProviderEnabled(provider: String?) {}
+//                override fun onProviderDisabled(provider: String?) {}
+//            }, null)
         }
     }
 }
