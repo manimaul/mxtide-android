@@ -12,9 +12,6 @@ android {
         targetSdkVersion sdk_version
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -37,53 +34,11 @@ android {
 }
 
 dependencies {
-    implementation project(":mxtide")
-
     /**
      * Kotlin
      */
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation project(':details')
+    implementation project(':base')
 
-    /**
-     * Support Libraries
-     */
-    implementation "com.android.support:appcompat-v7:$android_support_version"
-    implementation "com.android.support:design:$android_support_version"
-    implementation "com.android.support:support-v13:$android_support_version"
-    implementation "com.android.support.constraint:constraint-layout:$constraint_layout_version"
-    implementation "com.android.support:preference-v14:$android_support_version"
-
-    /**
-     * Android Architectural Components
-     */
-    implementation "android.arch.lifecycle:extensions:1.1.0"
-    kapt "android.arch.lifecycle:compiler:1.1.0"
-
-    /**
-     * Testing
-     */
-    testImplementation "junit:junit:$junit_version"
-    androidTestImplementation "com.android.support.test:runner:1.0.1"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_version"
-
-    /**
-     * Rx
-     */
-    implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
-    implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
-    implementation "io.reactivex.rxjava2:rxandroid:$rx_android_version"
-
-    /**
-     * Chart UI
-     */
-    implementation "com.github.PhilJay:MPAndroidChart:v3.0.3"
-
-    /**
-     * Dagger
-     */
-    String dagger_version = "2.12"
-    implementation "com.google.dagger:dagger-android:$dagger_version"
-    implementation "com.google.dagger:dagger-android-support:$dagger_version"
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
-    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
 }
