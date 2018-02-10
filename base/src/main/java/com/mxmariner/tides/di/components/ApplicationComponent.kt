@@ -2,6 +2,7 @@ package com.mxmariner.tides.di.components
 
 import android.app.Application
 import com.mxmariner.tides.di.modules.ActivityBinderModule
+import com.mxmariner.tides.di.modules.ActivityModule
 import com.mxmariner.tides.di.modules.AndroidModule
 import com.mxmariner.tides.di.modules.ImplementationModule
 import com.mxmariner.tides.main.application.MxTidesApplication
@@ -13,6 +14,7 @@ import javax.inject.Singleton
 @Component(modules = [
     AndroidModule::class,
     ActivityBinderModule::class,
+    ActivityModule::class,
     ImplementationModule::class
 ])
 internal interface ApplicationComponent {

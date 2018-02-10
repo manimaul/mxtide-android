@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import com.mxmariner.tides.R
-import dagger.android.AndroidInjection
+import com.mxmariner.tides.di.Injector
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
@@ -25,7 +25,7 @@ class DetailsActivity : AppCompatActivity(), HasSupportFragmentInjector {
     //region AppCompatActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
+        Injector.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
     }

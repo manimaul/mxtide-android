@@ -2,6 +2,7 @@ package com.mxmariner.tides.main.application
 
 import android.app.Activity
 import android.app.Application
+import com.mxmariner.tides.di.Injector
 import com.mxmariner.tides.di.components.DaggerApplicationComponent
 import com.mxmariner.tides.main.repository.HarmonicsRepo
 import com.mxmariner.tides.main.util.PerfTimer
@@ -25,6 +26,7 @@ class MxTidesApplication : Application(), HasActivityInjector {
                 .build()
                 .inject(this)
 
+        registerActivityLifecycleCallbacks(Injector)
         harmonicsRepo.initializeAsync()
 
         PerfTimer.markEventStop("MxTidesApplication.onCreate()")

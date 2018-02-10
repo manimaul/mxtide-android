@@ -21,22 +21,28 @@
             android:label="@string/app_name">
             <intent-filter android:order="1">
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data
                     android:host="tides.mxmariner.com"
-                    android:pathPattern="/.*"
+                    android:pathPattern="/"
                     android:scheme="https" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".details.activity.DetailsActivity" />
+        <activity android:name=".details.activity.DetailsActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                    android:host="tides.mxmariner.com"
+                    android:pathPrefix="/details/station" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

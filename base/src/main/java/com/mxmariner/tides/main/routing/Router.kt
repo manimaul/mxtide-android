@@ -45,7 +45,7 @@ class Router @Inject constructor(
 ) {
 
     fun routeTo(route: Route) {
-        val intent = Intent(routerIntentAction, route.uri)
+        val intent = Intent("android.intent.action.VIEW", route.uri)
         activity.startActivityIfNeeded(intent, 0)
     }
 }

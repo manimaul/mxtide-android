@@ -9,12 +9,12 @@ import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.mxmariner.tides.R
 import com.mxmariner.tides.currents.fragment.CurrentsFragment
+import com.mxmariner.tides.di.Injector
 import com.mxmariner.tides.main.routing.routerIntentAction
 import com.mxmariner.tides.main.util.PerfTimer
 import com.mxmariner.tides.map.fragment.MapFragment
 import com.mxmariner.tides.settings.fragment.SettingsFragment
 import com.mxmariner.tides.tides.fragment.TidesFragment
-import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.support.HasSupportFragmentInjector
@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), HasSupportFragmentInjector {
         PerfTimer.markEventStop("Between")
         PerfTimer.markEventStart("MainActivity.onCreate()")
 
-        AndroidInjection.inject(this)
+        Injector.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         navigation.setOnNavigationItemSelectedListener(bottomNavigationHandler)
