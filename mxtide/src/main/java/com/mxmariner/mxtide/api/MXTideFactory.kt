@@ -7,5 +7,3 @@ object MXTideFactory {
     fun createTidesAndCurrents(): ITidesAndCurrents = TidesAndCurrents()
 
 }
-
-

@@ -1,7 +1,4 @@
 apply plugin: "com.android.application"
-apply plugin: "kotlin-android"
-apply plugin: "kotlin-android-extensions"
-apply plugin: "kotlin-kapt"
 
 android {
     compileSdkVersion sdk_version
@@ -10,35 +7,24 @@ android {
         applicationId "com.mxmariner.tides"
         minSdkVersion min_sdk_version
         targetSdkVersion sdk_version
-        versionCode 1
-        versionName "1.0"
+        versionCode version_code
+        versionName version_name
     }
 
     buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        }
+       release {
+           minifyEnabled false
+           proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+       }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
-
-    splits {
-        abi {
-            enable true
-            universalApk false
-        }
-    }
 }
 
 dependencies {
-    /**
-     * Kotlin
-     */
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation project(':details')
+    implementation project(':station')
+    implementation project(':main')
     implementation project(':base')
-
 }

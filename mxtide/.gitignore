@@ -1,2 +1,3 @@
 .externalNativeBuild
 cmake-build-debug
+/build

@@ -1,18 +1,60 @@
 buildscript {
+    def android_support_version = "27.0.2"
+    def android_arch_comp_version = "1.1.0"
+    def constraint_layout_version = "1.0.2"
+    def espresso_version = "3.0.1"
+    def rxjava_version = "2.1.8"
+    def rxkotlin_version = "2.2.0"
+    def rx_android_version = "2.0.1"
+    def instant_apps_version = "1.1.0"
+    def android_support_test_runner_version = "1.0.1"
+
+    ext.version_code = 3
+    ext.version_name = "3.0"
+    ext.sdk_version = 27
+    ext.min_sdk_version = 23
+    ext.gradle_android_plugin_version = "3.0.1"
     ext.kotlin_version = "1.2.21"
-    ext.gradle_android_plugin_version = "3.0.0"
-    ext.android_support_version = "27.0.2"
-    ext.android_arch_comp_version = "1.1.0"
-    ext.junit_version = "4.12"
-    ext.constraint_layout_version = "1.0.2"
-    ext.min_sdk_version = 21
-    ext.sdk_version =  27
-    ext.espresso_version = "3.0.1"
-    ext.rxjava_version = "2.1.8"
-    ext.rxkotlin_version = "2.2.0"
-    ext.rx_android_version = "2.0.1"
-    ext.joda_time_version = "2.9.9"
     ext.ANDROID = true
+    ext.deps = [
+        "kodein": "com.github.salomonbrys.kodein:kodein:4.1.0",
+        "mp_android_chart" : "com.github.PhilJay:MPAndroidChart:v3.0.3",
+        "junit" : "junit:junit:4.12",
+        "jodatime": "joda-time:joda-time:2.9.9",
+        "kotlin": [
+            "stdlib": "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+        ],
+        "rx" : [
+            "java" : "io.reactivex.rxjava2:rxjava:$rxjava_version",
+            "kotlin" : "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version",
+            "android" : "io.reactivex.rxjava2:rxandroid:$rx_android_version",
+        ],
+        "android": [
+            "support" : [
+                "coreutils" : "com.android.support:support-core-utils:$android_support_version",
+                "v13": "com.android.support:support-v13:$android_support_version",
+                "annotations" : "com.android.support:support-annotations:$android_support_version",
+                "appcompat" : "com.android.support:appcompat-v7:$android_support_version",
+                "constraint" : "com.android.support.constraint:constraint-layout:$constraint_layout_version",
+                "design" : "com.android.support:design:$android_support_version",
+                "preference" : "com.android.support:preference-v14:$android_support_version",
+                "recyclerview" : "com.android.support:recyclerview-v7:$android_support_version",
+            ],
+            "arch" : [
+                "lifecycle_extensions" : "android.arch.lifecycle:extensions:$android_arch_comp_version",
+                "lifecycle_compiler" : "android.arch.lifecycle:compiler:$android_arch_comp_version",
+            ],
+            "instantapps": "com.google.android.instantapps:instantapps:$instant_apps_version",
+            "test" : [
+                "espresso" : [
+                    "core" : "com.android.support.test.espresso:espresso-core:$espresso_version",
+                ],
+                "rules" : "com.android.support.test:rules:$android_support_test_runner_version",
+                "runner": "com.android.support.test:runner:$android_support_test_runner_version",
+            ]
+        ]
+    ]
+
     repositories {
         jcenter()
         google()
@@ -33,8 +75,4 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = "4.2.1"
 }

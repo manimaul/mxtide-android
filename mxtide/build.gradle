@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion min_sdk_version
         targetSdkVersion sdk_version
-        versionCode 3
-        versionName "3.0"
+        versionCode version_code
+        versionName version_name
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -39,28 +39,28 @@ dependencies {
     /**
      * Support libraries
      */
-    compile "com.android.support:support-core-utils:$android_support_version"
+    implementation deps.android.support.coreutils
 
     /**
      * Kotlin
      */
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation deps.kotlin.stdlib
+    testImplementation deps.kotlin.stdlib
 
     /**
-     * Android Tests
+     * Testing
      */
-    androidTestImplementation("com.android.support.test.espresso:espresso-core:$espresso_version", {
+    androidTestImplementation(deps.android.test.espresso.core, {
         exclude group: "com.android.support", module: "support-annotations"
     })
 
     /**
      * Unit Tests
      */
-    testImplementation "junit:junit:$junit_version"
+    testImplementation deps.junit
 
     /**
      * Joda Time
      */
-    api "joda-time:joda-time:$joda_time_version"
+    api deps.jodatime
 }

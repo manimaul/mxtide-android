@@ -10,124 +10,127 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.AssetManager
 import android.content.res.Resources
-import android.location.Geocoder
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Handler
 import android.preference.PreferenceManager
-import android.support.v4.app.Fragment
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.app.FragmentActivity
 import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import com.mxmariner.tides.di.scopes.ActivityScope
-import com.mxmariner.tides.di.scopes.FragmentScope
-import dagger.Module
-import dagger.Provides
-import java.util.*
-import javax.inject.Named
-import javax.inject.Singleton
+import com.github.salomonbrys.kodein.*
+import com.mxmariner.mxtide.api.ITidesAndCurrents
+import com.mxmariner.mxtide.api.MXTideFactory
+import com.mxmariner.tides.repository.HarmonicsRepo
+import com.mxmariner.tides.routing.Router
+import com.mxmariner.tides.settings.Preferences
+import com.mxmariner.tides.ui.SnackbarController
+import com.mxmariner.tides.util.*
 
-/**
- * [Singleton] scope Android dependencies
- */
-@Module
-class AndroidModule {
-    @Provides
-    fun provideArgbEvaluator(): ArgbEvaluator = ArgbEvaluator()
+internal class BaseModule {
+    val module = Kodein.Module {
+        bind() from singleton { HarmonicsRepo(this) }
 
-    @Provides
-    fun provideAssetManager(context: Context): AssetManager = context.assets
+        bind<ITidesAndCurrents>() with singleton { MXTideFactory.createTidesAndCurrents() }
 
-    @Provides
-    fun provideClipboardManager(context: Context): ClipboardManager = context
-            .getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-
-    @Provides
-    fun provideConnectivityManager(context: Context): ConnectivityManager = context
-            .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-    @Provides
-    fun provideDisplayMetrics(resources: Resources): DisplayMetrics = resources.displayMetrics
-
-    @Provides
-    fun provideGeocoder(context: Context): Geocoder = Geocoder(context, Locale.US)
-
-    @Provides
-    fun provideHandler(): Handler = Handler()
-
-    @Provides
-    fun provideInputMethodManager(context: Context): InputMethodManager = context
-            .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
-    @Provides
-    fun provideLocationManager(context: Context): LocationManager = context
-            .getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-    @Provides
-    fun provideNotificationManager(context: Context): NotificationManager = context
-            .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-    @Provides
-    fun provideResources(context: Context): Resources = context.resources
-
-    @Provides
-    fun provideSharedPreferences(context: Context): SharedPreferences = PreferenceManager
-            .getDefaultSharedPreferences(context)
-
-    @Provides
-    fun provideTelephonyManager(context: Context): TelephonyManager = context
-            .getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-
-    @Provides
-    fun provideWindowManager(context: Context): WindowManager = context
-            .getSystemService(Context.WINDOW_SERVICE) as WindowManager
-
-    @Provides
-    fun provideContext(application: Application): Context = application.applicationContext
-}
-
-/**
- * [ActivityScope] scope Android dependencies
- */
-@Module
-internal class ActivityAndroidModule {
-    @ActivityScope
-    @Provides
-    fun provideLayoutInflater(activity: Activity) : LayoutInflater {
-        return activity.layoutInflater
-    }
-
-    @ActivityScope
-    @Provides
-    fun provideFragmentManager(activity: Activity): FragmentManager {
-        return activity.fragmentManager
-    }
-
-    @ActivityScope
-    @Provides
-    fun provideSupportFragmentManager(appCompatActivity: AppCompatActivity): android.support.v4.app.FragmentManager {
-        return appCompatActivity.supportFragmentManager
+        bind() from singleton { Preferences(this) }
     }
 }
 
-/**
- * [FragmentScope] scope Android dependencies
- */
-@Module
-internal class FragmentAndroidModule {
-    @FragmentScope
-    @Provides
-    fun provideLayoutInflater(fragment: Fragment) : LayoutInflater {
-        return fragment.layoutInflater
-    }
+internal class AndroidModule(private val application: Application) {
 
-    @Named("childFragmentManager")
-    @FragmentScope
-    @Provides
-    fun provideChildFragmentManager(fragment: Fragment) : android.support.v4.app.FragmentManager{
-        return fragment.childFragmentManager
+    val module = Kodein.Module {
+
+        bind<Resources>() with provider { application.resources }
+
+        bind<Application>() with provider { application }
+
+        bind<SharedPreferences>() with provider { PreferenceManager.getDefaultSharedPreferences(application) }
+
+        bind<AssetManager>() with provider { application.assets }
+
+        bind<DisplayMetrics>() with provider { instance<Resources>().displayMetrics }
+
+        bind<Context>() with provider { application.applicationContext }
+
+        bind() from provider { ArgbEvaluator() }
+
+        bind() from provider { Handler() }
+
+        bind<ClipboardManager>() with provider {
+            application.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        }
+
+        bind<ConnectivityManager>() with provider {
+            application.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        }
+
+        bind<InputMethodManager>() with provider {
+            application.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        }
+
+        bind<LocationManager>() with provider {
+            application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        }
+
+        bind<NotificationManager>() with provider {
+            application.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        }
+
+
+        bind<TelephonyManager>() with provider {
+            application.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+        }
+
+        bind<WindowManager>() with provider {
+            application.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        }
     }
 }
+
+internal class ActivityAndroidModule(private val fragmentActivity: FragmentActivity) {
+
+    val module = Kodein.Module {
+
+        bind() from provider { fragmentActivity }
+
+        bind() from provider { Router(this) }
+
+        bind() from provider { SnackbarController(this) }
+
+        bind<Activity>() with provider { fragmentActivity }
+
+        bind<RxPermission>() with provider { RxPermissionImpl(this) }
+
+        bind<RxActivityResult>() with provider { RxActivityResultImpl(this) }
+
+        bind<RxLocation>() with provider { RxLocationImpl(this) }
+
+        bind<LayoutInflater>() with provider { fragmentActivity.layoutInflater }
+
+        bind<FragmentManager>() with provider { fragmentActivity.fragmentManager }
+
+        bind<android.support.v4.app.FragmentManager>() with provider { fragmentActivity.supportFragmentManager }
+    }
+}
+
+///**
+// * [FragmentScope] scope Android dependencies
+// */
+//@Module
+//class FragmentAndroidModule {
+//    @FragmentScope
+//    @Provides
+//    fun provideLayoutInflater(fragment: Fragment) : LayoutInflater {
+//        return fragment.layoutInflater
+//    }
+//
+//    @Named("childFragmentManager")
+//    @FragmentScope
+//    @Provides
+//    fun provideChildFragmentManager(fragment: Fragment) : android.support.v4.app.FragmentManager{
+//        return fragment.childFragmentManager
+//    }
+//}

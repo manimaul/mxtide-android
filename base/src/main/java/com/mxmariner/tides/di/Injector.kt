@@ -3,56 +3,72 @@ package com.mxmariner.tides.di
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import dagger.android.AndroidInjection
-import java.lang.ref.WeakReference
+import android.support.v4.app.FragmentActivity
+import com.github.salomonbrys.kodein.Kodein
+import com.mxmariner.tides.di.modules.ActivityAndroidModule
+import com.mxmariner.tides.di.modules.AndroidModule
+import com.mxmariner.tides.di.modules.BaseModule
+
 
 object Injector : Application.ActivityLifecycleCallbacks {
 
-    private var activityRef: WeakReference<Activity>? = null
+    private lateinit var singletonAssembly: Kodein
+    private val activityAssemblies = mutableMapOf<Int, Kodein>()
+    private val moduleMixIns = mutableListOf<Kodein.Module>()
+    private var foreGroundActivityId = 0
 
-    fun inject(activity: AppCompatActivity) {
-        activityRef = WeakReference(activity)
-        AndroidInjection.inject(activity)
+    fun appScopeAssembly(application: Application) : Kodein {
+        singletonAssembly = Kodein {
+            import(AndroidModule(application).module)
+            import(BaseModule().module)
+        }
+        return singletonAssembly
     }
 
-    val foregroundActivity: AppCompatActivity
-        get() = activityRef?.get() as? AppCompatActivity
-                ?: throw RuntimeException("Foreground activity does not exist or is not an AppCompatActivity")
+    fun activityScopeAssembly(activity: FragmentActivity) : Kodein {
+        val id = System.identityHashCode(activity)
+        return activityAssemblies[id] ?: {
+            val assembly = Kodein {
+                extend(singletonAssembly)
+                import(ActivityAndroidModule(activity).module)
+                moduleMixIns.forEach { import(it) }
+            }
+            activityAssemblies[id] = assembly
+            assembly
+        }()
+    }
 
-    // region spinning up
+    /**
+     * Mix in [Kodein.Module]s to the activity scope from other project module's
+     * @param module the modules to mixin
+     */
+    fun mixInActivityScope(vararg module: Kodein.Module) {
+        moduleMixIns.addAll(module)
+    }
+
+    //region Application.ActivityLifecycleCallbacks
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        if (activityRef?.get() != activity) {
-            activityRef = WeakReference(activity)
-        }
+        foreGroundActivityId = System.identityHashCode(activity)
     }
 
     override fun onActivityStarted(activity: Activity) {
-        if (activityRef?.get() != activity) {
-            activityRef = WeakReference(activity)
-        }
+        foreGroundActivityId = System.identityHashCode(activity)
     }
 
     override fun onActivityResumed(activity: Activity) {
-        if (activityRef?.get() != activity) {
-            activityRef = WeakReference(activity)
-        }
+        foreGroundActivityId = System.identityHashCode(activity)
     }
-
-    // endregion
-
-    // region spinning down down
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle?) = Unit
     override fun onActivityPaused(activity: Activity) = Unit
     override fun onActivityStopped(activity: Activity) = Unit
     override fun onActivityDestroyed(activity: Activity) {
-        if (activityRef?.get() == activity) {
-            activityRef = null
-        }
+        val id = System.identityHashCode(activity)
+        activityAssemblies.remove(id)
     }
 
-    // endregion
+    //endregion
+
 }
 
