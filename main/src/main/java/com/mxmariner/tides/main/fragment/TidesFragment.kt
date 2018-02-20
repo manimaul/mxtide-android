@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
+import com.mxmariner.mxtide.api.StationType
+import com.mxmariner.tides.extensions.args
 import com.mxmariner.tides.main.R
 import com.mxmariner.tides.main.di.MainModuleInjector
 import com.mxmariner.tides.main.model.TidesViewStateLoadingComplete
@@ -21,6 +23,16 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_tides_fragment.*
 
 class TidesFragment : Fragment() {
+
+    companion object {
+        fun create(stationType: StationType): TidesFragment {
+            val fragment = TidesFragment()
+            fragment.args.putSerializable("type", stationType)
+            return fragment
+        }
+    }
+
+    private val stationType by lazy { args.getSerializable("type") as StationType }
 
     private lateinit var kodein: Kodein
     private lateinit var viewModelFactory: TidesViewModelFactory
@@ -45,7 +57,7 @@ class TidesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         recyclerView.adapter = viewModel.recyclerAdapter
         recyclerView.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
-        compositeDisposable.add(viewModel.viewState()
+        compositeDisposable.add(viewModel.viewState(stationType)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy {
                     when (it) {

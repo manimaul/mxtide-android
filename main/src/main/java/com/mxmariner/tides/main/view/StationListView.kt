@@ -1,7 +1,6 @@
 package com.mxmariner.tides.main.view
 
 import android.content.Context
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -31,6 +30,7 @@ class StationListView : FrameLayout {
     }
 
     fun apply(presentation: StationListViewPresentation, selection: () -> Unit) {
+        icon.setImageResource(presentation.icon)
         stationName.text = presentation.name
         position.text = presentation.position
         presentation.timeZone.toTimeZone()?.displayName?.let {
@@ -47,12 +47,11 @@ class StationListView : FrameLayout {
             Entry(hours, it.value)
         }
         val lineDataSet = LineDataSet(entries, "")
-        val color = ContextCompat.getColor(context, R.color.tideColorFix)
         lineDataSet.setDrawValues(false)
-        lineDataSet.setColors(color)
+        lineDataSet.setColors(presentation.color)
         lineDataSet.setDrawCircles(false)
         lineDataSet.setDrawFilled(true)
-        lineDataSet.fillColor = color
+        lineDataSet.fillColor = presentation.color
         lineDataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
         val lineData = LineData(lineDataSet)
         lineChart.data = lineData

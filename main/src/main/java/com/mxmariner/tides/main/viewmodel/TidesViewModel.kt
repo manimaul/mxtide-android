@@ -37,14 +37,14 @@ class TidesViewModel(kodein: Kodein) : ViewModel() {
     private val snackbarController: SnackbarController = kodein.instance()
     val recyclerAdapter: TidesRecyclerAdapter = kodein.instance()
 
-    fun viewState(): Observable<TidesViewState> {
+    fun viewState(stationType: StationType): Observable<TidesViewState> {
         val loadingStarted = TidesViewStateLoadingStarted(resources.getString(R.string.finding_closest_tide_stations))
         return rxLocation.singleRecentLocationPermissionResult()
                 .toObservable()
                 .compose(snackbarController.retryWhenSnackbarUntilType<LocationPermissionResult, LocationResultPermission>())
                 .observeOn(Schedulers.computation())
                 .map {
-                    harmonicsRepo.tidesAndCurrents.findNearestStations(it.location.latitude, it.location.longitude, StationType.TIDES)
+                    harmonicsRepo.tidesAndCurrents.findNearestStations(it.location.latitude, it.location.longitude, stationType)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .map<TidesViewState> {

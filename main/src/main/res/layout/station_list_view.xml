@@ -19,9 +19,10 @@
         app:layout_constraintVertical_bias="0">
 
         <ImageView
+            android:id="@+id/icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_tide" />
+            tools:src="@drawable/ic_tide" />
 
         <TextView
             style="@style/TitleText"

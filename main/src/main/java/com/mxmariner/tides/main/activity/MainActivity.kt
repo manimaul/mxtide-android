@@ -8,9 +8,9 @@ import android.support.v4.app.FragmentManager
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.github.salomonbrys.kodein.instance
+import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.tides.main.R
 import com.mxmariner.tides.main.di.MainModuleInjector
-import com.mxmariner.tides.main.fragment.CurrentsFragment
 import com.mxmariner.tides.main.fragment.MapFragment
 import com.mxmariner.tides.main.fragment.SettingsFragment
 import com.mxmariner.tides.main.fragment.TidesFragment
@@ -41,10 +41,6 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        fm.beginTransaction()
-                .replace(R.id.container, TidesFragment())
-                .commit()
-
         PerfTimer.markEventStop("MainActivity.onCreate()")
         PerfTimer.printLogOfCapturedEvents(true)
 
@@ -66,13 +62,15 @@ class MainActivity : AppCompatActivity() {
                 "map" -> navigation.selectedItemId = R.id.navigation_map
                 "settings" -> navigation.selectedItemId = R.id.navigation_settings
             }
-        }
+        } ?: {
+            navigation.selectedItemId = R.id.navigation_tides
+        }()
     }
 
     private fun routeToTab(@IdRes id: Int) : Boolean {
         return when (id) {
-            R.id.navigation_tides -> TidesFragment()
-            R.id.navigation_currents -> CurrentsFragment()
+            R.id.navigation_tides -> TidesFragment.create(StationType.TIDES)
+            R.id.navigation_currents -> TidesFragment.create(StationType.CURRENTS)
             R.id.navigation_map -> MapFragment()
             R.id.navigation_settings -> SettingsFragment()
             else -> null
