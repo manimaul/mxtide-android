@@ -22,4 +22,18 @@
             android:dialogTitle="@string/title_current_level" />
     </PreferenceCategory>
 
+
+    <PreferenceCategory
+        android:title="@string/pref_measure_location_title">
+        <ListPreference
+            android:key="@string/PREF_KEY_LOCATION"
+            android:title="@string/location_title"
+            android:summary="%s"
+            android:entries="@array/location_entries"
+            android:entryValues="@array/location_entries"
+            android:defaultValue="@string/location_device"
+            android:dialogTitle="@string/location_title"
+            />
+
+    </PreferenceCategory>
 </PreferenceScreen>

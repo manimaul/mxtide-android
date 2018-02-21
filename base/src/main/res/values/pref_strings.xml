@@ -25,9 +25,9 @@
     <string name="PREF_KEY_CURRENT_SPEED">PREF_KEY_CURRENT_SPEED</string>
     <string name="title_current_level">Current Predictions Measurement Speed</string>
     <array name="measure_units_speed_entries">
-        <item>@string/kph</item>
-        <item>@string/mph</item>
-        <item>@string/kts</item>
+        <item>@string/kilometersPerHour</item>
+        <item>@string/milesPerHour</item>
+        <item>@string/knots</item>
     </array>
     <array name="MEASURE_UNITS_SPEED_VALUES">
         <item>@string/METRIC</item>
@@ -35,4 +35,14 @@
         <item>@string/NAUTICAL</item>
     </array>
 
+    <!--Position -->
+    <string name="pref_measure_location_title">Location</string>
+    <string name="PREF_KEY_LOCATION">PREF_KEY_LOCATION</string>
+    <string name="location_title">Your location</string>
+    <string name="location_device">Use my device location</string>
+    <string name="location_user">Set my location</string>
+    <array name="location_entries">
+        <item>@string/location_device</item>
+        <item>@string/location_user</item>
+    </array>
 </resources>

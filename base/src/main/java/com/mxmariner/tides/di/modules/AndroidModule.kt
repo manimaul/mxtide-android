@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.AssetManager
 import android.content.res.Resources
+import android.location.Geocoder
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Handler
@@ -36,6 +37,8 @@ internal class BaseModule {
         bind<ITidesAndCurrents>() with singleton { MXTideFactory.createTidesAndCurrents() }
 
         bind() from singleton { Preferences(this) }
+
+        bind() from singleton { RxSharedPrefs(this) }
     }
 }
 
@@ -58,6 +61,8 @@ internal class AndroidModule(private val application: Application) {
         bind() from provider { ArgbEvaluator() }
 
         bind() from provider { Handler() }
+
+        bind<Geocoder>() with provider { Geocoder(instance()) }
 
         bind<ClipboardManager>() with provider {
             application.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager

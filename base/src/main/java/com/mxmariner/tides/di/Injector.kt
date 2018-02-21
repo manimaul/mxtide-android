@@ -17,7 +17,10 @@ object Injector : Application.ActivityLifecycleCallbacks {
     private val moduleMixIns = mutableListOf<Kodein.Module>()
     private var foreGroundActivityId = 0
 
-    fun appScopeAssembly(application: Application) : Kodein {
+    val applicationAssembly: Kodein
+        get() = singletonAssembly
+
+    fun appScopeAssembly(application: Application): Kodein {
         singletonAssembly = Kodein {
             import(AndroidModule(application).module)
             import(BaseModule().module)
@@ -25,7 +28,7 @@ object Injector : Application.ActivityLifecycleCallbacks {
         return singletonAssembly
     }
 
-    fun activityScopeAssembly(activity: FragmentActivity) : Kodein {
+    fun activityScopeAssembly(activity: FragmentActivity): Kodein {
         val id = System.identityHashCode(activity)
         return activityAssemblies[id] ?: {
             val assembly = Kodein {

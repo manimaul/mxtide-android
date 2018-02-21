@@ -13,17 +13,17 @@ class Preferences(kodein: Kodein) {
     private val resources: Resources = kodein.instance()
 
     val predictionLevels: MeasureUnit
-        get() = when (sharedPreferences.getString(resources.getString(R.string.PREF_KEY_TIDE_LEVEL), resources.getString(R.string.meters))) {
-            resources.getString(R.string.meters) -> MeasureUnit.METRIC
-            resources.getString(R.string.feet) -> MeasureUnit.STATUTE
+        get() = when (sharedPreferences.getString(resources.getString(R.string.PREF_KEY_TIDE_LEVEL), MeasureUnit.METRIC.name)) {
+            MeasureUnit.METRIC.name -> MeasureUnit.METRIC
+            MeasureUnit.STATUTE.name -> MeasureUnit.STATUTE
             else -> MeasureUnit.METRIC
         }
 
     val predictionSpeed: MeasureUnit
-        get() = when (sharedPreferences.getString(resources.getString(R.string.PREF_KEY_CURRENT_SPEED), resources.getString(R.string.kph))) {
-            resources.getString(R.string.kph) -> MeasureUnit.METRIC
-            resources.getString(R.string.mph) -> MeasureUnit.STATUTE
-            resources.getString(R.string.kts) -> MeasureUnit.NAUTICAL
+        get() = when (sharedPreferences.getString(resources.getString(R.string.PREF_KEY_CURRENT_SPEED), MeasureUnit.METRIC.name)) {
+            MeasureUnit.METRIC.name -> MeasureUnit.METRIC
+            MeasureUnit.STATUTE.name -> MeasureUnit.STATUTE
+            MeasureUnit.NAUTICAL.name -> MeasureUnit.NAUTICAL
             else -> MeasureUnit.METRIC
         }
 }

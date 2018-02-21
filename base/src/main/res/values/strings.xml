@@ -15,8 +15,8 @@
 
     <string name="feet">Feet</string>
     <string name="meters">Meters</string>
-    <string name="kts">Knots</string>
-    <string name="kph">Kilometers Per Hour</string>
-    <string name="mph">Miles Per Hour</string>
+    <string name="knots">Knots</string>
+    <string name="kilometersPerHour">Kilometers Per Hour</string>
+    <string name="milesPerHour">Miles Per Hour</string>
 
 </resources>

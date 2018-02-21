@@ -13,7 +13,6 @@ import java.util.concurrent.TimeUnit
 
 sealed class LocationPermissionResult
 class LocationResultNoPermission : LocationPermissionResult()
-class LocationResultTimeOut : LocationPermissionResult()
 data class LocationResultPermission(val location: Location) : LocationPermissionResult()
 
 interface RxLocation {
@@ -34,7 +33,7 @@ class RxLocationImpl(kodein: Kodein) : RxLocation {
             if (isPermissionGranted) {
                 recentLocation().map<LocationPermissionResult> {
                     LocationResultPermission(it)
-                }.timeout(5, TimeUnit.SECONDS, Single.just(LocationResultTimeOut()))
+                }
             } else {
                 Single.just(LocationResultNoPermission())
             }
@@ -50,19 +49,42 @@ class RxLocationImpl(kodein: Kodein) : RxLocation {
         }
     }
 
+
+
+    private val lastKnownLocation: Location?
+        @SuppressLint("MissingPermission")
+        get() {
+            return (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER) ?:
+            locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER) ?:
+            locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER))?.takeIf {
+                (System.currentTimeMillis() - it.time ) > TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES)
+            }
+        }
+
     @SuppressLint("MissingPermission")
     private fun recentLocation(): Single<Location> {
-        return Single.create { emitter ->
-            val location = Location("fake")
-            location.latitude = 47.0
-            location.longitude = -122.0
-            emitter.onSuccess(location)
-//            locationManager.requestSingleUpdate(Criteria(), object : LocationListener {
-//                override fun onLocationChanged(location: Location) = emitter.onSuccess(location)
-//                override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-//                override fun onProviderEnabled(provider: String?) {}
-//                override fun onProviderDisabled(provider: String?) {}
-//            }, null)
-        }
+        val location = Location("fake")
+        location.latitude = 47.0
+        location.longitude = -122.0
+        return Single.just(location)
+//        return Single.create { emitter ->
+//            lastKnownLocation?.let {
+//                emitter.onSuccess(it)
+//            } ?: {
+//                val criteria = Criteria()
+//                criteria.isAltitudeRequired = false
+//                criteria.isSpeedRequired = false
+//                criteria.bearingAccuracy = Criteria.ACCURACY_LOW
+//                criteria.verticalAccuracy = Criteria.ACCURACY_LOW
+//                criteria.horizontalAccuracy = Criteria.ACCURACY_MEDIUM
+//                criteria.isCostAllowed = true
+//                locationManager.requestSingleUpdate(criteria, object : LocationListener {
+//                    override fun onLocationChanged(location: Location) = emitter.onSuccess(location)
+//                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+//                    override fun onProviderEnabled(provider: String?) {}
+//                    override fun onProviderDisabled(provider: String?) {}
+//                }, null)
+//            }()
+//        }
     }
 }

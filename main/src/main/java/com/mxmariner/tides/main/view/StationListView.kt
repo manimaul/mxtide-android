@@ -66,6 +66,10 @@ class StationListView : FrameLayout {
                 else -> "${hr}am"
             }
         }
+        val abriviation = context.getString(presentation.yValAbrv)
+        lineChart.axisRight.setValueFormatter { _, _ ->
+            abriviation
+        }
         lineChart.description = description
         lineChart.setTouchEnabled(false)
         lineChart.invalidate()
