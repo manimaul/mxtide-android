@@ -3,7 +3,6 @@ package com.mxmariner.tides.util
 import android.content.SharedPreferences
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
-import com.mxmariner.tides.extensions.debug
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
@@ -64,7 +63,6 @@ class RxSharedPrefs(kodein: Kodein) : SharedPreferences.OnSharedPreferenceChange
 
     fun observableKey(forKey: String, clazz: Class<*>): Observable<Any> {
         return subject.filter { it.key == forKey && clazz.isInstance(it.value) }
-                .debug("WBK observableKey")
                 .map { it.value!! }
     }
 
