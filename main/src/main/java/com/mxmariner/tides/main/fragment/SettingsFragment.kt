@@ -2,10 +2,14 @@ package com.mxmariner.tides.main.fragment
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.location.Address
 import android.os.Bundle
+import android.support.v7.preference.ListPreference
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.View
 import com.github.salomonbrys.kodein.instance
+import com.mxmariner.tides.extensions.evaluateNullables
 import com.mxmariner.tides.main.R
 import com.mxmariner.tides.main.activity.LocationSearchActivity
 import com.mxmariner.tides.main.di.MainModuleInjector
@@ -18,16 +22,19 @@ import io.reactivex.rxkotlin.subscribeBy
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
-    private lateinit var sharedPreferences: RxSharedPrefs
+    private lateinit var rxSharedPreferences: RxSharedPrefs
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var rxActivityResult: RxActivityResult
     private lateinit var ctx: Context
+    private lateinit var locationPreference: ListPreference
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         activity?.let {
             val injector = MainModuleInjector.activityScopeAssembly(it)
-            sharedPreferences = injector.instance()
+            rxSharedPreferences = injector.instance()
             rxActivityResult = injector.instance()
+            sharedPreferences = injector.instance()
             ctx = injector.instance()
         }
         super.onCreate(savedInstanceState)
@@ -36,10 +43,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val key = getString(R.string.PREF_KEY_LOCATION)
-        compositeDisposable.add(sharedPreferences.observeChanges<String>(key)
-                .filter { it == getString(R.string.location_user) }
+        compositeDisposable.add(rxSharedPreferences.observeChanges<String>(key)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { pickUserLocation() })
+                .subscribe {
+                    if (it == getString(R.string.location_user)) {
+                        pickUserLocation()
+                    } else {
+                        updateLocationPrefSummary()
+                    }
+                })
     }
 
     override fun onDestroyView() {
@@ -49,14 +61,44 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences)
+        val key = getString(R.string.PREF_KEY_LOCATION)
+        locationPreference = findPreference(key) as ListPreference
+        updateLocationPrefSummary()
     }
 
-    fun pickUserLocation() {
+    private fun updateLocationPrefSummary() {
+        sharedPreferences.getString(locationPreference.key, null)?.let {
+            locationPreference.summary = it
+        }
+    }
+
+    private fun pickUserLocation() {
         val intent = Intent(ctx, LocationSearchActivity::class.java)
         compositeDisposable.add(rxActivityResult.startActivityForResultSingle(intent)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy {
+                    val queryKey = "query"
+                    val addressKey = "address"
 
+                    val address = it.data?.takeIf {
+                        it.hasExtra(addressKey) && it.hasExtra(queryKey)
+                    }?.getParcelableExtra<Address>(addressKey)?.takeIf {
+                        it.hasLatitude() && it.hasLongitude()
+                    }
+
+                    val query = it.data?.takeIf {
+                        it.hasExtra(queryKey)
+                    }?.getStringExtra(queryKey)
+
+                    evaluateNullables(query, address,
+                            both = {
+                                val value = "$query:${address?.latitude}:${address?.longitude}"
+                                locationPreference.value = value
+                            },
+                            notBoth = {
+                                val defaultValue = getString(R.string.location_device)
+                                locationPreference.value = defaultValue
+                            })
                 })
     }
 }

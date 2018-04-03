@@ -11,7 +11,6 @@ import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.tides.main.R
 import com.mxmariner.tides.main.di.MainModuleInjector
-import com.mxmariner.tides.main.fragment.MapFragment
 import com.mxmariner.tides.main.fragment.SettingsFragment
 import com.mxmariner.tides.main.fragment.TidesFragment
 import com.mxmariner.tides.util.PerfTimer
@@ -59,7 +58,6 @@ class MainActivity : AppCompatActivity() {
             when (it) {
                 "nearby_tides" -> navigation.selectedItemId = R.id.navigation_tides
                 "nearby_currents" -> navigation.selectedItemId = R.id.navigation_currents
-                "map" -> navigation.selectedItemId = R.id.navigation_map
                 "settings" -> navigation.selectedItemId = R.id.navigation_settings
             }
         } ?: {
@@ -71,7 +69,6 @@ class MainActivity : AppCompatActivity() {
         return when (id) {
             R.id.navigation_tides -> TidesFragment.create(StationType.TIDES)
             R.id.navigation_currents -> TidesFragment.create(StationType.CURRENTS)
-            R.id.navigation_map -> MapFragment()
             R.id.navigation_settings -> SettingsFragment()
             else -> null
         }?.let {
