@@ -20,7 +20,7 @@ class StationListViewPresentationFactory(kodein: Kodein) {
 
     fun  createPresentation(station: IStation) : StationListViewPresentation {
         val measureUnit: MeasureUnit
-        val abriviation = if (station.type == StationType.TIDES) {
+        val abbreviation = if (station.type == StationType.TIDES) {
             measureUnit = preferences.predictionLevels
             when(measureUnit) {
                 MeasureUnit.METRIC -> R.string.mt
@@ -43,6 +43,6 @@ class StationListViewPresentationFactory(kodein: Kodein) {
             StationType.CURRENTS -> ContextCompat.getColor(context, R.color.currentColor) to R.drawable.ic_current
         }
         return StationListViewPresentation(prediction, station.name, position, station.timeZone,
-                rez.first, rez.second, abriviation)
+                rez.first, rez.second, abbreviation)
     }
 }
