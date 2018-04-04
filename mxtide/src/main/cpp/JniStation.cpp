@@ -86,48 +86,6 @@ Java_com_mxmariner_mxtide_internal_Station_getPredictionRaw(JNIEnv *env,
     return jniPredictionList.getArrayList();
 }
 
-JNIEXPORT jobject JNICALL
-Java_com_mxmariner_mxtide_internal_Station_getPredictionPlain(JNIEnv *env,
-                                                              jclass clazz,
-                                                              jlong ptr,
-                                                              jlong epoch,
-                                                              jlong duration,
-                                                              jstring units) {
-    auto station = reinterpret_cast<mdr::Station *>(ptr);
-    auto dur = DurationSeconds(duration);
-    TimePoint timePoint{DurationSeconds(epoch)};
-    auto unitsStr = mdr::JniString::fromJni(env, units);
-    auto measureUnit = measureUnitFromString(unitsStr);
-    auto prediction = station->getPredictionPlain(timePoint, dur, measureUnit);
-    auto jniPredictionList = mdr::JniArrayList(env, prediction.size());
-    auto tz = station->timeZone();
-    auto lambda = [&jniPredictionList, &tz, env](mdr::StationPrediction<std::string> &each) {
-        jobject jniPrediction = mdr::JniStationPrediction::createJniStationPrediction(env,
-                                                                                      each.timePoint,
-                                                                                      each.value,
-                                                                                      tz);
-        jniPredictionList.add(env, jniPrediction);
-    };
-    std::for_each(prediction.begin(), prediction.end(), lambda);
-    return jniPredictionList.getArrayList();
-}
-
-JNIEXPORT jobject JNICALL
-Java_com_mxmariner_mxtide_internal_Station_getPredictionClockSVG(JNIEnv *env,
-                                                                 jclass clazz,
-                                                                 jlong ptr,
-                                                                 jlong epoch,
-                                                                 jlong duration,
-                                                                 jstring units) {
-    auto station = reinterpret_cast<mdr::Station *>(ptr);
-    auto dur = DurationSeconds(duration);
-    TimePoint timePoint{DurationSeconds(epoch)};
-    auto unitsStr = mdr::JniString::fromJni(env, units);
-    auto measureUnit = measureUnitFromString(unitsStr);
-    auto svg = station->getPredictionClockSVG(timePoint, dur, measureUnit);
-    return mdr::JniString::toJni(env, svg);
-}
-
 JNIEXPORT void JNICALL
 Java_com_mxmariner_mxtide_internal_Station_deleteStation(JNIEnv *env,
                                                          jclass clazz,

@@ -67,36 +67,4 @@ interface IStation {
     fun getPredictionRaw(date: DateTime,
                          duration: Duration,
                          measureUnit: MeasureUnit): List<IStationPrediction<Float>>
-
-    /**
-     * Create a tidal prediction for a given date and duration represented by a list of dates and [String] values.
-     *
-     * Example:
-     * <DateTime> : High Tide
-     * <DateTime> : Sunrise
-     * <DateTime> : Moonrise
-     * <DateTime> : Low Tide
-     * <DateTime> : Sunset
-     * <DateTime> : High Tide
-     * <DateTime> : Moonset
-     * <DateTime> : Low Tide
-     *
-     * @param date the prediction start date.
-     * @param duration the prediction duration.
-     * @return the tidal prediction values.
-     */
-    fun getPredictionPlain(date: DateTime,
-                           duration: Duration,
-                           measureUnit: MeasureUnit): List<IStationPrediction<String>>
-
-    /**
-     * Create a tidal prediction SVG image for a given date and duration.
-     *
-     * @param date the prediction start date.
-     * @param duration the prediction duration.
-     * @return the tidal prediction SVG image.
-     */
-    fun getPredictionClockSVG(date: DateTime,
-                              duration: Duration,
-                              measureUnit: MeasureUnit): String
 }

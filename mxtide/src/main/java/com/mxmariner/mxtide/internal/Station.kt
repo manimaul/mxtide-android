@@ -28,16 +28,6 @@ internal class Station(private val nativePtr: Long) : IStation {
                                                  duration: Long,
                                                  measureUnit: String): List<IStationPrediction<Float>>
 
-        @JvmStatic external fun getPredictionPlain(nativePtr: Long,
-                                                   epoch: Long,
-                                                   duration: Long,
-                                                   measureUnit: String): List<IStationPrediction<String>>
-
-        @JvmStatic external fun getPredictionClockSVG(nativePtr: Long,
-                                                      epoch: Long,
-                                                      duration: Long,
-                                                      measureUnit: String): String
-
         @JvmStatic external fun deleteStation(ptr: Long)
     }
 
@@ -65,18 +55,6 @@ internal class Station(private val nativePtr: Long) : IStation {
                                   duration: Duration,
                                   measureUnit: MeasureUnit): List<IStationPrediction<Float>> {
         return getPredictionRaw(nativePtr, date.unixTimeSeconds, duration.standardSeconds, measureUnit.toString())
-    }
-
-    override fun getPredictionPlain(date: DateTime,
-                                    duration: Duration,
-                                    measureUnit: MeasureUnit): List<IStationPrediction<String>> {
-        return getPredictionPlain(nativePtr, date.unixTimeSeconds, duration.standardSeconds, measureUnit.toString())
-    }
-
-    override fun getPredictionClockSVG(date: DateTime,
-                                       duration: Duration,
-                                       measureUnit: MeasureUnit): String {
-        return getPredictionClockSVG(nativePtr, date.unixTimeSeconds, duration.standardSeconds, measureUnit.toString())
     }
 
     @Suppress("unused")
