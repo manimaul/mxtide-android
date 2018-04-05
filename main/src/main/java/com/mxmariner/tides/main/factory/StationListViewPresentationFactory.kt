@@ -39,8 +39,8 @@ class StationListViewPresentationFactory(kodein: Kodein) {
                 Duration.standardHours(6), measureUnit)
         val position = "${station.latitude}, ${station.longitude}"
         val rez = when (station.type) {
-            StationType.TIDES -> ContextCompat.getColor(context, R.color.tideColor) to R.drawable.ic_tide
-            StationType.CURRENTS -> ContextCompat.getColor(context, R.color.currentColor) to R.drawable.ic_current
+            StationType.TIDES -> ContextCompat.getColor(context, com.mxmariner.tides.R.color.tideColor) to com.mxmariner.tides.R.drawable.ic_tide
+            StationType.CURRENTS -> ContextCompat.getColor(context, com.mxmariner.tides.R.color.currentColor) to com.mxmariner.tides.R.drawable.ic_current
         }
         return StationListViewPresentation(prediction, station.name, position, station.timeZone,
                 rez.first, rez.second, abbreviation)

@@ -105,7 +105,7 @@ class LocationSearchActivity : AppCompatActivity() {
     private fun showError() {
         loadingProgress.hide()
         AlertDialog.Builder(this)
-                .setMessage(R.string.whoops)
+                .setMessage(com.mxmariner.tides.R.string.whoops)
                 .show()
     }
 

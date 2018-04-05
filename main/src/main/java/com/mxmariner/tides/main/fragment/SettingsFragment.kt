@@ -42,11 +42,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val key = getString(R.string.PREF_KEY_LOCATION)
+        val key = getString(com.mxmariner.tides.R.string.PREF_KEY_LOCATION)
         compositeDisposable.add(rxSharedPreferences.observeChanges<String>(key)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    if (it == getString(R.string.location_user)) {
+                    if (it == getString(com.mxmariner.tides.R.string.location_user)) {
                         pickUserLocation()
                     } else {
                         updateLocationPrefSummary()
@@ -61,7 +61,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences)
-        val key = getString(R.string.PREF_KEY_LOCATION)
+        val key = getString(com.mxmariner.tides.R.string.PREF_KEY_LOCATION)
         locationPreference = findPreference(key) as ListPreference
         updateLocationPrefSummary()
     }
@@ -96,7 +96,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                                 locationPreference.value = value
                             },
                             notBoth = {
-                                val defaultValue = getString(R.string.location_device)
+                                val defaultValue = getString(com.mxmariner.tides.R.string.location_device)
                                 locationPreference.value = defaultValue
                             })
                 })
