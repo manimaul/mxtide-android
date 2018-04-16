@@ -20,6 +20,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_search_layout.*
 import java.io.IOException
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
 class LocationSearchActivity : AppCompatActivity() {
@@ -39,13 +40,12 @@ class LocationSearchActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
     }
 
-    private fun addressSelection(query: String?, address: Address?) {
-        evaluateNullables(query, address, both = {
+    private fun addressSelection(address: Address?) {
+        address?.let{
             val intent = Intent()
-            intent.putExtra("query", it.first)
-            intent.putExtra("address", it.second)
+            intent.putExtra("address", it)
             setResult(Activity.RESULT_OK, intent)
-        })
+        }
         finish()
     }
 
@@ -60,7 +60,7 @@ class LocationSearchActivity : AppCompatActivity() {
                             findAddress(query).observeOn(AndroidSchedulers.mainThread()).subscribe(
                                     {
                                         loading.set(false)
-                                        addressSelection(query, it)
+                                        addressSelection(it)
                                     },
                                     {
                                         loading.set(false)
@@ -113,7 +113,7 @@ class LocationSearchActivity : AppCompatActivity() {
         loadingProgress.show()
         return Maybe.create<Address> { emitter ->
             try {
-                geocoder.getFromLocationName(query, 1).firstOrNull()
+                attemptExtractCoordinates(query) ?: attemptGeoCoderSearch(query)
             } catch (e: IOException) {
                 Log.e(TAG, "", e)
                 null
@@ -123,5 +123,31 @@ class LocationSearchActivity : AppCompatActivity() {
                 emitter.onComplete()
             }()
         }.subscribeOn(Schedulers.io())
+    }
+
+    private fun attemptGeoCoderSearch(query: String?): Address? {
+        return geocoder.getFromLocationName(query, 1).firstOrNull()?.apply {
+            query?.let {
+                featureName = it
+            }
+        }
+    }
+
+    private fun attemptExtractCoordinates(query: String?): Address? {
+        return query?.let {
+            it.split(",").takeIf {
+                it.size == 2
+            }?.let {
+                val lat = it.firstOrNull()?.toDoubleOrNull()
+                val lng = it.lastOrNull()?.toDoubleOrNull()
+                evaluateNullables(lat, lng, both = {
+                    val address = Address(Locale.getDefault())
+                    address.latitude = it.first
+                    address.longitude = it.second
+                    address.featureName = getString(R.string.coordinates)
+                    address
+                })
+            }
+        }
     }
 }

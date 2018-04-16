@@ -26,14 +26,3 @@ fun <T, E, R> evaluateNullables(a: T?,
         none?.invoke()
     }
 }
-
-fun <T, E, R> evaluateNullables(a: T?,
-                                b: E?,
-                                both: ((Pair<T, E>) -> R)? = null,
-                                notBoth: (() -> R)? = null): R? {
-    return if (a != null && b != null) {
-        both?.invoke(a to b)
-    } else {
-        notBoth?.invoke()
-    }
-}

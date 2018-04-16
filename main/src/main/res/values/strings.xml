@@ -7,4 +7,5 @@
     <string name="kts">kts</string>
     <string name="mph">mph</string>
     <string name="kph">kph</string>
+    <string name="coordinates">Coordinates</string>
 </resources>

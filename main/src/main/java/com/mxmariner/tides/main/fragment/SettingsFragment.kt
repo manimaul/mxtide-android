@@ -9,7 +9,6 @@ import android.support.v7.preference.ListPreference
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.View
 import com.github.salomonbrys.kodein.instance
-import com.mxmariner.tides.extensions.evaluateNullables
 import com.mxmariner.tides.main.R
 import com.mxmariner.tides.main.activity.LocationSearchActivity
 import com.mxmariner.tides.main.di.MainModuleInjector
@@ -77,28 +76,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
         compositeDisposable.add(rxActivityResult.startActivityForResultSingle(intent)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy {
-                    val queryKey = "query"
                     val addressKey = "address"
 
                     val address = it.data?.takeIf {
-                        it.hasExtra(addressKey) && it.hasExtra(queryKey)
+                        it.hasExtra(addressKey)
                     }?.getParcelableExtra<Address>(addressKey)?.takeIf {
                         it.hasLatitude() && it.hasLongitude()
                     }
 
-                    val query = it.data?.takeIf {
-                        it.hasExtra(queryKey)
-                    }?.getStringExtra(queryKey)
-
-                    evaluateNullables(query, address,
-                            both = {
-                                val value = "$query:${address?.latitude}:${address?.longitude}"
-                                locationPreference.value = value
-                            },
-                            notBoth = {
-                                val defaultValue = getString(com.mxmariner.tides.R.string.location_device)
-                                locationPreference.value = defaultValue
-                            })
+                    address?.let {
+                        val value = "${address.featureName}:${address.latitude}:${address.longitude}"
+                        locationPreference.value = value
+                    } ?: {
+                        val defaultValue = getString(com.mxmariner.tides.R.string.location_device)
+                        locationPreference.value = defaultValue
+                    }()
                 })
     }
 }
