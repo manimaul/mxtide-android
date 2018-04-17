@@ -13,7 +13,7 @@ buildscript {
     ext.version_name = "3.0"
     ext.sdk_version = 27
     ext.min_sdk_version = 23
-    ext.gradle_android_plugin_version = "3.1.0"
+    ext.gradle_android_plugin_version = "3.1.1"
     ext.kotlin_version = "1.2.31"
     ext.ANDROID = true
     ext.deps = [
@@ -75,4 +75,8 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "4.4"
 }
