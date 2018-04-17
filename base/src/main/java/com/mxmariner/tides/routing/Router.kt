@@ -27,10 +27,9 @@ abstract class Route(
 
 // region MainActivity
 
-class RouteNearbyTides : Route("/tides?tab=nearby_tides")
-class RouteNearbyCurrents : Route("/tides?tab=nearby_currents")
-class RouteMap : Route("/tides?tab=map")
-class RouteSettings : Route("/tides?tab=settings")
+//class RouteNearbyTides : Route("/tides?tab=nearby_tides")
+//class RouteNearbyCurrents : Route("/tides?tab=nearby_currents")
+//class RouteSettings : Route("/tides?tab=settings")
 
 // endregion
 
