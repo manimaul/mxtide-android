@@ -1,11 +1,5 @@
 <resources>
     <string name="search_title">Location Search</string>
 
-    <!--Measurement abbreviations -->
-    <string name="ft">ft</string>
-    <string name="mt">m</string>
-    <string name="kts">kts</string>
-    <string name="mph">mph</string>
-    <string name="kph">kph</string>
     <string name="coordinates">Coordinates</string>
 </resources>

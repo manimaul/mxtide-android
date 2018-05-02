@@ -19,4 +19,11 @@
     <string name="kilometersPerHour">Kilometers Per Hour</string>
     <string name="milesPerHour">Miles Per Hour</string>
 
+    <!--Measurement abbreviations -->
+    <string name="ft">ft</string>
+    <string name="mt">m</string>
+    <string name="kts">kts</string>
+    <string name="mph">mph</string>
+    <string name="kph">kph</string>
+
 </resources>

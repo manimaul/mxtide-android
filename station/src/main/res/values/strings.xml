@@ -1,3 +1,6 @@
 <resources>
 
+    <string name="distance">Distance</string>
+    <string name="station_time">Station Local Time</string>
+    <string name="unknown">unknown</string>
 </resources>

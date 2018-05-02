@@ -197,7 +197,7 @@ class LatLng {
         return bearingToPoint(this, endPoint)
     }
 
-    fun distanceToPoint(endPoint: LatLng): Int {
+    fun distanceToPoint(endPoint: LatLng): Double {
         return distanceToPoint(latitude, longitude, endPoint.latitude, endPoint.latitude)
     }
 
@@ -370,7 +370,7 @@ fun destinationPoint(startLat: Double, startLng: Double, aDistanceInMeters: Doub
  * @return distance in meters
  * @see [GPS Distance](http://www.geocities.com/DrChengalva/GPSDistance.html)
  */
-fun distanceToPoint(startLat: Double, startLng: Double, endLat: Double, endLng: Double): Int {
+fun distanceToPoint(startLat: Double, startLng: Double, endLat: Double, endLng: Double): Double {
     val a1 = DEG2RAD * startLat
     val a2 = DEG2RAD * startLng
     val b1 = DEG2RAD * endLat
@@ -381,7 +381,7 @@ fun distanceToPoint(startLat: Double, startLng: Double, endLat: Double, endLng: 
     val t2 = cosa1 * Math.sin(a2) * cosb1 * Math.sin(b2)
     val t3 = Math.sin(a1) * Math.sin(b1)
     val tt = Math.acos(t1 + t2 + t3)
-    return (RADIUS_EARTH_METERS * tt).toInt()
+    return RADIUS_EARTH_METERS * tt
 }
 
 /**

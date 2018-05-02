@@ -7,33 +7,26 @@ import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.mxtide.api.StationType
-import com.mxmariner.tides.main.R
 import com.mxmariner.tides.main.model.StationListViewPresentation
 import com.mxmariner.tides.settings.Preferences
+import com.mxmariner.tides.ui.UnitFormats
 import org.joda.time.DateTime
 import org.joda.time.Duration
 
 class StationListViewPresentationFactory(kodein: Kodein) {
 
     private val preferences: Preferences = kodein.instance()
+    private val unitFormats: UnitFormats = kodein.instance()
     private val context: Context = kodein.instance()
 
     fun  createPresentation(station: IStation) : StationListViewPresentation {
         val measureUnit: MeasureUnit
         val abbreviation = if (station.type == StationType.TIDES) {
             measureUnit = preferences.predictionLevels
-            when(measureUnit) {
-                MeasureUnit.METRIC -> R.string.mt
-                MeasureUnit.STATUTE,
-                MeasureUnit.NAUTICAL -> R.string.ft
-            }
+            unitFormats.levelPostFix
         } else {
             measureUnit = preferences.predictionSpeed
-            when(measureUnit) {
-                MeasureUnit.METRIC -> R.string.kph
-                MeasureUnit.STATUTE -> R.string.mph
-                MeasureUnit.NAUTICAL -> R.string.kts
-            }
+            unitFormats.speedPostFix
         }
         val prediction = station.getPredictionRaw(DateTime.now().minusHours(3),
                 Duration.standardHours(6), measureUnit)

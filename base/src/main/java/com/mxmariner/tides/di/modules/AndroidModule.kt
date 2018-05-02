@@ -28,6 +28,7 @@ import com.mxmariner.tides.repository.HarmonicsRepo
 import com.mxmariner.tides.routing.Router
 import com.mxmariner.tides.settings.Preferences
 import com.mxmariner.tides.ui.SnackbarController
+import com.mxmariner.tides.ui.UnitFormats
 import com.mxmariner.tides.util.*
 
 internal class BaseModule {
@@ -39,6 +40,8 @@ internal class BaseModule {
         bind() from singleton { Preferences(this) }
 
         bind() from singleton { RxSharedPrefs(this) }
+
+        bind() from provider { UnitFormats(this) }
     }
 }
 
