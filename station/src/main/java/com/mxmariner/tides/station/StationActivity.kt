@@ -66,7 +66,7 @@ class StationActivity : AppCompatActivity() {
         .subscribeBy {
           distanceLabel.text = when (it) {
             is LocationResultNoPermission -> getString(R.string.unknown)
-            is LocationResultPermission -> unitFormats.distanceFormated(it.location, station)
+            is LocationResultPermission -> unitFormats.distanceFormatted(it.location, station)
           }
         }
   }

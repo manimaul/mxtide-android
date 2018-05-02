@@ -15,6 +15,8 @@ class UnitFormats(kodein: Kodein) {
 
   companion object {
     const val METER_FOOT = 0.3048
+    const val METER_MILE = 1609.34
+    const val METER_KM = 1000.00
   }
 
   private val preferences: Preferences = kodein.instance()
@@ -39,17 +41,33 @@ class UnitFormats(kodein: Kodein) {
       }
     }
 
-  fun distanceFormated(location: Location, station: IStation) : String {
-    val meters = distanceToPoint(location.latitude, location.latitude, station.latitude, station.longitude)
+  fun distanceFormatted(location: Location, station: IStation) : String {
+    val meters = distanceToPoint(location.latitude, location.longitude, station.latitude, station.longitude)
     val value = when (preferences.predictionLevels) {
-      MeasureUnit.METRIC -> distanceFormat.format(meters)
+      MeasureUnit.METRIC -> {
+        if (meters > METER_KM) {
+          distanceFormat.format(meters / METER_KM) to R.string.km
+        } else {
+          distanceFormat.format(meters) to R.string.mt
+        }
+      }
       MeasureUnit.STATUTE,
-      MeasureUnit.NAUTICAL -> distanceFormat.format(meToFt(meters))
+      MeasureUnit.NAUTICAL -> {
+        if (meters > (METER_MILE / 4)) {
+          distanceFormat.format(meToMi(meters)) to R.string.mi
+        } else {
+          distanceFormat.format(meToFt(meters)) to R.string.feet
+        }
+      }
     }
-    return "$value ${resources.getString(levelPostFix)}"
+    return "${value.first} ${resources.getString(value.second)}"
   }
 
   fun meToFt(meters: Double): Double {
     return Math.round(meters / METER_FOOT * 100).toDouble() / 100
+  }
+
+  fun meToMi(meters: Double) : Double {
+    return Math.round(meters / METER_MILE * 100).toDouble() / 100
   }
 }

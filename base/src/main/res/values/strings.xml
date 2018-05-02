@@ -21,7 +21,9 @@
 
     <!--Measurement abbreviations -->
     <string name="ft">ft</string>
+    <string name="mi">mi</string>
     <string name="mt">m</string>
+    <string name="km">km</string>
     <string name="kts">kts</string>
     <string name="mph">mph</string>
     <string name="kph">kph</string>
