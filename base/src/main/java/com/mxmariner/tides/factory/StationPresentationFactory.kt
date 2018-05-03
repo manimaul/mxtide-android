@@ -1,6 +1,7 @@
 package com.mxmariner.tides.main.factory
 
 import android.content.Context
+import android.location.Location
 import android.support.v4.content.ContextCompat
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
@@ -21,7 +22,7 @@ class StationPresentationFactory(kodein: Kodein) {
     private val context: Context = kodein.instance()
     private val rxLocation: RxLocation = kodein.instance()
 
-    fun  createPresentation(station: IStation) : StationPresentation {
+    fun  createPresentation(station: IStation, location: Location? = null) : StationPresentation {
         val measureUnit: MeasureUnit
         val abbreviation = if (station.type == StationType.TIDES) {
             measureUnit = preferences.predictionLevels
@@ -38,7 +39,7 @@ class StationPresentationFactory(kodein: Kodein) {
             StationType.CURRENTS -> ContextCompat.getColor(context, com.mxmariner.tides.R.color.currentColor) to com.mxmariner.tides.R.drawable.ic_current
         }
 
-        val distance = rxLocation.lastKnownLocation?.let {
+        val distance = (location ?: rxLocation.lastKnownLocation)?.let {
             unitFormats.distanceFormatted(it, station)
         } ?: context.getString(com.mxmariner.tides.R.string.unknown)
 

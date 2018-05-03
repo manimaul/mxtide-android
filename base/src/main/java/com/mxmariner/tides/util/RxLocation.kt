@@ -66,7 +66,7 @@ class RxLocationImpl(kodein: Kodein) : RxLocation {
     }
 
     override val lastKnownLocation: Location?
-        get() = if (locationPermissionGranted) lastKnownLocationWhenGranted else null
+        get() = prefLocation() ?: if (locationPermissionGranted) lastKnownLocationWhenGranted else null
 
     private val lastKnownLocationWhenGranted: Location?
         @SuppressLint("MissingPermission")
