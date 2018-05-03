@@ -24,6 +24,7 @@ import android.view.inputmethod.InputMethodManager
 import com.github.salomonbrys.kodein.*
 import com.mxmariner.mxtide.api.ITidesAndCurrents
 import com.mxmariner.mxtide.api.MXTideFactory
+import com.mxmariner.tides.main.factory.StationPresentationFactory
 import com.mxmariner.tides.repository.HarmonicsRepo
 import com.mxmariner.tides.routing.Router
 import com.mxmariner.tides.settings.Preferences
@@ -42,6 +43,8 @@ internal class BaseModule {
         bind() from singleton { RxSharedPrefs(this) }
 
         bind() from provider { UnitFormats(this) }
+
+        bind() from provider { StationPresentationFactory(this) }
     }
 }
 
@@ -123,22 +126,3 @@ internal class ActivityAndroidModule(private val fragmentActivity: FragmentActiv
         bind<android.support.v4.app.FragmentManager>() with provider { fragmentActivity.supportFragmentManager }
     }
 }
-
-///**
-// * [FragmentScope] scope Android dependencies
-// */
-//@Module
-//class FragmentAndroidModule {
-//    @FragmentScope
-//    @Provides
-//    fun provideLayoutInflater(fragment: Fragment) : LayoutInflater {
-//        return fragment.layoutInflater
-//    }
-//
-//    @Named("childFragmentManager")
-//    @FragmentScope
-//    @Provides
-//    fun provideChildFragmentManager(fragment: Fragment) : android.support.v4.app.FragmentManager{
-//        return fragment.childFragmentManager
-//    }
-//}

@@ -5,14 +5,14 @@ import android.view.ViewGroup
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.IStation
-import com.mxmariner.tides.main.factory.StationListViewPresentationFactory
+import com.mxmariner.tides.main.factory.StationPresentationFactory
 import com.mxmariner.tides.main.view.TideStationListViewHolder
 import com.mxmariner.tides.routing.RouteStationDetails
 import com.mxmariner.tides.routing.Router
 
 class TidesRecyclerAdapter (kodein: Kodein) : RecyclerView.Adapter<TideStationListViewHolder>() {
 
-    private val presentationFactory: StationListViewPresentationFactory = kodein.instance()
+    private val presentationFactory: StationPresentationFactory = kodein.instance()
     private val router: Router = kodein.instance()
 
     private val stationList = ArrayList<IStation>()

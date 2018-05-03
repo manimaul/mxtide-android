@@ -6,7 +6,6 @@ import com.github.salomonbrys.kodein.bind
 import com.github.salomonbrys.kodein.provider
 import com.mxmariner.tides.di.Injector
 import com.mxmariner.tides.main.adapter.TidesRecyclerAdapter
-import com.mxmariner.tides.main.factory.StationListViewPresentationFactory
 import com.mxmariner.tides.main.viewmodel.TidesViewModel
 import com.mxmariner.tides.main.viewmodel.TidesViewModelFactory
 
@@ -16,7 +15,6 @@ object MainModuleInjector {
             bind() from provider { TidesViewModel(this) }
             bind() from provider { TidesViewModelFactory(this) }
             bind() from provider { TidesRecyclerAdapter(this) }
-            bind() from provider { StationListViewPresentationFactory(this) }
         })
     }
 

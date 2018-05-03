@@ -26,6 +26,8 @@ interface RxLocation {
      * Retrieves a location signal asking permission if necessary.
      */
     fun singleRecentLocationPermissionResult(): Single<LocationPermissionResult>
+
+    val lastKnownLocation: Location?
 }
 
 class RxLocationImpl(kodein: Kodein) : RxLocation {
@@ -49,16 +51,24 @@ class RxLocationImpl(kodein: Kodein) : RxLocation {
         }
     }
 
+    private val locationPermissionGranted: Boolean
+    get() {
+        return (PermissionChecker.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED ||
+            PermissionChecker.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED)
+    }
+
     private fun locationPermission(): Single<Boolean> {
-        return if (PermissionChecker.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED ||
-                PermissionChecker.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED) {
+        return if (locationPermissionGranted) {
             Single.just(true)
         } else rxPermission.requestPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION).map {
             it.first().grantResult == PermissionChecker.PERMISSION_GRANTED || it.last().grantResult == PermissionChecker.PERMISSION_GRANTED
         }
     }
 
-    private val lastKnownLocation: Location?
+    override val lastKnownLocation: Location?
+        get() = if (locationPermissionGranted) lastKnownLocationWhenGranted else null
+
+    private val lastKnownLocationWhenGranted: Location?
         @SuppressLint("MissingPermission")
         get() {
             return (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
@@ -89,7 +99,7 @@ class RxLocationImpl(kodein: Kodein) : RxLocation {
     @SuppressLint("MissingPermission")
     private fun recentLocation(): Single<Location> {
         return Single.create { emitter ->
-            lastKnownLocation?.let {
+            lastKnownLocationWhenGranted?.let {
                 emitter.onSuccess(it)
             } ?: {
                 val criteria = Criteria()

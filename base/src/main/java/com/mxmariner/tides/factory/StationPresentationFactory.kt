@@ -7,19 +7,21 @@ import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.mxtide.api.StationType
-import com.mxmariner.tides.main.model.StationListViewPresentation
+import com.mxmariner.tides.model.StationPresentation
 import com.mxmariner.tides.settings.Preferences
 import com.mxmariner.tides.ui.UnitFormats
+import com.mxmariner.tides.util.RxLocation
 import org.joda.time.DateTime
 import org.joda.time.Duration
 
-class StationListViewPresentationFactory(kodein: Kodein) {
+class StationPresentationFactory(kodein: Kodein) {
 
     private val preferences: Preferences = kodein.instance()
     private val unitFormats: UnitFormats = kodein.instance()
     private val context: Context = kodein.instance()
+    private val rxLocation: RxLocation = kodein.instance()
 
-    fun  createPresentation(station: IStation) : StationListViewPresentation {
+    fun  createPresentation(station: IStation) : StationPresentation {
         val measureUnit: MeasureUnit
         val abbreviation = if (station.type == StationType.TIDES) {
             measureUnit = preferences.predictionLevels
@@ -35,7 +37,12 @@ class StationListViewPresentationFactory(kodein: Kodein) {
             StationType.TIDES -> ContextCompat.getColor(context, com.mxmariner.tides.R.color.tideColor) to com.mxmariner.tides.R.drawable.ic_tide
             StationType.CURRENTS -> ContextCompat.getColor(context, com.mxmariner.tides.R.color.currentColor) to com.mxmariner.tides.R.drawable.ic_current
         }
-        return StationListViewPresentation(prediction, station.name, position, station.timeZone,
-                rez.first, rez.second, abbreviation)
+
+        val distance = rxLocation.lastKnownLocation?.let {
+            unitFormats.distanceFormatted(it, station)
+        } ?: context.getString(com.mxmariner.tides.R.string.unknown)
+
+        return StationPresentation(prediction, station.name, position, station.timeZone,
+            distance, rez.first, rez.second, abbreviation)
     }
 }

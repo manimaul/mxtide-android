@@ -65,7 +65,7 @@ class StationActivity : AppCompatActivity() {
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeBy {
           distanceLabel.text = when (it) {
-            is LocationResultNoPermission -> getString(R.string.unknown)
+            is LocationResultNoPermission -> getString(com.mxmariner.tides.R.string.unknown)
             is LocationResultPermission -> unitFormats.distanceFormatted(it.location, station)
           }
         }

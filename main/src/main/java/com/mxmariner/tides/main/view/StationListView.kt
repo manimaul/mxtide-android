@@ -12,7 +12,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.mxmariner.tides.extensions.hoursToDateTime
 import com.mxmariner.tides.extensions.unixTimeHours
 import com.mxmariner.tides.main.R
-import com.mxmariner.tides.main.model.StationListViewPresentation
+import com.mxmariner.tides.model.StationPresentation
 import kotlinx.android.synthetic.main.station_list_view.view.*
 
 
@@ -29,7 +29,7 @@ class StationListView : FrameLayout {
         description.text = ""
     }
 
-    fun apply(presentation: StationListViewPresentation, selection: () -> Unit) {
+    fun apply(presentation: StationPresentation, selection: () -> Unit) {
         icon.setImageResource(presentation.icon)
         stationName.text = presentation.name
         position.text = presentation.position
