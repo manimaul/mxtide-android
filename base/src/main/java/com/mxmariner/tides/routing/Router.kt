@@ -29,7 +29,7 @@ abstract class Route(
 
 //class RouteNearbyTides : Route("/tides?tab=nearby_tides")
 //class RouteNearbyCurrents : Route("/tides?tab=nearby_currents")
-//class RouteSettings : Route("/tides?tab=settings")
+class RouteSettings : Route("/tides?tab=settings")
 
 // endregion
 

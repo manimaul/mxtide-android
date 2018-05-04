@@ -36,4 +36,14 @@
             />
 
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="@string/PREF_KEY_INSTALL_CAT"
+        android:title="@string/instant_app">
+        <Preference
+            android:key="@string/PREF_KEY_INSTALL"
+            android:title="@string/installation"
+            android:summary="@string/install_app"
+            />
+    </PreferenceCategory>
 </PreferenceScreen>

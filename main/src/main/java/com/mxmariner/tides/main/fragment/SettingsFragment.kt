@@ -9,9 +9,11 @@ import android.support.v7.preference.ListPreference
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.View
 import com.github.salomonbrys.kodein.instance
+import com.google.android.instantapps.InstantApps
 import com.mxmariner.tides.main.R
 import com.mxmariner.tides.main.activity.LocationSearchActivity
 import com.mxmariner.tides.main.di.MainModuleInjector
+import com.mxmariner.tides.routing.RouteSettings
 import com.mxmariner.tides.util.RxActivityResult
 import com.mxmariner.tides.util.RxSharedPrefs
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -62,6 +64,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
         addPreferencesFromResource(R.xml.preferences)
         val key = getString(com.mxmariner.tides.R.string.PREF_KEY_LOCATION)
         locationPreference = findPreference(key) as ListPreference
+
+        if (InstantApps.isInstantApp(ctx)) {
+            findPreference(getString(R.string.PREF_KEY_INSTALL))?.setOnPreferenceClickListener {
+                activity?.let {
+                    val intent = Intent(Intent.ACTION_VIEW, RouteSettings().uri)
+                    intent.`package` =  it.packageName
+                    InstantApps.showInstallPrompt(it, intent, 9000, null)
+                }
+                true
+            }
+        } else {
+            findPreference(getString(R.string.PREF_KEY_INSTALL_CAT))?.isVisible = false
+            findPreference(getString(R.string.PREF_KEY_INSTALL))?.isVisible = false
+        }
         updateLocationPrefSummary()
     }
 
