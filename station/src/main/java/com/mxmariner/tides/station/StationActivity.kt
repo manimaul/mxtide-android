@@ -55,6 +55,7 @@ class StationActivity : AppCompatActivity() {
     stationTimeZone.text = presentation.timeZone.toTimeZone().displayName
     distanceLabel.text = presentation.distance
     localTime.text = presentation.startToEndFormatted
+    lineChart.applyPresentation(presentation)
   }
 
   private fun bindUiError() {

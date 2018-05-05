@@ -61,5 +61,5 @@ class StationPresentation(
     get() = format.print(start)
 
   val startToEndFormatted: String
-    get() = "$startFormated to ${formatTime.print(end)}"
+    get() = "$startFormated - ${formatTime.print(end)}"
 }

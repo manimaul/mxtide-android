@@ -68,7 +68,7 @@
 
     </LinearLayout>
 
-    <com.github.mikephil.charting.charts.LineChart
+    <com.mxmariner.tides.ui.StationLineChart
         android:id="@+id/lineChart"
         android:layout_width="136dp"
         android:layout_height="256dp"
