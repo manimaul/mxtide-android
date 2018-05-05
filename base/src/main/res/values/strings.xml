@@ -12,6 +12,7 @@
     <string name="position">Position</string>
     <string name="time_zone">Time Zone</string>
     <string name="details">details</string>
+    <string name="level">Level</string>
 
     <string name="feet">Feet</string>
     <string name="meters">Meters</string>

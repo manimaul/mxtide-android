@@ -1,5 +1,6 @@
 package com.mxmariner.tides.station
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -43,10 +44,11 @@ class StationActivity : AppCompatActivity() {
       } ?: {
         emitter.onComplete()
       }()
-    }.map { stationPresentationFactory.createPresentation(it) }.subscribeOn(Schedulers.io())
+    }.map { stationPresentationFactory.createPresentation(it, hrs = 6) }.subscribeOn(Schedulers.io())
 
   }
 
+  @SuppressLint("SetTextI18n")
   private fun bindUi(presentation: StationPresentation) {
     startColumn.visibility = View.VISIBLE
     icon.setImageResource(presentation.icon)
@@ -56,6 +58,8 @@ class StationActivity : AppCompatActivity() {
     distanceLabel.text = presentation.distance
     localTime.text = presentation.startToEndFormatted
     lineChart.applyPresentation(presentation)
+    nowLine.setBackgroundColor(presentation.color)
+    levelNow.text = presentation.predictionNow
   }
 
   private fun bindUiError() {

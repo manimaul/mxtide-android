@@ -47,6 +47,7 @@ private val formatTime = DateTimeFormat.forPattern("hh:mmaa")
 
 class StationPresentation(
     val prediction: List<IStationPrediction<Float>>,
+    val predictionNow: String,
     val name: String,
     val position: String,
     val timeZone: DateTimeZone,

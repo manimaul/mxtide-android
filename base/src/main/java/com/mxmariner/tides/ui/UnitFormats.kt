@@ -34,12 +34,22 @@ class UnitFormats(kodein: Kodein) {
 
   val levelPostFix: Int
     get() {
-      return when (preferences.predictionLevels) {
-        MeasureUnit.METRIC -> R.string.mt
-        MeasureUnit.STATUTE,
-        MeasureUnit.NAUTICAL -> R.string.ft
-      }
+      return getLevelPostFix(preferences.predictionLevels)
     }
+
+  private fun getLevelPostFix(measureUnit: MeasureUnit): Int {
+    return when (measureUnit) {
+      MeasureUnit.METRIC -> R.string.mt
+      MeasureUnit.STATUTE,
+      MeasureUnit.NAUTICAL -> R.string.ft
+    }
+  }
+
+  fun levelFormatted(level: Float?, unitFormats: MeasureUnit) : String {
+    return level?.let {
+      "${distanceFormat.format(it)}${resources.getString(getLevelPostFix(unitFormats))}"
+    } ?: resources.getString(R.string.unknown)
+  }
 
   fun distanceFormatted(location: Location, station: IStation) : String {
     val meters = distanceToPoint(location.latitude, location.longitude, station.latitude, station.longitude)

@@ -24,7 +24,7 @@ class StationPresentationFactory(kodein: Kodein) {
     private val context: Context = kodein.instance()
     private val rxLocation: RxLocation = kodein.instance()
 
-    fun  createPresentation(station: IStation, location: Location? = null) : StationPresentation {
+    fun  createPresentation(station: IStation, location: Location? = null, hrs: Int = hours) : StationPresentation {
         val measureUnit: MeasureUnit
         val abbreviation = if (station.type == StationType.TIDES) {
             measureUnit = preferences.predictionLevels
@@ -34,8 +34,10 @@ class StationPresentationFactory(kodein: Kodein) {
             unitFormats.speedPostFix
         }
         val now = DateTime.now().toDateTime(station.timeZone)
-        val start = now.minusHours(hours)
-        val end = now.plusHours(hours)
+        val levelValueNow = station.getPredictionRaw(now, Duration.standardSeconds(1), measureUnit).firstOrNull()?.value
+        val levelNow = unitFormats.levelFormatted(levelValueNow, measureUnit)
+        val start = now.minusHours(hrs)
+        val end = now.plusHours(hrs)
         val prediction = station.getPredictionRaw(start,
             Duration.millis(end.millis - start.millis), measureUnit)
         val position = "${station.latitude}, ${station.longitude}"
@@ -48,7 +50,7 @@ class StationPresentationFactory(kodein: Kodein) {
             unitFormats.distanceFormatted(it, station)
         } ?: context.getString(com.mxmariner.tides.R.string.unknown)
 
-        return StationPresentation(prediction, station.name, position, station.timeZone,
+        return StationPresentation(prediction, levelNow, station.name, position, station.timeZone,
             distance, start, end, rez.first, rez.second, abbreviation)
     }
 }
