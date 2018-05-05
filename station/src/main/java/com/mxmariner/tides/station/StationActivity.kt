@@ -6,7 +6,7 @@ import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.ITidesAndCurrents
-import com.mxmariner.tides.main.factory.StationPresentationFactory
+import com.mxmariner.tides.factory.StationPresentationFactory
 import com.mxmariner.tides.model.StationPresentation
 import com.mxmariner.tides.station.di.StationModuleInjector
 import io.reactivex.Maybe
@@ -54,6 +54,7 @@ class StationActivity : AppCompatActivity() {
     position.text = presentation.position
     stationTimeZone.text = presentation.timeZone.toTimeZone().displayName
     distanceLabel.text = presentation.distance
+    localTime.text = presentation.startToEndFormatted
   }
 
   private fun bindUiError() {

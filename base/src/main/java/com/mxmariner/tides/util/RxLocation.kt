@@ -51,6 +51,9 @@ class RxLocationImpl(kodein: Kodein) : RxLocation {
         }
     }
 
+    override val lastKnownLocation: Location?
+        get() = prefLocation() ?: if (locationPermissionGranted) lastKnownLocationWhenGranted else null
+
     private val locationPermissionGranted: Boolean
     get() {
         return (PermissionChecker.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED ||
@@ -64,9 +67,6 @@ class RxLocationImpl(kodein: Kodein) : RxLocation {
             it.first().grantResult == PermissionChecker.PERMISSION_GRANTED || it.last().grantResult == PermissionChecker.PERMISSION_GRANTED
         }
     }
-
-    override val lastKnownLocation: Location?
-        get() = prefLocation() ?: if (locationPermissionGranted) lastKnownLocationWhenGranted else null
 
     private val lastKnownLocationWhenGranted: Location?
         @SuppressLint("MissingPermission")

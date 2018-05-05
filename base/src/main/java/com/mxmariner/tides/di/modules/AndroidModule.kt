@@ -24,7 +24,7 @@ import android.view.inputmethod.InputMethodManager
 import com.github.salomonbrys.kodein.*
 import com.mxmariner.mxtide.api.ITidesAndCurrents
 import com.mxmariner.mxtide.api.MXTideFactory
-import com.mxmariner.tides.main.factory.StationPresentationFactory
+import com.mxmariner.tides.factory.StationPresentationFactory
 import com.mxmariner.tides.repository.HarmonicsRepo
 import com.mxmariner.tides.routing.Router
 import com.mxmariner.tides.settings.Preferences

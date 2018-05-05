@@ -74,19 +74,17 @@
             tools:text="47.00, -122.0" />
 
         <TextView
-            android:id="@+id/stationTimeZoneTitle"
             style="@style/TitleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/time_zone" />
+            android:text="@string/distance" />
 
         <TextView
-            android:id="@+id/stationTimeZone"
+            android:id="@+id/distanceLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/half_margin"
-            tools:text="Pacific" />
+            tools:text="24.3km" />
 
     </LinearLayout>
 
@@ -112,26 +110,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/distance" />
+            android:text="@string/station_time" />
 
         <TextView
-            android:id="@+id/distanceLabel"
+            android:id="@+id/localTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="24.3km" />
+            android:layout_marginTop="@dimen/half_margin"
+            tools:text="Monday January 12, 2018 6:30PM to 9:30PM" />
 
         <TextView
+            android:id="@+id/stationTimeZoneTitle"
             style="@style/TitleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/station_time" />
+            android:text="@string/time_zone" />
 
         <TextView
+            android:id="@+id/stationTimeZone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/half_margin"
-            tools:text="6:00pm" />
+            tools:text="Pacific" />
 
     </LinearLayout>
 

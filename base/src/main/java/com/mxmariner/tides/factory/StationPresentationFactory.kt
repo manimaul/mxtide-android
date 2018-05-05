@@ -1,4 +1,4 @@
-package com.mxmariner.tides.main.factory
+package com.mxmariner.tides.factory
 
 import android.content.Context
 import android.location.Location
@@ -14,6 +14,8 @@ import com.mxmariner.tides.ui.UnitFormats
 import com.mxmariner.tides.util.RxLocation
 import org.joda.time.DateTime
 import org.joda.time.Duration
+
+private const val hours = 3
 
 class StationPresentationFactory(kodein: Kodein) {
 
@@ -31,8 +33,11 @@ class StationPresentationFactory(kodein: Kodein) {
             measureUnit = preferences.predictionSpeed
             unitFormats.speedPostFix
         }
-        val prediction = station.getPredictionRaw(DateTime.now().minusHours(3),
-                Duration.standardHours(6), measureUnit)
+        val now = DateTime.now().toDateTime(station.timeZone)
+        val start = now.minusHours(hours)
+        val end = now.plusHours(hours)
+        val prediction = station.getPredictionRaw(start,
+            Duration.millis(end.millis - start.millis), measureUnit)
         val position = "${station.latitude}, ${station.longitude}"
         val rez = when (station.type) {
             StationType.TIDES -> ContextCompat.getColor(context, com.mxmariner.tides.R.color.tideColor) to com.mxmariner.tides.R.drawable.ic_tide
@@ -44,6 +49,6 @@ class StationPresentationFactory(kodein: Kodein) {
         } ?: context.getString(com.mxmariner.tides.R.string.unknown)
 
         return StationPresentation(prediction, station.name, position, station.timeZone,
-            distance, rez.first, rez.second, abbreviation)
+            distance, start, end, rez.first, rez.second, abbreviation)
     }
 }
