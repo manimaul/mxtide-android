@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DualItems">
+        <attr name="leftTitle" format="string"/>
+        <attr name="leftDesc" format="string"/>
+        <attr name="rightTitle" format="string"/>
+        <attr name="rightDesc" format="string"/>
+    </declare-styleable>
+</resources>
