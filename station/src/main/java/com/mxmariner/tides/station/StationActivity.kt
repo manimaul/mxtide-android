@@ -43,7 +43,7 @@ class StationActivity : AppCompatActivity() {
       } ?: {
         emitter.onComplete()
       }()
-    }.map { stationPresentationFactory.createPresentation(it, hrs = 6) }.subscribeOn(Schedulers.io())
+    }.map { stationPresentationFactory.createPresentation(it, hrs = 12) }.subscribeOn(Schedulers.io())
 
   }
 

@@ -42,8 +42,7 @@ import org.joda.time.format.DateTimeFormat
  *  '       escape for text              delimiter
  *  ''      single quote                 literal
  */
-private val format = DateTimeFormat.forPattern("EEEE MMMM dd, yyyy hh:mmaa")
-private val formatTime = DateTimeFormat.forPattern("hh:mmaa")
+private val formatDateTime = DateTimeFormat.forPattern("EE hh:mmaa")
 
 class StationPresentation(
     val prediction: List<IStationPrediction<Float>>,
@@ -58,9 +57,7 @@ class StationPresentation(
     @DrawableRes val icon: Int,
     @StringRes val yValAbrv: Int
 ) {
-  val startFormated: String
-    get() = format.print(start)
 
   val startToEndFormatted: String
-    get() = "$startFormated - ${formatTime.print(end)}"
+    get() = "${formatDateTime.print(start)}\n${formatDateTime.print(end)}"
 }
