@@ -3,7 +3,6 @@ package com.mxmariner.tides.station
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.ITidesAndCurrents
@@ -50,16 +49,19 @@ class StationActivity : AppCompatActivity() {
 
   @SuppressLint("SetTextI18n")
   private fun bindUi(presentation: StationPresentation) {
-    startColumn.visibility = View.VISIBLE
     icon.setImageResource(presentation.icon)
-    stationName.text = presentation.name
-    position.text = presentation.position
-    stationTimeZone.text = presentation.timeZone.toTimeZone().displayName
-    distanceLabel.text = presentation.distance
-    localTime.text = presentation.startToEndFormatted
+
+    nameAndTime.leftDesc = presentation.name
+    nameAndTime.rightDesc = presentation.startToEndFormatted
+
+    positionAndTimeZone.leftDesc = presentation.position
+    positionAndTimeZone.rightDesc = presentation.timeZone.toTimeZone().displayName
+
+    distanceAndLevel.leftDesc = presentation.distance
+    distanceAndLevel.rightDesc = presentation.predictionNow
+
     lineChart.applyPresentation(presentation)
     nowLine.setBackgroundColor(presentation.color)
-    levelNow.text = presentation.predictionNow
   }
 
   private fun bindUiError() {

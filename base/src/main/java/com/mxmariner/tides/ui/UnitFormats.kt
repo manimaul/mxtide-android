@@ -6,6 +6,7 @@ import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.MeasureUnit
+import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.mxtide.api.distanceToPoint
 import com.mxmariner.tides.R
 import com.mxmariner.tides.settings.Preferences
@@ -25,12 +26,16 @@ class UnitFormats(kodein: Kodein) {
 
   val speedPostFix: Int
     get() {
-      return when (preferences.predictionSpeed) {
-        MeasureUnit.METRIC -> R.string.kph
-        MeasureUnit.STATUTE -> R.string.mph
-        MeasureUnit.NAUTICAL -> R.string.kts
-      }
+      return getSpeedPostFix(preferences.predictionSpeed)
     }
+
+  private fun getSpeedPostFix(measureUnit: MeasureUnit) : Int {
+    return when (measureUnit) {
+      MeasureUnit.METRIC -> R.string.kph
+      MeasureUnit.STATUTE -> R.string.mph
+      MeasureUnit.NAUTICAL -> R.string.kts
+    }
+  }
 
   val levelPostFix: Int
     get() {
@@ -45,9 +50,13 @@ class UnitFormats(kodein: Kodein) {
     }
   }
 
-  fun levelFormatted(level: Float?, unitFormats: MeasureUnit) : String {
+  fun valueFormatted(level: Float?, unitFormats: MeasureUnit, type: StationType) : String {
+    val prefix = when (type) {
+      StationType.TIDES -> getLevelPostFix(unitFormats)
+      StationType.CURRENTS -> getSpeedPostFix(unitFormats)
+    }
     return level?.let {
-      "${distanceFormat.format(it)}${resources.getString(getLevelPostFix(unitFormats))}"
+      "${distanceFormat.format(it)}${resources.getString(prefix)}"
     } ?: resources.getString(R.string.unknown)
   }
 

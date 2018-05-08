@@ -34,8 +34,8 @@ class StationPresentationFactory(kodein: Kodein) {
             unitFormats.speedPostFix
         }
         val now = DateTime.now().toDateTime(station.timeZone)
-        val levelValueNow = station.getPredictionRaw(now, Duration.standardSeconds(1), measureUnit).firstOrNull()?.value
-        val levelNow = unitFormats.levelFormatted(levelValueNow, measureUnit)
+        val levelValueNow = station.getPredictionRaw(now, Duration.standardMinutes(1), measureUnit).firstOrNull()?.value
+        val levelNow = unitFormats.valueFormatted(levelValueNow, measureUnit, station.type)
         val start = now.minusHours(hrs)
         val end = now.plusHours(hrs)
         val prediction = station.getPredictionRaw(start,

@@ -16,6 +16,54 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/whoops" />
 
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_margin="@dimen/default_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_tide" />
+
+    <com.mxmariner.tides.ui.DualItems
+        android:id="@+id/nameAndTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/icon"
+        app:leftTitle="@string/name"
+        app:rightTitle="@string/station_time"
+        tools:leftDesc="Des Moines, East Passage"
+        tools:rightDesc="Monday January 12, 2018 6:30PM to 9:30PM" />
+
+    <com.mxmariner.tides.ui.DualItems
+        android:id="@+id/positionAndTimeZone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameAndTime"
+        app:leftTitle="@string/position"
+        app:rightTitle="@string/time_zone"
+        tools:leftDesc="47.00, -122.00"
+        tools:rightDesc="Pacific" />
+
+    <com.mxmariner.tides.ui.DualItems
+        android:id="@+id/distanceAndLevel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/positionAndTimeZone"
+        app:leftTitle="@string/distance"
+        app:rightTitle="@string/level"
+        tools:leftDesc="24.30km"
+        tools:rightDesc="10ft" />
+
     <com.mxmariner.tides.ui.StationLineChart
         android:id="@+id/lineChart"
         android:layout_width="0dp"
@@ -24,142 +72,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/endColumn" />
+        app:layout_constraintTop_toBottomOf="@id/distanceAndLevel" />
 
     <View
         android:id="@+id/nowLine"
         android:layout_width="2dp"
         android:layout_height="0dp"
-        android:background="@color/black"
         android:layout_marginBottom="24dp"
         android:layout_marginTop="24dp"
+        tools:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/endColumn" />
-
-    <LinearLayout
-        android:id="@+id/startColumn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_margin"
-        android:orientation="vertical"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/endColumn"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"
-        tools:visibility="visible">
-
-        <ImageView
-            android:id="@+id/icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            tools:src="@drawable/ic_tide" />
-
-        <TextView
-            style="@style/TitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/name" />
-
-        <TextView
-            android:id="@+id/stationName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Des Moines, East Passage" />
-
-        <TextView
-            style="@style/TitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/position" />
-
-        <TextView
-            android:id="@+id/position"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/half_margin"
-            tools:text="47.00, -122.0" />
-
-        <TextView
-            style="@style/TitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/distance" />
-
-        <TextView
-            android:id="@+id/distanceLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="24.3km" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/endColumn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/default_margin"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/startColumn"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"
-        tools:visibility="visible">
-
-        <View
-            android:layout_width="32dp"
-            android:layout_height="32dp" />
-
-        <TextView
-            style="@style/TitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/station_time" />
-
-        <TextView
-            android:id="@+id/localTime"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/half_margin"
-            tools:text="Monday January 12, 2018 6:30PM to 9:30PM" />
-
-        <TextView
-            android:id="@+id/stationTimeZoneTitle"
-            style="@style/TitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/time_zone" />
-
-        <TextView
-            android:id="@+id/stationTimeZone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/half_margin"
-            tools:text="Pacific" />
-
-        <TextView
-            style="@style/TitleText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/default_margin"
-            android:text="@string/level" />
-
-        <TextView
-            android:id="@+id/levelNow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/half_margin"
-            tools:text="10ft" />
-
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@id/distanceAndLevel" />
 
 </android.support.constraint.ConstraintLayout>
