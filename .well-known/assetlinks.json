@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.mxmariner.tides",
+    "sha256_cert_fingerprints":
+    ["60:44:6A:79:B2:CF:52:5F:19:C8:AE:FF:6E:C5:C8:13:72:16:21:BA:54:77:09:54:F6:14:9F:51:D8:88:B3:F9"]
+  }
+}]
