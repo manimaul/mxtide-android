@@ -8,7 +8,7 @@
 * [Disclaimer](http://www.flaterco.com/xtide/disclaimer.html) "NOT FOR NAVIGATION," "ABSOLUTELY NO WARRANTY"
 
 ![tide station list](icon_src/tides_nearby.png)
-![tide station](icon_src/tides_station.png)
+![tide station](icon_src/tide_station.png)
 ![current station list](icon_src/currents_nearby.png)
 ![current station](icon_src/current_station.png)
 ![settings](icon_src/settings.png)
