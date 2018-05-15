@@ -1,0 +1,3 @@
+[submodule "mxtide-core"]
+	path = mxtide-core
+	url = https://github.com/manimaul/mxtide-core.git
