@@ -15,7 +15,6 @@ import com.github.salomonbrys.kodein.instance
 import com.mxmariner.tides.R
 import com.mxmariner.tides.extensions.evaluateNullables
 import io.reactivex.Single
-import java.util.concurrent.TimeUnit
 
 sealed class LocationPermissionResult
 class LocationResultNoPermission : LocationPermissionResult()
@@ -71,11 +70,9 @@ class RxLocationImpl(kodein: Kodein) : RxLocation {
     private val lastKnownLocationWhenGranted: Location?
         @SuppressLint("MissingPermission")
         get() {
-            return (locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                    ?: locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
-                    ?: locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER))?.takeIf {
-                (System.currentTimeMillis() - it.time) > TimeUnit.MILLISECONDS.convert(5, TimeUnit.MINUTES)
-            }
+            return locationManager.allProviders.asSequence().map {
+                locationManager.getLastKnownLocation(it)
+            }.firstOrNull()
         }
 
     private fun prefLocation(): Location? {
@@ -107,7 +104,7 @@ class RxLocationImpl(kodein: Kodein) : RxLocation {
                 criteria.isSpeedRequired = false
                 criteria.bearingAccuracy = Criteria.ACCURACY_LOW
                 criteria.verticalAccuracy = Criteria.ACCURACY_LOW
-                criteria.horizontalAccuracy = Criteria.ACCURACY_MEDIUM
+                criteria.horizontalAccuracy = Criteria.ACCURACY_COARSE
                 criteria.isCostAllowed = true
                 locationManager.requestSingleUpdate(criteria, object : LocationListener {
                     override fun onLocationChanged(location: Location) = emitter.onSuccess(location)

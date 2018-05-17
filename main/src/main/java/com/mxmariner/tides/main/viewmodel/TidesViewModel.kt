@@ -44,7 +44,7 @@ class TidesViewModel(kodein: Kodein) : ViewModel() {
                 .compose(snackbarController.retryWhenSnackbarUntilType<LocationPermissionResult, LocationResultPermission>())
                 .observeOn(Schedulers.computation())
                 .map {
-                    harmonicsRepo.tidesAndCurrents.findNearestStations(it.location.latitude, it.location.longitude, stationType)
+                    harmonicsRepo.tidesAndCurrents.findNearestStations(it.location.latitude, it.location.longitude, stationType, 25)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .map<TidesViewState> {
