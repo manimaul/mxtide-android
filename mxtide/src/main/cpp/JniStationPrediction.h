@@ -19,13 +19,6 @@ namespace mdr {
                                    TimePoint timePoint,
                                    float value,
                                    std::string timeZone);
-
-        static jobject
-        createJniStationPrediction(JNIEnv *env,
-                                   TimePoint timePoint,
-                                   std::string value,
-                                   std::string timeZone);
     };
-
 }
 

@@ -34,20 +34,20 @@ internal class TidesAndCurrents : ITidesAndCurrents {
                                                     lat: Double,
                                                     lng: Double,
                                                     type: String,
-                                                    limit: Int): List<Long>?
+                                                    limit: Int): LongArray?
 
         @JvmStatic external fun findStationsInCircle(ptr: Long,
                                                      centerLat: Double,
                                                      centerLng: Double,
                                                      radius: Double,
-                                                     type: String): List<Long>?
+                                                     type: String): LongArray?
 
         @JvmStatic external fun findStationsInBounds(ptr: Long,
                                                      northLat: Double,
                                                      eastLng: Double,
                                                      southLat: Double,
                                                      westLng: Double,
-                                                     type: String): List<Long>?
+                                                     type: String): LongArray?
     }
 
     private val nativePtr: Long = create()

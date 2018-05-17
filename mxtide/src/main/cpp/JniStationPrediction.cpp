@@ -30,18 +30,3 @@ jobject mdr::JniStationPrediction::createJniStationPrediction(JNIEnv *env,
     mdr::Jni::checkException(env, true);
     return retVal;
 }
-
-jobject mdr::JniStationPrediction::createJniStationPrediction(JNIEnv *env,
-                                                              TimePoint timePoint,
-                                                              std::string value,
-                                                              std::string timeZone) {
-    auto duration = timePoint.time_since_epoch();
-    auto epoch = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-    jlong jniEpoch = static_cast<jlong>(epoch);
-    jstring jniValue = mdr::JniString::toJni(env, value);
-    jstring tz = mdr::JniString::toJni(env, timeZone);
-    auto retVal = env->CallStaticObjectMethod(stationPredictionFactoryClass, factoryCtor, jniEpoch,
-                                       tz, jniValue);
-    mdr::Jni::checkException(env, true);
-    return retVal;
-}
