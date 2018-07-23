@@ -24,6 +24,7 @@ dependencies {
      * Project
      */
     implementation project(":base")
+    implementation deps.rx.binding
 
     /**
      * Testing

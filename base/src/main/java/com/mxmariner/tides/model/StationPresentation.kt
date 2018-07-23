@@ -4,6 +4,9 @@ import android.support.annotation.ColorInt
 import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
 import com.mxmariner.mxtide.api.IStationPrediction
+import com.mxmariner.tides.extensions.inBetween
+import com.mxmariner.tides.extensions.minus
+import com.mxmariner.tides.extensions.unixTimeHours
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
@@ -42,7 +45,7 @@ import org.joda.time.format.DateTimeFormat
  *  '       escape for text              delimiter
  *  ''      single quote                 literal
  */
-private val formatDateTime = DateTimeFormat.forPattern("EE hh:mmaa")
+private val formatDateTime = DateTimeFormat.forPattern("MMM dd yyyy hh:mmaa") // Jul 23 2018 5:51am
 
 class StationPresentation(
     val prediction: List<IStationPrediction<Float>>,
@@ -58,6 +61,11 @@ class StationPresentation(
     @StringRes val yValAbrv: Int
 ) {
 
-  val startToEndFormatted: String
-    get() = "${formatDateTime.print(start)}\n${formatDateTime.print(end)}"
+  val scaleHours: Int
+    get() = (end - start).unixTimeHours.toInt()
+
+  val midDateTimeFormatted: String
+    get() {
+      return formatDateTime.print(start.inBetween(end))
+    }
 }

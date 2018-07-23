@@ -1,2 +1,4 @@
 <resources>
+    <string name="hrs">hrs</string>
+    <string name="scale">Scale</string>
 </resources>

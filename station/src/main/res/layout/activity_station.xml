@@ -21,9 +21,44 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_margin="@dimen/default_margin"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/editTime"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
         tools:src="@drawable/ic_tide" />
+
+    <ImageView
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:id="@+id/editTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        android:src="@drawable/ic_access_time_black_24dp" />
+
+    <ImageView
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:id="@+id/editDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/default_margin"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/double_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/editTime"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        android:src="@drawable/ic_date_range_black_24dp" />
 
     <com.mxmariner.tides.ui.DualItems
         android:id="@+id/nameAndTime"
@@ -80,10 +115,10 @@
         android:layout_height="0dp"
         android:layout_marginBottom="24dp"
         android:layout_marginTop="24dp"
-        tools:background="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/distanceAndLevel" />
+        app:layout_constraintTop_toBottomOf="@id/distanceAndLevel"
+        tools:background="@color/black" />
 
 </android.support.constraint.ConstraintLayout>
