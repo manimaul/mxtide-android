@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.mxmariner.tides.main.R
+import com.mxmariner.tides.R
 import com.mxmariner.tides.model.StationPresentation
 
 private fun inflateView(parent: ViewGroup) : View {

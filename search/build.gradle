@@ -18,18 +18,18 @@ dependencies {
      * Project
      */
     implementation project(":app")
-    implementation "com.jakewharton.rxbinding2:rxbinding:2.1.1"
+//    implementation deps.rx.binding
 
     /**
      * Testing
      */
-    testImplementation "junit:junit:$junit_version"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_version"
-    androidTestImplementation "com.android.support.test:runner:$android_support_test_runner_version"
+    testImplementation deps.junit
+    androidTestImplementation deps.android.test.runner
+    androidTestImplementation deps.android.test.espresso.core
 
     /**
      * Android
      */
-    kapt "android.arch.lifecycle:compiler:$android_arch_comp_version"
+    kapt deps.android.arch.lifecycle_compiler
 
 }

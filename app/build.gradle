@@ -1,31 +1,114 @@
 apply plugin: "com.android.application"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-android-extensions"
+apply plugin: "kotlin-kapt"
 
 android {
     compileSdkVersion sdk_version
-
     defaultConfig {
         applicationId "com.mxmariner.tides"
         minSdkVersion min_sdk_version
         targetSdkVersion sdk_version
         versionCode version_code
         versionName version_name
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-
+//    splits {
+//        density {
+//
+//            // Configures multiple APKs based on screen density.
+//            enable true
+//
+//            // Specifies a list of screen densities Gradle should not create multiple APKs for.
+//            exclude "ldpi", "xxhdpi", "xxxhdpi"
+//
+//            // Specifies a list of compatible screen size settings for the manifest.
+//            compatibleScreens 'small', 'normal', 'large', 'xlarge'
+//        }
+//
+//        abi {
+//            enable true
+//            // Resets the list of ABIs that Gradle should create APKs for to none.
+//            reset()
+//
+//            // Specifies a list of ABIs that Gradle should create APKs for.
+//            include "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
+//
+//            // Specifies that we do not want to also generate a universal APK that includes all ABIs.
+//            universalApk false
+//        }
+//    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     buildTypes {
-       release {
-           minifyEnabled true
-           shrinkResources true
-           proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-       }
+        release {
+            minifyEnabled true
+//           shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         debug {
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    dynamicFeatures = [":station", ":main"]
 }
 
 dependencies {
-    implementation project(':station')
-    implementation project(':main')
-    implementation project(':base')
+    /**
+     * Project
+     */
+    api project(":mxtide")
+
+    /**
+     * Kotlin
+     */
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    /**
+     * Android
+     */
+    api "com.android.support:appcompat-v7:$android_support_version"
+    api "com.android.support.constraint:constraint-layout:$constraint_layout_version"
+    api "com.android.support:design:$android_support_version"
+    api "com.android.support:preference-v14:$android_support_version"
+    api "com.android.support:support-v13:$android_support_version"
+    api "com.google.android.instantapps:instantapps:$instant_apps_version"
+    api "android.arch.lifecycle:extensions:$android_arch_comp_version"
+    kapt "android.arch.lifecycle:compiler:$android_arch_comp_version"
+
+    /**
+     * Testing
+     */
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "com.android.support.test:runner:$android_support_test_runner_version"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_version"
+
+    /**
+     * Kodein
+     */
+    api "com.github.salomonbrys.kodein:kodein:4.1.0"
+
+    /**
+     * Charts and Graphs
+     */
+    api "com.github.PhilJay:MPAndroidChart:v3.0.3"
+
+    /**
+     * Rx
+     */
+    api "io.reactivex.rxjava2:rxjava:$rxjava_version"
+    api "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
+    api "io.reactivex.rxjava2:rxandroid:$rx_android_version"
+
+    /**
+     * Android
+     */
+    kapt "android.arch.lifecycle:compiler:$android_arch_comp_version"
+
 }

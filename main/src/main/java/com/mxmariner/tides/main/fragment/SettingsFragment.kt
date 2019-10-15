@@ -10,7 +10,7 @@ import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.View
 import com.github.salomonbrys.kodein.instance
 import com.google.android.instantapps.InstantApps
-import com.mxmariner.tides.main.R
+import com.mxmariner.tides.R
 import com.mxmariner.tides.main.activity.LocationSearchActivity
 import com.mxmariner.tides.main.di.MainModuleInjector
 import com.mxmariner.tides.routing.RouteSettings

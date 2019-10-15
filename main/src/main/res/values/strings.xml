@@ -1,10 +1,3 @@
 <resources>
-    <string name="search_title">Location Search</string>
-
-    <string name="coordinates">Coordinates</string>
-    <string name="installation">Installation</string>
-    <string name="install_app">Install this application</string>
-    <string name="instant_app">Instant App</string>
-    <string name="PREF_KEY_INSTALL_CAT">PREF_KEY_INSTALL_CAT</string>
-    <string name="PREF_KEY_INSTALL">PREF_KEY_INSTALL</string>
+    <string name="title_main">MX Tides</string>
 </resources>

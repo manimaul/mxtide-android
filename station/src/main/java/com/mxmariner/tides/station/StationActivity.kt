@@ -38,7 +38,7 @@ class StationActivity : AppCompatActivity() {
     setContentView(R.layout.activity_station)
 
     //madrona://mxmariner.com/tides/station?stationName=NameUriEncoded
-    val name = intent.data.getQueryParameter("stationName")
+    val name = intent.data?.getQueryParameter("stationName")
     getStationMessage(name)
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeBy(
@@ -101,8 +101,8 @@ class StationActivity : AppCompatActivity() {
 
     positionAndTimeZone.leftDesc = presentation.position
     positionAndTimeZone.rightDesc = presentation.timeZone.toTimeZone().displayName
-    editDate.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN)
-    editTime.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN)
+////    editDate.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN)
+////    editTime.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN)
 
     distanceAndLevel.leftDesc = presentation.distance
     distanceAndLevel.rightDesc = presentation.predictionNow

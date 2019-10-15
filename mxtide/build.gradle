@@ -1,5 +1,6 @@
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
+apply plugin: "kotlin-android-extensions"
 
 android {
     compileSdkVersion sdk_version
@@ -39,28 +40,28 @@ dependencies {
     /**
      * Support libraries
      */
-    implementation deps.android.support.coreutils
+    implementation "com.android.support:support-core-utils:$android_support_version"
 
     /**
      * Kotlin
      */
-    implementation deps.kotlin.stdlib
-    testImplementation deps.kotlin.stdlib
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     /**
      * Testing
      */
-    androidTestImplementation(deps.android.test.espresso.core, {
+    androidTestImplementation("com.android.support.test.espresso:espresso-core:$espresso_version", {
         exclude group: "com.android.support", module: "support-annotations"
     })
 
     /**
      * Unit Tests
      */
-    testImplementation deps.junit
+    testImplementation "junit:junit:$junit_version"
 
     /**
      * Joda Time
      */
-    api deps.jodatime
+    api "joda-time:joda-time:2.9.9"
 }

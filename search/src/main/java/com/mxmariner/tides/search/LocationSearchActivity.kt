@@ -1,4 +1,4 @@
-package com.mxmariner.tides.main.activity
+package com.mxmariner.tides.search
 
 import android.app.Activity
 import android.content.Intent
@@ -12,10 +12,9 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.github.salomonbrys.kodein.instance
+import com.mxmariner.tides.di.SearchModuleInjector
 import com.mxmariner.tides.extensions.evaluateNullables
-import com.mxmariner.tides.main.R
-import com.mxmariner.tides.R as RR
-import com.mxmariner.tides.main.di.MainModuleInjector
+import com.mxmariner.tides.search.R
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -34,7 +33,7 @@ class LocationSearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val injector = MainModuleInjector.activityScopeAssembly(this)
+        val injector = SearchModuleInjector.activityScopeAssembly(this)
         geocoder = injector.instance()
 
         setContentView(R.layout.activity_search_layout)
@@ -145,7 +144,7 @@ class LocationSearchActivity : AppCompatActivity() {
                     val address = Address(Locale.getDefault())
                     address.latitude = it.first
                     address.longitude = it.second
-                    address.featureName = getString(RR.string.coordinates)
+                    address.featureName = getString(R.string.coordinates)
                     address
                 })
             }

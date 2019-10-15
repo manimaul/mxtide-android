@@ -1,6 +1,8 @@
 package com.mxmariner.tides.ui
 
 import android.content.Context
+import android.os.Build
+import android.support.annotation.RequiresApi
 import android.support.annotation.StringRes
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -22,7 +24,8 @@ class DualItems : FrameLayout {
     initAttrs(attrs)
   }
 
-  constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
+  @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+  constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
     initAttrs(attrs)
   }
 

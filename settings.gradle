@@ -1,6 +1,5 @@
-include ":main",
-        ":app",
-        ":base",
-        ":instantapp",
+include ":app",
+        ":main",
         ":station",
+//        ":search",
         ":mxtide"

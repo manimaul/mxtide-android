@@ -1,4 +1,4 @@
-apply plugin: "com.android.feature"
+apply plugin: "com.android.dynamic-feature"
 apply plugin: "kotlin-android"
 apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
@@ -10,32 +10,12 @@ android {
         targetSdkVersion sdk_version
         versionCode version_code
         versionName version_name
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "aia-proguard-rules.pro"
-        }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
-    /**
-     * Project
-     */
-    implementation project(":base")
-
-    /**
-     * Testing
-     */
-    testImplementation deps.junit
-    androidTestImplementation deps.android.test.runner
-    androidTestImplementation deps.android.test.espresso.core
-
-    /**
-     * Android
-     */
-    kapt deps.android.arch.lifecycle_compiler
-
+    implementation project(':app')
 }
