@@ -1,4 +1,4 @@
-package com.mxmariner.tides.main.view
+package com.mxmariner.main.view
 
 import android.view.LayoutInflater
 import android.view.View

@@ -1,4 +1,4 @@
-package com.mxmariner.tides.main.activity
+package com.mxmariner.main.activity
 
 import android.content.Intent
 import android.net.Uri
@@ -6,14 +6,13 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.StationType
-import com.mxmariner.tides.main.R
-import com.mxmariner.tides.main.di.MainModuleInjector
-import com.mxmariner.tides.main.fragment.SettingsFragment
-import com.mxmariner.tides.main.fragment.TidesFragment
+import com.mxmariner.tides.R
+import com.mxmariner.tides.fragment.SettingsFragment
+import com.mxmariner.tides.fragment.TidesFragment
+import com.mxmariner.main.di.MainModuleInjector
 import com.mxmariner.tides.util.PerfTimer
 import kotlinx.android.synthetic.main.activity_main.*
 

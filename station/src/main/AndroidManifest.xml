@@ -12,7 +12,7 @@
 
     <application>
         <activity
-                android:parentActivityName="com.mxmariner.tides.main.activity.MainActivity"
+                android:parentActivityName="com.mxmariner.main.activity.MainActivity"
                 android:name=".StationActivity"
                 android:theme="@style/AppTheme">
             <intent-filter

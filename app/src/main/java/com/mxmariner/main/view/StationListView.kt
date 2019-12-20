@@ -1,11 +1,11 @@
-package com.mxmariner.tides.main.view
+package com.mxmariner.main.view
 
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
-import com.mxmariner.tides.main.R
+import com.mxmariner.tides.R
 import com.mxmariner.tides.model.StationPresentation
 import kotlinx.android.synthetic.main.station_list_view.view.*
 

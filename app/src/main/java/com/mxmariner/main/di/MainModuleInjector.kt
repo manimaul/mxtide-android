@@ -1,13 +1,13 @@
-package com.mxmariner.tides.main.di
+package com.mxmariner.main.di
 
 import androidx.fragment.app.FragmentActivity
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.bind
 import com.github.salomonbrys.kodein.provider
 import com.mxmariner.tides.di.Injector
-import com.mxmariner.tides.main.adapter.TidesRecyclerAdapter
-import com.mxmariner.tides.main.viewmodel.TidesViewModel
-import com.mxmariner.tides.main.viewmodel.TidesViewModelFactory
+import com.mxmariner.main.adapter.TidesRecyclerAdapter
+import com.mxmariner.main.viewmodel.TidesViewModel
+import com.mxmariner.main.viewmodel.TidesViewModelFactory
 
 object MainModuleInjector {
     init {

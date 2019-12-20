@@ -1,4 +1,4 @@
-package com.mxmariner.tides.main.fragment
+package com.mxmariner.tides.fragment
 
 import android.content.Context
 import android.content.Intent
@@ -10,9 +10,9 @@ import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.github.salomonbrys.kodein.instance
 import com.google.android.instantapps.InstantApps
+import com.mxmariner.main.activity.LocationSearchActivity
 import com.mxmariner.tides.R
-import com.mxmariner.tides.main.activity.LocationSearchActivity
-import com.mxmariner.tides.main.di.MainModuleInjector
+import com.mxmariner.main.di.MainModuleInjector
 import com.mxmariner.tides.routing.RouteSettings
 import com.mxmariner.tides.util.RxActivityResult
 import com.mxmariner.tides.util.RxSharedPrefs
@@ -91,13 +91,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val intent = Intent(ctx, LocationSearchActivity::class.java)
         compositeDisposable.add(rxActivityResult.startActivityForResultSingle(intent)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy {
+                .subscribeBy { result ->
                     val addressKey = "address"
 
-                    val address = it.data?.takeIf {
-                        it.hasExtra(addressKey)
-                    }?.getParcelableExtra<Address>(addressKey)?.takeIf {
-                        it.hasLatitude() && it.hasLongitude()
+                    val address = result.data?.takeIf { intent ->
+                        intent.hasExtra(addressKey)
+                    }?.getParcelableExtra<Address>(addressKey)?.takeIf { address ->
+                        address.hasLatitude() && address.hasLongitude()
                     }
 
                     address?.let {

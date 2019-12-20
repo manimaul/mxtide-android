@@ -1,4 +1,4 @@
-package com.mxmariner.tides.main.fragment
+package com.mxmariner.tides.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,12 +11,12 @@ import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.tides.extensions.args
-import com.mxmariner.tides.main.R
-import com.mxmariner.tides.main.di.MainModuleInjector
-import com.mxmariner.tides.main.model.TidesViewStateLoadingComplete
-import com.mxmariner.tides.main.model.TidesViewStateLoadingStarted
-import com.mxmariner.tides.main.viewmodel.TidesViewModel
-import com.mxmariner.tides.main.viewmodel.TidesViewModelFactory
+import com.mxmariner.main.di.MainModuleInjector
+import com.mxmariner.main.model.TidesViewStateLoadingComplete
+import com.mxmariner.main.model.TidesViewStateLoadingStarted
+import com.mxmariner.main.viewmodel.TidesViewModel
+import com.mxmariner.main.viewmodel.TidesViewModelFactory
+import com.mxmariner.tides.R
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy

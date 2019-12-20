@@ -1,4 +1,4 @@
-package com.mxmariner.tides.main.adapter
+package com.mxmariner.main.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -6,7 +6,7 @@ import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.tides.factory.StationPresentationFactory
-import com.mxmariner.tides.main.view.TideStationListViewHolder
+import com.mxmariner.main.view.TideStationListViewHolder
 import com.mxmariner.tides.routing.RouteStationDetails
 import com.mxmariner.tides.routing.Router
 

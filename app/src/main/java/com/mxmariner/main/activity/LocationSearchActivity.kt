@@ -1,4 +1,4 @@
-package com.mxmariner.tides.main.activity
+package com.mxmariner.main.activity
 
 import android.app.Activity
 import android.content.Intent
@@ -12,12 +12,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import com.github.salomonbrys.kodein.instance
+import com.mxmariner.tides.R
 import com.mxmariner.tides.extensions.evaluateNullables
-import com.mxmariner.tides.main.R
-import com.mxmariner.tides.R as RR
-import com.mxmariner.tides.main.di.MainModuleInjector
+import com.mxmariner.main.di.MainModuleInjector
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_search_layout.*
 import java.io.IOException
@@ -31,6 +31,8 @@ class LocationSearchActivity : AppCompatActivity() {
     }
 
     private lateinit var geocoder: Geocoder
+    private val compositeDisposable = CompositeDisposable()
+    private val loading = AtomicBoolean(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +41,11 @@ class LocationSearchActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_search_layout)
         setSupportActionBar(toolbar)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.clear()
     }
 
     private fun addressSelection(address: Address?) {
@@ -54,26 +61,11 @@ class LocationSearchActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.search, menu)
         (menu?.findItem(R.id.search)?.actionView as? SearchView)?.setOnQueryTextListener(
                 object : SearchView.OnQueryTextListener {
-                    val loading = AtomicBoolean(false)
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         if (!loading.getAndSet(true)) {
                             loadingProgress.show()
-                            findAddress(query).observeOn(AndroidSchedulers.mainThread()).subscribe(
-                                    {
-                                        loading.set(false)
-                                        addressSelection(it)
-                                    },
-                                    {
-                                        loading.set(false)
-                                        showError()
-                                    },
-                                    {
-                                        loading.set(false)
-                                        showError()
-                                    }
-                            )
+                            query(query)
                         }
-
                         return true
                     }
 
@@ -83,6 +75,25 @@ class LocationSearchActivity : AppCompatActivity() {
                 }
         )
         return true
+    }
+
+    private fun query(query: String?) {
+        compositeDisposable.add(
+                findAddress(query).observeOn(AndroidSchedulers.mainThread()).subscribe(
+                        {
+                            loading.set(false)
+                            addressSelection(it)
+                        },
+                        {
+                            loading.set(false)
+                            showError()
+                        },
+                        {
+                            loading.set(false)
+                            showError()
+                        }
+                )
+        )
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
@@ -106,7 +117,7 @@ class LocationSearchActivity : AppCompatActivity() {
     private fun showError() {
         loadingProgress.hide()
         AlertDialog.Builder(this)
-                .setMessage(com.mxmariner.tides.R.string.whoops)
+                .setMessage(R.string.whoops)
                 .show()
     }
 
@@ -145,7 +156,7 @@ class LocationSearchActivity : AppCompatActivity() {
                     val address = Address(Locale.getDefault())
                     address.latitude = it.first
                     address.longitude = it.second
-                    address.featureName = getString(RR.string.coordinates)
+                    address.featureName = getString(R.string.coordinates)
                     address
                 })
             }
