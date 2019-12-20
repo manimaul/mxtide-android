@@ -1,12 +1,12 @@
 package com.mxmariner.tides.ui
 
 import android.content.res.Resources
-import android.support.design.widget.BaseTransientBottomBar
-import android.support.design.widget.Snackbar
-import android.support.v4.app.FragmentActivity
 import android.view.View
+import androidx.fragment.app.FragmentActivity
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.mxmariner.tides.R
 import com.mxmariner.tides.extensions.safeComplete
 import com.mxmariner.tides.extensions.safeError

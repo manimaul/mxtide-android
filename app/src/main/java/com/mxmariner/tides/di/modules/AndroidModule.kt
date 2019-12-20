@@ -3,7 +3,6 @@ package com.mxmariner.tides.di.modules
 import android.animation.ArgbEvaluator
 import android.app.Activity
 import android.app.Application
-import android.app.FragmentManager
 import android.app.NotificationManager
 import android.content.ClipboardManager
 import android.content.Context
@@ -15,12 +14,13 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.os.Handler
 import android.preference.PreferenceManager
-import android.support.v4.app.FragmentActivity
 import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import com.github.salomonbrys.kodein.*
 import com.mxmariner.mxtide.api.ITidesAndCurrents
 import com.mxmariner.mxtide.api.MXTideFactory
@@ -121,8 +121,6 @@ internal class ActivityAndroidModule(private val fragmentActivity: FragmentActiv
 
         bind<LayoutInflater>() with provider { fragmentActivity.layoutInflater }
 
-        bind<FragmentManager>() with provider { fragmentActivity.fragmentManager }
-
-        bind<android.support.v4.app.FragmentManager>() with provider { fragmentActivity.supportFragmentManager }
+        bind<FragmentManager>() with provider { fragmentActivity.supportFragmentManager }
     }
 }

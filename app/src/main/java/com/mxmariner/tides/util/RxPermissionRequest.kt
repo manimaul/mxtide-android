@@ -1,10 +1,9 @@
 package com.mxmariner.tides.util
 
-import android.app.Fragment
-import android.app.FragmentManager
 import android.os.Bundle
-import android.support.v13.app.FragmentCompat
-import android.support.v4.content.PermissionChecker
+import androidx.core.content.PermissionChecker
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import io.reactivex.Single
@@ -72,7 +71,7 @@ class PermissionRequestBroker : Fragment() {
         super.onCreate(savedInstanceState)
         retainInstance = true
         arguments?.getStringArray(KEY_PERMISSIONS)?.let {
-            FragmentCompat.requestPermissions(this, it, requestCode)
+            requestPermissions(it, requestCode)
         }
 
     }
@@ -82,9 +81,9 @@ class PermissionRequestBroker : Fragment() {
         if (requestCode == this.requestCode) {
             resultSubject.onSuccess(grantResults.zip(permissions).map { PermissionRequestResult(it.second, it.first) })
             fragmentManager
-                    .beginTransaction()
-                    .remove(this)
-                    .commit()
+                    ?.beginTransaction()
+                    ?.remove(this)
+                    ?.commit()
         }
     }
 }

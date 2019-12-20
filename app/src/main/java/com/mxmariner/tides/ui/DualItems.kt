@@ -2,11 +2,11 @@ package com.mxmariner.tides.ui
 
 import android.content.Context
 import android.os.Build
-import android.support.annotation.RequiresApi
-import android.support.annotation.StringRes
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import androidx.annotation.RequiresApi
+import androidx.annotation.StringRes
 import com.mxmariner.tides.R
 import kotlinx.android.synthetic.main.dual_items.view.*
 

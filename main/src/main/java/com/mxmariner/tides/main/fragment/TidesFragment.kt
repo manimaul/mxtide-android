@@ -1,12 +1,12 @@
 package com.mxmariner.tides.main.fragment
 
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.DividerItemDecoration
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.StationType
@@ -38,6 +38,7 @@ class TidesFragment : Fragment() {
     private lateinit var viewModelFactory: TidesViewModelFactory
     private lateinit var viewModel: TidesViewModel
 
+
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +46,7 @@ class TidesFragment : Fragment() {
         activity?.let {
             kodein = MainModuleInjector.activityScopeAssembly(it)
             viewModelFactory = kodein.instance()
-            viewModel = ViewModelProviders.of(this, viewModelFactory).get(TidesViewModel::class.java)
+            viewModel = ViewModelProvider(this, viewModelFactory).get(TidesViewModel::class.java)
         }
     }
 

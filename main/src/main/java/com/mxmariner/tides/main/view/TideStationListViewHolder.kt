@@ -1,9 +1,9 @@
 package com.mxmariner.tides.main.view
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.mxmariner.tides.R
 import com.mxmariner.tides.model.StationPresentation
 

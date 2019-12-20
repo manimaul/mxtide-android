@@ -1,7 +1,7 @@
 package com.mxmariner.tides.extensions
 
 import android.content.res.Resources
-import android.support.annotation.RawRes
+import androidx.annotation.RawRes
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -15,7 +15,7 @@ import java.io.IOException
  * @return if copy was successful or (non-directory) destination exists
  */
 fun Resources.copyRawResourceToFile(@RawRes rawId: Int,
-                                             destination: File) {
+                                    destination: File) {
 
     destination.parentFile.takeUnless {
         it.exists()

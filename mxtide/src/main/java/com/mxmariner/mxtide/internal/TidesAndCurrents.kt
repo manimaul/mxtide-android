@@ -1,7 +1,7 @@
 package com.mxmariner.mxtide.internal
 
 import android.content.Context
-import android.support.annotation.RawRes
+import androidx.annotation.RawRes
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.ITidesAndCurrents
 import com.mxmariner.mxtide.api.MeasureUnit

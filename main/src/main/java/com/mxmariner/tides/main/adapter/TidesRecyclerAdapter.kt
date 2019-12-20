@@ -1,7 +1,7 @@
 package com.mxmariner.tides.main.adapter
 
-import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.IStation
@@ -25,10 +25,10 @@ class TidesRecyclerAdapter (kodein: Kodein) : RecyclerView.Adapter<TideStationLi
         return stationList.count()
     }
 
-    override fun onBindViewHolder(holder: TideStationListViewHolder?, position: Int) {
+    override fun onBindViewHolder(holder: TideStationListViewHolder, position: Int) {
         val station = stationList[position]
         val name = station.name
-        holder?.apply(presentationFactory.createPresentation(station)) {
+        holder.apply(presentationFactory.createPresentation(station)) {
             router.routeTo(RouteStationDetails(name))
         }
     }

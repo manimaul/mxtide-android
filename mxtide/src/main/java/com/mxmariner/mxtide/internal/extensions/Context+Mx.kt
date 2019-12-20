@@ -1,7 +1,7 @@
 package com.mxmariner.mxtide.internal.extensions
 
 import android.content.Context
-import android.support.annotation.RawRes
+import androidx.annotation.RawRes
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream

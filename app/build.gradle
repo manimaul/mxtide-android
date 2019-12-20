@@ -72,15 +72,15 @@ dependencies {
 
     /**
      * Android
+     * https://developer.android.com/jetpack/androidx/migrate/artifact-mappings
      */
-    api "com.android.support:appcompat-v7:$android_support_version"
-    api "com.android.support.constraint:constraint-layout:$constraint_layout_version"
-    api "com.android.support:design:$android_support_version"
-    api "com.android.support:preference-v14:$android_support_version"
-    api "com.android.support:support-v13:$android_support_version"
-    api "com.google.android.instantapps:instantapps:$instant_apps_version"
-    api "android.arch.lifecycle:extensions:$android_arch_comp_version"
-    kapt "android.arch.lifecycle:compiler:$android_arch_comp_version"
+    api "androidx.appcompat:appcompat:1.1.0"
+    api "androidx.constraintlayout:constraintlayout:1.1.3"
+    api "com.google.android.material:material:1.0.0"
+    api "androidx.legacy:legacy-preference-v14:1.0.0"
+    api "androidx.legacy:legacy-support-v13:1.0.0"
+    api "com.google.android.instantapps:instantapps:1.1.0"
+    api "androidx.lifecycle:lifecycle-common-java8:2.1.0"
 
     /**
      * Testing
@@ -102,13 +102,7 @@ dependencies {
     /**
      * Rx
      */
-    api "io.reactivex.rxjava2:rxjava:$rxjava_version"
-    api "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
-    api "io.reactivex.rxjava2:rxandroid:$rx_android_version"
-
-    /**
-     * Android
-     */
-    kapt "android.arch.lifecycle:compiler:$android_arch_comp_version"
-
+    api "io.reactivex.rxjava2:rxjava:2.2.15"
+    api "io.reactivex.rxjava2:rxkotlin:2.3.0"
+    api "io.reactivex.rxjava2:rxandroid:2.1.1"
 }

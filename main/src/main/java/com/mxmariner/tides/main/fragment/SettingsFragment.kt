@@ -5,9 +5,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.location.Address
 import android.os.Bundle
-import android.support.v7.preference.ListPreference
-import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.View
+import androidx.preference.ListPreference
+import androidx.preference.PreferenceFragmentCompat
 import com.github.salomonbrys.kodein.instance
 import com.google.android.instantapps.InstantApps
 import com.mxmariner.tides.R

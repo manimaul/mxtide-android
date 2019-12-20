@@ -2,7 +2,7 @@ package com.mxmariner.tides.factory
 
 import android.content.Context
 import android.location.Location
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.IStation

@@ -4,8 +4,7 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.github.salomonbrys.kodein.instance
 import com.jakewharton.rxbinding2.view.RxView
 import com.mxmariner.mxtide.api.IStation

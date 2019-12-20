@@ -1,7 +1,7 @@
 package com.mxmariner.mxtide.api
 
 import android.content.Context
-import android.support.annotation.RawRes
+import androidx.annotation.RawRes
 import java.io.File
 
 interface ITidesAndCurrents {

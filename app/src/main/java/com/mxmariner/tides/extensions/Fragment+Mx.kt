@@ -1,7 +1,7 @@
 package com.mxmariner.tides.extensions
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 
 val Fragment.args : Bundle
 get() {

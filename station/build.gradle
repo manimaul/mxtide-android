@@ -26,10 +26,4 @@ dependencies {
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation "com.android.support.test:runner:$android_support_test_runner_version"
-
-    /**
-     * Android
-     */
-    kapt "android.arch.lifecycle:compiler:$android_arch_comp_version"
-
 }

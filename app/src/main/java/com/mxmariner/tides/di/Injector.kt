@@ -3,7 +3,7 @@ package com.mxmariner.tides.di
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.FragmentActivity
 import com.github.salomonbrys.kodein.Kodein
 import com.mxmariner.tides.di.modules.ActivityAndroidModule
 import com.mxmariner.tides.di.modules.AndroidModule
