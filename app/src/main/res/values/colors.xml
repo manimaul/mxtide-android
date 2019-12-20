@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#148271</color>
-    <color name="colorPrimaryDark">#0e5b4f</color>
-    <color name="colorAccent">#BF1A2F</color>
-    <color name="tideColor">#454E9E</color>
-    <color name="currentColor">#E53D00</color>
+    <color name="colorPrimary">#00897B</color>
+    <color name="colorPrimaryDark">#005047</color>
+    <color name="colorAccent">@color/colorPrimaryDark</color>
+    <color name="tideColor">#3949AB</color>
+    <color name="currentColor">#F4511E</color>
     <color name="white">#fff</color>
     <color name="black">#000</color>
     <color name="white_semi_transparent">#a8ffffff</color>
