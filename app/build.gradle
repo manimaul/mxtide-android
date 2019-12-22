@@ -56,7 +56,7 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
-    dynamicFeatures = [":station"]
+    dynamicFeatures = [":station", ":globe"]
 }
 
 dependencies {

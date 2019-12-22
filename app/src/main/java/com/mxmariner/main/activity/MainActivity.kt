@@ -3,26 +3,28 @@ package com.mxmariner.main.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.github.salomonbrys.kodein.instance
+import com.mxmariner.main.di.MainModuleInjector
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.tides.R
 import com.mxmariner.tides.fragment.SettingsFragment
 import com.mxmariner.tides.fragment.TidesFragment
-import com.mxmariner.main.di.MainModuleInjector
+import com.mxmariner.tides.routing.RouteGlobe
+import com.mxmariner.tides.routing.Router
 import com.mxmariner.tides.util.PerfTimer
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var fm: FragmentManager
+    private lateinit var router: Router
 
-    private val bottomNavigationHandler = { item: MenuItem ->
-        routeToTab(item.itemId)
-    }
 
     //region AppCompatActivity
 
@@ -32,18 +34,27 @@ class MainActivity : AppCompatActivity() {
 
         val injector = MainModuleInjector.activityScopeAssembly(this)
         fm = injector.instance()
+        router = injector.instance()
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        navigation.setOnNavigationItemSelectedListener(bottomNavigationHandler)
-        navigation.inflateMenu(R.menu.navigation)
-
+        navigation.setOnNavigationItemSelectedListener { item: MenuItem ->
+            routeToTab(item.itemId)
+        }
         setSupportActionBar(toolbar)
-
         PerfTimer.markEventStop("MainActivity.onCreate()")
         PerfTimer.printLogOfCapturedEvents(true)
 
         selectTabFromUri(intent?.data)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.toolbar_navigation, menu)
+        menu?.findItem(R.id.navigation_globe)?.setOnMenuItemClickListener {
+            router.routeTo(RouteGlobe())
+            true
+        }
+        return true
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -65,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         }()
     }
 
-    private fun routeToTab(@IdRes id: Int) : Boolean {
+    private fun routeToTab(@IdRes id: Int): Boolean {
         return when (id) {
             R.id.navigation_tides -> TidesFragment.create(StationType.TIDES)
             R.id.navigation_currents -> TidesFragment.create(StationType.CURRENTS)

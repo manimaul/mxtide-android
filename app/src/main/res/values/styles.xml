@@ -43,4 +43,15 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="ToolbarStyle">
+        <item name="titleTextAppearance">@style/ToolbarStyle.TextAppearance</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlHighlight">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <style name="ToolbarStyle.TextAppearance">
+        <item name="android:textSize">@dimen/large</item>
+    </style>
+
 </resources>

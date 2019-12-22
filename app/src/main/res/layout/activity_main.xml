@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.MainActivity">
+    tools:context="com.mxmariner.main.activity.MainActivity">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayout"
@@ -22,9 +22,13 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                app:menu="@menu/toolbar_navigation"
+                app:itemIconTint="@color/white"
+                app:itemTextColor="@color/white"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                android:theme="@style/ToolbarStyle"
                 tools:title="@string/app_name" />
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -39,6 +43,7 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation"
+        app:menu="@menu/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

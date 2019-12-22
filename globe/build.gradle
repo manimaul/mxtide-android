@@ -1,0 +1,26 @@
+apply plugin: "com.android.dynamic-feature"
+apply plugin: "kotlin-android"
+apply plugin: "kotlin-android-extensions"
+apply plugin: "kotlin-kapt"
+
+android {
+    compileSdkVersion sdk_version
+    defaultConfig {
+        minSdkVersion min_sdk_version
+        targetSdkVersion sdk_version
+        versionCode version_code
+        versionName version_name
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':app')
+}

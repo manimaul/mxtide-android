@@ -33,6 +33,7 @@ abstract class Route(
 //class RouteNearbyTides : Route("/tides", mapOf("tab" to "nearby_tides"))
 //class RouteNearbyCurrents : Route("/tides", mapOf("tab" to "nearby_currents"))
 class RouteSettings : Route("/tides", mapOf("tab" to "settings"))
+class RouteGlobe : Route("/tides/globe")
 //class RouteStation : Route("/tides/station", mapOf("stationName" to "Tacoma, Commencement Bay, Sitcum Waterway, Puget Sound, Washington"))
 
 // endregion
