@@ -81,6 +81,8 @@ dependencies {
     api "androidx.legacy:legacy-support-v13:1.0.0"
     api "com.google.android.instantapps:instantapps:1.1.0"
     api "androidx.lifecycle:lifecycle-common-java8:2.1.0"
+    api 'androidx.core:core-ktx:1.1.0'
+
 
     /**
      * Testing
@@ -102,7 +104,7 @@ dependencies {
     /**
      * Rx
      */
-    api "io.reactivex.rxjava2:rxjava:2.2.15"
-    api "io.reactivex.rxjava2:rxkotlin:2.3.0"
+    api "io.reactivex.rxjava2:rxjava:2.2.16"
+    api "io.reactivex.rxjava2:rxkotlin:2.4.0"
     api "io.reactivex.rxjava2:rxandroid:2.1.1"
 }

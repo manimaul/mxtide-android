@@ -20,7 +20,19 @@ android {
     }
 }
 
+repositories {
+    jcenter()
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':app')
+    implementation(name: 'WhirlyGlobe-Maply_Distribution_2_6_2', ext: 'aar')
+    implementation 'com.squareup.okhttp:okhttp:2.7.5'
+//    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
+
+
 }
