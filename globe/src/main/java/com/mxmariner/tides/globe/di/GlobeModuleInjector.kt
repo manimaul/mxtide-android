@@ -1,0 +1,27 @@
+package com.mxmariner.tides.globe.di
+
+import androidx.fragment.app.FragmentActivity
+import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.bind
+import com.github.salomonbrys.kodein.provider
+import com.mxmariner.tides.di.Injector
+import com.mxmariner.tides.globe.GlobeViewModel
+import com.mxmariner.tides.globe.GlobeViewModelFactory
+
+object GlobeModuleInjector {
+
+    init {
+        Injector.mixInActivityScope(Kodein.Module {
+            bind() from provider { GlobeViewModel(this)}
+            bind() from provider { GlobeViewModelFactory(this)}
+        })
+    }
+
+    /**
+     * Gets the [FragmentActivity] scope assembly for the specified activity creating it if necessary
+     * which mixes in this project's assembly module(s).
+     */
+    fun activityScopeAssembly(activity: FragmentActivity) : Kodein {
+        return Injector.activityScopeAssembly(activity)
+    }
+}
