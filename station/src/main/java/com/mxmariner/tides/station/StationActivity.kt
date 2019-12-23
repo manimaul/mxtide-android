@@ -38,14 +38,14 @@ class StationActivity : AppCompatActivity() {
 
     //madrona://mxmariner.com/tides/station?stationName=NameUriEncoded
     val name = intent.data?.getQueryParameter("stationName")
-    getStationMessage(name)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeBy(
-            onSuccess = ::bindUi,
-            onComplete = ::bindUiError
-        )
 
     compositeDisposable.addAll(
+        getStationMessage(name)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                        onSuccess = ::bindUi,
+                        onComplete = ::bindUiError
+                ),
 
         RxView.clicks(editTime)
             .withLatestFrom(stationDate, BiFunction<Any, DateTime, DateTime> { _, date ->
