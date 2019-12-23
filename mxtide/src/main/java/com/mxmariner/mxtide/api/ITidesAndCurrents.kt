@@ -37,7 +37,7 @@ interface ITidesAndCurrents {
      * @param name the name of the tide or current station
      * @return the station of null if one with the supplied name does not exist
      */
-    fun findStationByName(name: String?): IStation?
+    fun findStationByName(name: String?, type: StationType?): IStation?
 
     /**
      * Find a station nearest to a position

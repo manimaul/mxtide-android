@@ -27,9 +27,8 @@ class TidesRecyclerAdapter (kodein: Kodein) : RecyclerView.Adapter<TideStationLi
 
     override fun onBindViewHolder(holder: TideStationListViewHolder, position: Int) {
         val station = stationList[position]
-        val name = station.name
         holder.apply(presentationFactory.createPresentation(station)) {
-            router.routeTo(RouteStationDetails(name))
+            router.routeTo(RouteStationDetails(station))
         }
     }
 

@@ -6,6 +6,7 @@ import android.net.Uri
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import com.google.android.instantapps.InstantApps
+import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.tides.extensions.addParams
 import com.mxmariner.tides.model.ActivityResult
 import com.mxmariner.tides.util.RxActivityResult
@@ -41,7 +42,10 @@ class RouteGlobe : Route("/tides/globe")
 
 // region DetailsActivity
 
-class RouteStationDetails(stationName: String) : Route("/tides/station", mapOf("stationName" to stationName))
+class RouteStationDetails(station: IStation) : Route("/tides/station", mapOf(
+        "stationName" to station.name,
+        "stationType" to station.type.name
+))
 
 // endregion
 

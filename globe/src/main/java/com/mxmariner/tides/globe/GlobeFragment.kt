@@ -48,7 +48,7 @@ class GlobeFragment : GlobeMapFragment() {
                         .singleElement()
                         .subscribeBy(
                                 onSuccess = {
-                                    router.routeTo(RouteStationDetails(it.name))
+                                    router.routeTo(RouteStationDetails(it))
                                 }
                         )
         )
