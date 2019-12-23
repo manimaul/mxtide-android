@@ -16,7 +16,7 @@ class HarmonicsRepo(kodein: Kodein) {
     fun initializeAsync() {
         AsyncTask.execute {
             PerfTimer.markEventStart("HarmonicsRepo.initialize()")
-            tidesAndCurrents.addHarmonicsFile(context, R.raw.harmonics_dwf_20161231_free_tcd)
+            tidesAndCurrents.addHarmonicsFile(context, R.raw.harmonics_dwf_20190620_free_tcd)
             PerfTimer.markEventStop("HarmonicsRepo.initialize()")
         }
     }
