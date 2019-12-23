@@ -56,16 +56,16 @@ class GlobeViewModel(kodein: Kodein) : ViewModel(), GlobeController.GestureDeleg
     var currentMarkers: ComponentObject? = null
     var tideMarkers: ComponentObject? = null
 
-    override fun userDidSelect(globeControl: GlobeController, selObjs: Array<out SelectedObject>, loc: Point2d, screenLoc: Point2d) {
-        selObjs.filter {
+    override fun userDidSelect(globeControl: GlobeController, selObjs: Array<out SelectedObject>?, loc: Point2d, screenLoc: Point2d) {
+        selObjs?.filter {
             it.selObj is ScreenMarker
-        }.map {
+        }?.map {
             it.selObj as ScreenMarker
-        }.filter {
+        }?.filter {
             it.userObject is IStation
-        }.map {
+        }?.map {
             it.userObject as IStation
-        }.forEach {
+        }?.forEach {
             Log.i("gvm station selected", "$it")
             clickSubject.onNext(it)
         }
@@ -74,19 +74,19 @@ class GlobeViewModel(kodein: Kodein) : ViewModel(), GlobeController.GestureDeleg
     override fun globeDidStopMoving(globeControl: GlobeController, corners: Array<out Point3d>?, userMotion: Boolean) {
     }
 
-    override fun userDidTap(globeControl: GlobeController, loc: Point2d, screenLoc: Point2d) {
+    override fun userDidTap(globeControl: GlobeController, loc: Point2d?, screenLoc: Point2d?) {
     }
 
     override fun globeDidStartMoving(globeControl: GlobeController, userMotion: Boolean) {
     }
 
-    override fun userDidLongPress(globeControl: GlobeController, selObjs: Array<out SelectedObject>, loc: Point2d, screenLoc: Point2d) {
+    override fun userDidLongPress(globeControl: GlobeController, selObjs: Array<out SelectedObject>?, loc: Point2d, screenLoc: Point2d) {
     }
 
-    override fun globeDidMove(globeControl: GlobeController, corners: Array<out Point3d>, userMotion: Boolean) {
+    override fun globeDidMove(globeControl: GlobeController, corners: Array<out Point3d>?, userMotion: Boolean) {
     }
 
-    override fun userDidTapOutside(globeControl: GlobeController, screenLoc: Point2d) {
+    override fun userDidTapOutside(globeControl: GlobeController, screenLoc: Point2d?) {
     }
 
     private fun bitmap(resId: Int): Single<Bitmap> {

@@ -29,7 +29,7 @@
                 app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 android:theme="@style/ToolbarStyle"
-                tools:title="@string/app_name" />
+                app:title="@string/app_name" />
 
         </com.google.android.material.appbar.AppBarLayout>
 

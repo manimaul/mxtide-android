@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import com.mousebird.maply.*
+import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.tides.globe.di.GlobeModuleInjector
 import com.mxmariner.tides.routing.RouteStationDetails
 import com.mxmariner.tides.routing.Router
@@ -96,5 +97,9 @@ class GlobeFragment : GlobeMapFragment() {
 
     private fun remoteTileInfo(): RemoteTileInfo {
         return RemoteTileInfo(openStreetMapUrl, "png", 0, 18)
+    }
+
+    fun select(type: StationType) {
+        viewModel.displayType = type
     }
 }
