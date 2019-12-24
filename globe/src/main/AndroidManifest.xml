@@ -16,7 +16,7 @@
 
     <application>
         <activity
-                android:name=".GlobeActivity"
+                android:name=".activity.GlobeActivity"
                 android:parentActivityName="com.mxmariner.main.activity.MainActivity"
                 android:theme="@style/AppTheme">
             <intent-filter

@@ -1,4 +1,4 @@
-package com.mxmariner.tides.globe
+package com.mxmariner.tides.globe.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +10,8 @@ import com.github.salomonbrys.kodein.instance
 import com.mousebird.maply.*
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.tides.globe.di.GlobeModuleInjector
+import com.mxmariner.tides.globe.viewmodel.GlobeViewModel
+import com.mxmariner.tides.globe.viewmodel.GlobeViewModelFactory
 import com.mxmariner.tides.routing.RouteStationDetails
 import com.mxmariner.tides.routing.Router
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,7 +22,6 @@ import java.io.File
 
 private const val cacheDirName = "openstreetmap"
 private const val openStreetMapUrl = "https://a.tile.openstreetmap.org/{z}/{x}/{y}"
-private val seattleMark = Point2d.FromDegrees(-122.3320708, 47.6062095)
 
 class GlobeFragment : GlobeMapFragment() {
 
@@ -54,6 +55,11 @@ class GlobeFragment : GlobeMapFragment() {
         )
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.pause(globeControl)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         globeControl?.gestureDelegate = null
@@ -71,7 +77,6 @@ class GlobeFragment : GlobeMapFragment() {
 
     override fun controlHasStarted() {
         globeControl.addLayer(baseLayer())
-        globeControl.animatePositionGeo(seattleMark.x, seattleMark.y, .5, 2.0)
         viewModel.initialize(globeControl)
     }
 

@@ -1,9 +1,11 @@
-package com.mxmariner.tides.globe
+package com.mxmariner.tides.globe.activity
 
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.mxmariner.mxtide.api.StationType
+import com.mxmariner.tides.globe.fragment.GlobeFragment
+import com.mxmariner.tides.globe.R
 import kotlinx.android.synthetic.main.globe_layout.*
 
 class GlobeActivity : AppCompatActivity() {

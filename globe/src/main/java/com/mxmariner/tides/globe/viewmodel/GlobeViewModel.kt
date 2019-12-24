@@ -1,4 +1,4 @@
-package com.mxmariner.tides.globe
+package com.mxmariner.tides.globe.viewmodel
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -14,6 +14,10 @@ import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.ITidesAndCurrents
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.tides.R
+import com.mxmariner.tides.globe.util.GlobePreferences
+import com.mxmariner.tides.globe.data.GeoBox
+import com.mxmariner.tides.globe.data.globeBox
+import com.mxmariner.tides.globe.extensions.setPosition
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -37,6 +41,7 @@ class GlobeViewModel(kodein: Kodein) : ViewModel(), GlobeController.GestureDeleg
 
     private val tidesAndCurrents: ITidesAndCurrents = kodein.instance()
     private val context: Context = kodein.instance()
+    private val prefs: GlobePreferences = kodein.instance()
 
     private val clickSubject = PublishSubject.create<IStation>()
     val stationClickObservable: Observable<IStation>
@@ -180,6 +185,11 @@ class GlobeViewModel(kodein: Kodein) : ViewModel(), GlobeController.GestureDeleg
     fun initialize(globeControl: GlobeController) {
         globeController = globeControl
         globeControl.gestureDelegate = this
+        globeControl.setPosition(prefs.lastPosition())
         displayMarkers()
+    }
+
+    fun pause(globeControl: GlobeController) {
+        prefs.savePosition(globeControl.positionGeo)
     }
 }

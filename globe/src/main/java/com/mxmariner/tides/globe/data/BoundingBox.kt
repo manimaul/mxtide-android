@@ -1,4 +1,4 @@
-package com.mxmariner.tides.globe
+package com.mxmariner.tides.globe.data
 
 
 interface GeoBox {

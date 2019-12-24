@@ -5,15 +5,17 @@ import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.bind
 import com.github.salomonbrys.kodein.provider
 import com.mxmariner.tides.di.Injector
-import com.mxmariner.tides.globe.GlobeViewModel
-import com.mxmariner.tides.globe.GlobeViewModelFactory
+import com.mxmariner.tides.globe.util.GlobePreferences
+import com.mxmariner.tides.globe.viewmodel.GlobeViewModel
+import com.mxmariner.tides.globe.viewmodel.GlobeViewModelFactory
 
 object GlobeModuleInjector {
 
     init {
         Injector.mixInActivityScope(Kodein.Module {
-            bind() from provider { GlobeViewModel(this)}
-            bind() from provider { GlobeViewModelFactory(this)}
+            bind() from provider { GlobeViewModel(this) }
+            bind() from provider { GlobeViewModelFactory(this) }
+            bind() from provider { GlobePreferences(this) }
         })
     }
 
