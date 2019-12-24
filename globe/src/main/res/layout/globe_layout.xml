@@ -24,6 +24,7 @@
                     android:layout_height="?attr/actionBarSize"
                     app:itemIconTint="@color/white"
                     app:itemTextColor="@color/white"
+                    app:menu="@menu/globe_toolbar_navigation"
                     app:layout_scrollFlags="scroll|enterAlways"
                     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"

@@ -1,5 +1,6 @@
 package com.mxmariner.tides.globe.fragment
 
+import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -106,5 +107,10 @@ class GlobeFragment : GlobeMapFragment() {
 
     fun select(type: StationType) {
         viewModel.displayType = type
+    }
+
+    fun userSelectLocation(location: Location) {
+        val pos = Point2d.FromDegrees(location.longitude, location.latitude)
+        globeControl.animatePositionGeo(pos.x, pos.y, 0.003562353551387787, 1.0)
     }
 }
