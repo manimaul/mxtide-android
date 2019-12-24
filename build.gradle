@@ -1,5 +1,5 @@
 buildscript {
-    ext.espresso_version = "3.0.1"
+    ext.espresso_version = "3.2.0"
     ext.android_support_test_runner_version = "1.0.1"
 
     ext.version_code = 5

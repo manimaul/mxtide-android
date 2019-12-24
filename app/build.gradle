@@ -11,7 +11,11 @@ android {
         targetSdkVersion sdk_version
         versionCode version_code
         versionName version_name
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    testOptions {
+        execution "ANDROIDX_TEST_ORCHESTRATOR"
     }
 //    splits {
 //        density {
@@ -23,7 +27,7 @@ android {
 //            exclude "ldpi", "xxhdpi", "xxxhdpi"
 //
 //            // Specifies a list of compatible screen size settings for the manifest.
-//            compatibleScreens 'small', 'normal', 'large', 'xlarge'
+//            compatibleScreens "small", "normal", "large", "xlarge"
 //        }
 //
 //        abi {
@@ -49,7 +53,7 @@ android {
         release {
             minifyEnabled true
 //           shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
         debug {
             minifyEnabled false
@@ -81,15 +85,17 @@ dependencies {
     api "androidx.legacy:legacy-support-v13:1.0.0"
     api "com.google.android.instantapps:instantapps:1.1.0"
     api "androidx.lifecycle:lifecycle-common-java8:2.1.0"
-    api 'androidx.core:core-ktx:1.1.0'
+    api "androidx.core:core-ktx:1.1.0"
 
 
     /**
      * Testing
      */
     testImplementation "junit:junit:$junit_version"
-    androidTestImplementation "com.android.support.test:runner:$android_support_test_runner_version"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test.ext:junit:1.1.1"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test:runner:1.2.0"
+    androidTestUtil "androidx.test:orchestrator:1.2.0"
 
     /**
      * Kodein

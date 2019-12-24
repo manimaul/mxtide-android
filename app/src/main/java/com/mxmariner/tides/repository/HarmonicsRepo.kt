@@ -5,7 +5,6 @@ import android.os.AsyncTask
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.ITidesAndCurrents
-import com.mxmariner.tides.R
 import com.mxmariner.tides.util.PerfTimer
 
 class HarmonicsRepo(kodein: Kodein) {
@@ -16,7 +15,7 @@ class HarmonicsRepo(kodein: Kodein) {
     fun initializeAsync() {
         AsyncTask.execute {
             PerfTimer.markEventStart("HarmonicsRepo.initialize()")
-            tidesAndCurrents.addHarmonicsFile(context, R.raw.harmonics_dwf_20190620_free_tcd)
+            tidesAndCurrents.addHarmonicsFile(context, "harmonics_dwf_20190620_free_tcd")
             PerfTimer.markEventStop("HarmonicsRepo.initialize()")
         }
     }

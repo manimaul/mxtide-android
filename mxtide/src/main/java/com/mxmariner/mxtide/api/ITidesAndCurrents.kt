@@ -10,9 +10,9 @@ interface ITidesAndCurrents {
      * Add the stations from a harmonics file raw resource
      *
      * @param context the application [Context]
-     * @param resId the raw resource id of the harmonics file
+     * @param rawRes the raw resource id of the harmonics file
      */
-    fun addHarmonicsFile(context: Context, @RawRes resId: Int)
+    fun addHarmonicsFile(context: Context, rawRes: String)
 
     /**
      * Add the stations from a harmonics file

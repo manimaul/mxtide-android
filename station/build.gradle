@@ -10,6 +10,10 @@ android {
         targetSdkVersion sdk_version
         versionCode version_code
         versionName version_name
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    testOptions {
+        execution "ANDROIDX_TEST_ORCHESTRATOR"
     }
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8
@@ -31,6 +35,8 @@ dependencies {
      * Testing
      */
     testImplementation "junit:junit:$junit_version"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espresso_version"
-    androidTestImplementation "com.android.support.test:runner:$android_support_test_runner_version"
+    androidTestImplementation "androidx.test.ext:junit:1.1.1"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test:runner:1.2.0"
+    androidTestUtil "androidx.test:orchestrator:1.2.0"
 }

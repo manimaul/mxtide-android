@@ -10,7 +10,7 @@ android {
         targetSdkVersion sdk_version
         versionCode version_code
         versionName version_name
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_STL=c++_shared",
@@ -22,6 +22,9 @@ android {
         ndk {
             abiFilters "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
         }
+    }
+    testOptions {
+        execution "ANDROIDX_TEST_ORCHESTRATOR"
     }
     buildTypes {
         release {
@@ -58,14 +61,11 @@ dependencies {
     /**
      * Testing
      */
-    androidTestImplementation("com.android.support.test.espresso:espresso-core:$espresso_version", {
-        exclude group: "com.android.support", module: "support-annotations"
-    })
-
-    /**
-     * Unit Tests
-     */
     testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:1.1.1"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test:runner:1.2.0"
+    androidTestUtil "androidx.test:orchestrator:1.2.0"
 
     /**
      * Joda Time

@@ -1,7 +1,7 @@
 package com.mxmariner.mxtide.internal
 
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.mxmariner.andxtidelib.R
 import com.mxmariner.mxtide.api.MXTideFactory.createTidesAndCurrents
 import com.mxmariner.mxtide.api.MeasureUnit
@@ -9,8 +9,7 @@ import com.mxmariner.mxtide.api.StationType
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.Duration
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,18 +22,18 @@ class StationTest {
   @Before
   fun beforeEach() {
     val tnc = createTidesAndCurrents()
-    tnc.addHarmonicsFile(InstrumentationRegistry.getTargetContext(), R.raw.harmonics_dwf_20161231_free_tcd)
-    subject = tnc.findStationByName("Seattle, Puget Sound, Washington") as Station
+    tnc.addHarmonicsFile(InstrumentationRegistry.getInstrumentation().targetContext, "harmonics_dwf_20190620_free_tcd")
+    subject = tnc.findStationByName("Seattle, Puget Sound, Washington", StationType.TIDES) as Station
   }
 
   @Test
   fun getLatitude() {
-    assertEquals(47.6026, subject.latitude, 0.0000001)
+    assertEquals(47.60264, subject.latitude, 0.0)
   }
 
   @Test
   fun getLongitude() {
-    assertEquals(-122.33929999999999, subject.longitude, 0.0000001)
+    assertEquals(-122.33931, subject.longitude, 0.0)
   }
 
   @Test

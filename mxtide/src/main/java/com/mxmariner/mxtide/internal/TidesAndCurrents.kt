@@ -53,8 +53,8 @@ internal class TidesAndCurrents : ITidesAndCurrents {
 
     private val nativePtr: Long = create()
 
-    override fun addHarmonicsFile(context: Context, @RawRes resId: Int) {
-        addHarmonicsFile(context.rawResourceAsCacheFile(resId))
+    override fun addHarmonicsFile(context: Context, rawRes: String) {
+        addHarmonicsFile(context.rawResourceAsCacheFile(rawRes))
     }
 
     override fun addHarmonicsFile(file: File) {
