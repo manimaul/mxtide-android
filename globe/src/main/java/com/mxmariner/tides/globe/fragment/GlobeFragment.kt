@@ -77,8 +77,8 @@ class GlobeFragment : GlobeMapFragment() {
     }
 
     override fun controlHasStarted() {
-        globeControl.addLayer(baseLayer())
-        viewModel.initialize(globeControl)
+        //globeControl.addLayer(baseLayer()) // openstreetmap
+        compositeDisposable.add(viewModel.initialize(globeControl).subscribe())
     }
 
     private fun baseLayer(): Layer {

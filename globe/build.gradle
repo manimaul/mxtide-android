@@ -18,6 +18,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    testOptions {
+        execution "ANDROIDX_TEST_ORCHESTRATOR"
+    }
 }
 
 repositories {
@@ -34,5 +37,12 @@ dependencies {
     implementation 'com.squareup.okhttp:okhttp:2.7.5'
 //    implementation 'com.squareup.okhttp3:okhttp:4.2.2'
 
-
+    /**
+     * Testing
+     */
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:1.1.1"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test:runner:1.2.0"
+    androidTestUtil "androidx.test:orchestrator:1.2.0"
 }

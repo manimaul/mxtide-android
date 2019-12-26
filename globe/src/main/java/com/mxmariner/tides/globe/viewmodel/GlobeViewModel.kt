@@ -18,6 +18,8 @@ import com.mxmariner.tides.globe.util.GlobePreferences
 import com.mxmariner.tides.globe.data.GeoBox
 import com.mxmariner.tides.globe.data.globeBox
 import com.mxmariner.tides.globe.extensions.setPosition
+import com.mxmariner.tides.globe.util.ShapeFileDao
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -42,6 +44,7 @@ class GlobeViewModel(kodein: Kodein) : ViewModel(), GlobeController.GestureDeleg
     private val tidesAndCurrents: ITidesAndCurrents = kodein.instance()
     private val context: Context = kodein.instance()
     private val prefs: GlobePreferences = kodein.instance()
+    private val shapeFileDao: ShapeFileDao = kodein.instance()
 
     private val clickSubject = PublishSubject.create<IStation>()
     val stationClickObservable: Observable<IStation>
@@ -182,11 +185,18 @@ class GlobeViewModel(kodein: Kodein) : ViewModel(), GlobeController.GestureDeleg
         globeController = null
     }
 
-    fun initialize(globeControl: GlobeController) {
+    fun initialize(globeControl: GlobeController): Completable {
         globeController = globeControl
         globeControl.gestureDelegate = this
         globeControl.setPosition(prefs.lastPosition())
         displayMarkers()
+        return shapeFileDao.graticules().flatMapCompletable {
+            globeControl.addVector(it.first, it.second, MaplyBaseController.ThreadMode.ThreadAny)
+            Completable.complete()
+        }.andThen(shapeFileDao.land().flatMapCompletable {
+            globeControl.addVector(it.first, it.second, MaplyBaseController.ThreadMode.ThreadAny)
+            Completable.complete()
+        })
     }
 
     fun pause(globeControl: GlobeController) {
