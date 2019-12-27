@@ -110,7 +110,6 @@ class StationActivity : AppCompatActivity() {
     distanceAndLevel.rightDesc = presentation.predictionNow
 
     lineChart.applyPresentation(presentation)
-    nowLine.setBackgroundColor(presentation.color)
   }
 
   private fun userTimePick(startDate: DateTime): Maybe<DateTime> {

@@ -6,6 +6,7 @@ import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.mxmariner.tides.extensions.hoursToDateTime
 import com.mxmariner.tides.extensions.unixTimeHours
 import com.mxmariner.tides.model.StationPresentation
@@ -23,7 +24,11 @@ class StationLineChart : LineChart {
     val lineDataSet = LineDataSet(entries, "")
     lineDataSet.setDrawValues(false)
     lineDataSet.setColors(presentation.color)
-    lineDataSet.setDrawCircles(false)
+    lineDataSet.setDrawCircles(true)
+
+    lineDataSet.circleColors = entries.map {
+      if (it.x == presentation.now.unixTimeHours) presentation.nowColor else presentation.color
+    }
     lineDataSet.setDrawFilled(true)
     lineDataSet.fillColor = presentation.color
     lineDataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
@@ -32,17 +37,21 @@ class StationLineChart : LineChart {
     xAxis.granularity = 2.0f
     legend.isEnabled = false
     val timeZone = presentation.timeZone
-    xAxis.setValueFormatter { value, _ ->
-      val hr = value.hoursToDateTime(timeZone).hourOfDay
-      when {
-        hr == 0 -> "12 am"
-        hr > 12 -> "${hr - 12}pm"
-        else -> "${hr}am"
+    xAxis.valueFormatter = object : ValueFormatter() {
+      override fun getFormattedValue(value: Float): String {
+        val hr = value.hoursToDateTime(timeZone).hourOfDay
+        return when {
+          hr == 0 -> "12 am"
+          hr > 12 -> "${hr - 12}pm"
+          else -> "${hr}am"
+        }
       }
     }
     val abriviation = context.getString(presentation.yValAbrv)
-    axisRight.setValueFormatter { _, _ ->
-      abriviation
+    axisRight.valueFormatter = object : ValueFormatter() {
+      override fun getFormattedValue(value: Float): String {
+        return abriviation
+      }
     }
     description.text = ""
     setTouchEnabled(false)

@@ -1,6 +1,7 @@
 package com.mxmariner.tides.factory
 
 import android.content.Context
+import android.graphics.Color
 import android.location.Location
 import androidx.core.content.ContextCompat
 import com.github.salomonbrys.kodein.Kodein
@@ -46,8 +47,14 @@ class StationPresentationFactory(kodein: Kodein) {
         Duration.millis(end.millis - start.millis), measureUnit)
     val position = "${station.latitude}, ${station.longitude}"
     val rez = when (station.type) {
-      StationType.TIDES -> ContextCompat.getColor(context, com.mxmariner.tides.R.color.tideColor) to com.mxmariner.tides.R.drawable.ic_tide
-      StationType.CURRENTS -> ContextCompat.getColor(context, com.mxmariner.tides.R.color.currentColor) to com.mxmariner.tides.R.drawable.ic_current
+      StationType.TIDES -> Triple(
+              ContextCompat.getColor(context, com.mxmariner.tides.R.color.tideColor),
+              Color.RED,
+              com.mxmariner.tides.R.drawable.ic_tide)
+      StationType.CURRENTS -> Triple(
+              ContextCompat.getColor(context, com.mxmariner.tides.R.color.currentColor),
+              Color.BLACK,
+              com.mxmariner.tides.R.drawable.ic_current)
     }
 
     val distance = (location ?: rxLocation.lastKnownLocation)?.let {
@@ -55,6 +62,6 @@ class StationPresentationFactory(kodein: Kodein) {
     } ?: context.getString(com.mxmariner.tides.R.string.unknown)
 
     return StationPresentation(prediction, levelNow, station.name, position, station.timeZone,
-        distance, start, end, rez.first, rez.second, abbreviation)
+        distance, start, now, end, rez.first, rez.second, rez.third, abbreviation)
   }
 }

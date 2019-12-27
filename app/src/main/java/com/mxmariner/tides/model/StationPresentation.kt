@@ -55,8 +55,10 @@ class StationPresentation(
         val timeZone: DateTimeZone,
         val distance: String,
         val start: DateTime,
+        val now: DateTime,
         val end: DateTime,
         @ColorInt val color: Int,
+        @ColorInt val nowColor: Int,
         @DrawableRes val icon: Int,
         @StringRes val yValAbrv: Int
 ) {
