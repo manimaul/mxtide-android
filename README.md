@@ -1,4 +1,4 @@
-![icon](icon_src/icon.png)
+![icon](station/icon.png)
 [![Build status](https://build.appcenter.ms/v0.1/apps/ffe99a34-b214-4c49-8483-9f0223ccc058/branches/master/badge)](https://appcenter.ms)
 
 # MX Tides - Android
@@ -9,11 +9,11 @@
 * [GPL LICENSE](gpl-3.0.md)
 * [Disclaimer](http://www.flaterco.com/xtide/disclaimer.html) "NOT FOR NAVIGATION," "ABSOLUTELY NO WARRANTY"
 
-![tide station list](icon_src/tides_nearby.png | width=100)
-![tide station](icon_src/tide_station.png | width=100)
-![current station list](icon_src/currents_nearby.png | width=100)
-![current station](icon_src/current_station.png | width=100)
-![settings](icon_src/settings.png | width=100)
-![globe tides](icon_src/globe_tides.png | width=100)
-![globe currents](icon_src/globe_currents.png | width=100)
+![tide station list](icon_src/tides_nearby.png)
+![tide station](icon_src/tide_station.png)
+![current station list](icon_src/currents_nearby.png)
+![current station](icon_src/current_station.png)
+![settings](icon_src/settings.png)
+![globe tides](icon_src/globe_tides.png)
+![globe currents](icon_src/globe_currents.png)
 
