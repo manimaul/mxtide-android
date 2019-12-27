@@ -14,12 +14,12 @@ import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.ITidesAndCurrents
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.tides.R
-import com.mxmariner.tides.globe.util.GlobePreferences
 import com.mxmariner.tides.globe.data.GeoBox
 import com.mxmariner.tides.globe.data.globeBox
 import com.mxmariner.tides.globe.extensions.setPosition
+import com.mxmariner.tides.globe.util.GlobePreferences
 import com.mxmariner.tides.globe.util.ShapeFileDao
-import io.reactivex.Completable
+import com.mxmariner.tides.util.Variable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -50,16 +50,16 @@ class GlobeViewModel(kodein: Kodein) : ViewModel(), GlobeController.GestureDeleg
     val stationClickObservable: Observable<IStation>
         get() = clickSubject.hide()
 
-    var displayType = StationType.TIDES
+    var displayType = prefs.lastSelection()
         set(value) {
             if (value != field) {
                 field = value
-                displayMarkers()
+                displayMarkers(value)
             }
         }
 
     private val disposable = CompositeDisposable()
-    private var globeController: GlobeController? = null
+    private var globeController = Variable<GlobeController>()
 
     var currentMarkers: ComponentObject? = null
     var tideMarkers: ComponentObject? = null
@@ -127,15 +127,14 @@ class GlobeViewModel(kodein: Kodein) : ViewModel(), GlobeController.GestureDeleg
         }
     }
 
-    private fun displayMarkersQuery(gc: GlobeController) {
-        disposable.clear()
+    private fun displayMarkersQuery(gc: GlobeController, target: StationType) {
         disposable.add(
-                stationMarkers(type = displayType, corners = globeBox)
+                stationMarkers(type = target, corners = globeBox)
                         .toList()
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeBy(
                                 onSuccess = { markerList ->
-                                    when (displayType) {
+                                    when (target) {
                                         StationType.TIDES -> tideMarkers = gc.addScreenMarkers(markerList, MarkerInfo(), MaplyBaseController.ThreadMode.ThreadAny)
                                         StationType.CURRENTS -> currentMarkers = gc.addScreenMarkers(markerList, MarkerInfo(), MaplyBaseController.ThreadMode.ThreadAny)
                                     }
@@ -147,59 +146,67 @@ class GlobeViewModel(kodein: Kodein) : ViewModel(), GlobeController.GestureDeleg
         )
     }
 
-    private fun displayMarkers() {
+    private fun displayMarkers(target: StationType) {
         /**
          * https://mousebird.github.io/WhirlyGlobe/tutorial/android/screen-markers.html
          */
-        globeController?.let { gc ->
-            when (displayType) {
-                StationType.TIDES -> {
-                    currentMarkers?.let {
-                        gc.disableObject(it, MaplyBaseController.ThreadMode.ThreadAny)
+        disposable.add(
+                globeController.observable.subscribe { gc ->
+                    when (target) {
+                        StationType.TIDES -> {
+                            currentMarkers?.let {
+                                gc.disableObject(it, MaplyBaseController.ThreadMode.ThreadAny)
+                            }
+                            tideMarkers?.let {
+                                gc.enableObject(it, MaplyBaseController.ThreadMode.ThreadAny)
+                            } ?: {
+                                displayMarkersQuery(gc, target)
+                            }()
+                        }
+                        StationType.CURRENTS -> {
+                            tideMarkers?.let {
+                                gc.disableObject(it, MaplyBaseController.ThreadMode.ThreadAny)
+                            }
+                            currentMarkers?.let {
+                                gc.enableObject(it, MaplyBaseController.ThreadMode.ThreadAny)
+                            } ?: {
+                                displayMarkersQuery(gc, target)
+                            }()
+                        }
                     }
-                    tideMarkers?.let {
-                        gc.enableObject(it, MaplyBaseController.ThreadMode.ThreadAny)
-                    } ?: {
-                        displayMarkersQuery(gc)
-                    }()
-                }
-                StationType.CURRENTS -> {
-                    tideMarkers?.let {
-                        gc.disableObject(it, MaplyBaseController.ThreadMode.ThreadAny)
-                    }
-                    currentMarkers?.let {
-                        gc.enableObject(it, MaplyBaseController.ThreadMode.ThreadAny)
-                    } ?: {
-                        displayMarkersQuery(gc)
-                    }()
-                }
-            }
-        }
+                })
     }
 
     override fun onCleared() {
         disposable.clear()
-        globeController?.let {
+        globeController.value?.let {
             it.gestureDelegate = null
         }
-        globeController = null
+        globeController = Variable()
     }
 
-    fun initialize(globeControl: GlobeController): Completable {
-        globeController = globeControl
+    fun initialize(globeControl: GlobeController) {
+        globeController.value = globeControl
         globeControl.gestureDelegate = this
         globeControl.setPosition(prefs.lastPosition())
-        displayMarkers()
-        return shapeFileDao.graticules().flatMapCompletable {
-            globeControl.addVector(it.first, it.second, MaplyBaseController.ThreadMode.ThreadAny)
-            Completable.complete()
-        }.andThen(shapeFileDao.land().flatMapCompletable {
-            globeControl.addVector(it.first, it.second, MaplyBaseController.ThreadMode.ThreadAny)
-            Completable.complete()
-        })
+        displayMarkers(displayType)
+        disposable.addAll(
+                shapeFileDao.graticules().subscribeBy(
+                        onSuccess = {
+                            globeControl.addVector(it.first, it.second, MaplyBaseController.ThreadMode.ThreadAny)
+                        }
+                ),
+                shapeFileDao.land().subscribeBy(
+                        onSuccess = {
+                            globeControl.addVector(it.first, it.second, MaplyBaseController.ThreadMode.ThreadAny)
+                        }
+                )
+        )
+
     }
 
     fun pause(globeControl: GlobeController) {
         prefs.savePosition(globeControl.positionGeo)
+        prefs.saveSelection(displayType)
     }
 }

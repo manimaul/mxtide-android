@@ -25,6 +25,13 @@ class GlobeActivity : AppCompatActivity() {
                 .replace(R.id.content, GlobeFragment())
                 .commitNow()
 
+        globeFragment?.let {
+            when(it.typeSelected) {
+                StationType.TIDES -> navigation.selectedItemId = R.id.navigation_tides
+                StationType.CURRENTS -> navigation.selectedItemId = R.id.navigation_currents
+            }
+        }
+
         toolbar.menu?.findItem(R.id.set_location)?.setOnMenuItemClickListener {
             rxLocation.lastKnownLocation?.let {
                 globeFragment?.userSelectLocation(it)

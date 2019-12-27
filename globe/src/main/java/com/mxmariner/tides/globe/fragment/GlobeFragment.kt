@@ -83,7 +83,7 @@ class GlobeFragment : GlobeMapFragment() {
 
     override fun controlHasStarted() {
         //globeControl.addLayer(baseLayer()) // openstreetmap
-        compositeDisposable.add(viewModel.initialize(globeControl).subscribe())
+        viewModel.initialize(globeControl)
     }
 
     private fun baseLayer(): Layer {
@@ -113,6 +113,9 @@ class GlobeFragment : GlobeMapFragment() {
     fun select(type: StationType) {
         viewModel.displayType = type
     }
+
+    val typeSelected: StationType
+        get() = viewModel.displayType
 
     fun userSelectLocation(location: Location) {
         val pos = Point2d.FromDegrees(location.longitude, location.latitude)
