@@ -1,4 +1,4 @@
-![icon](station/icon.png)
+![icon](icon_src/icon.png)
 [![Build status](https://build.appcenter.ms/v0.1/apps/ffe99a34-b214-4c49-8483-9f0223ccc058/branches/master/badge)](https://appcenter.ms)
 
 # MX Tides - Android
