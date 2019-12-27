@@ -1,0 +1,52 @@
+<resources>
+    <string name="search_title">Location Search</string>
+
+    <string name="coordinates">Coordinates</string>
+    <string name="installation">Installation</string>
+    <string name="install_app">Install this application</string>
+    <string name="instant_app">Instant App</string>
+    <string name="PREF_KEY_INSTALL_CAT">PREF_KEY_INSTALL_CAT</string>
+    <string name="PREF_KEY_INSTALL">PREF_KEY_INSTALL</string>
+
+    <string name="app_name">MX Tides</string>
+    <string name="title_tides">Tides</string>
+    <string name="title_currents">Currents</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_map">Map</string>
+    <string name="try_again">Try Again?</string>
+    <string name="could_not_deterine_location">I could not determine your location.</string>
+    <string name="whoops">Whoops, something is awry!</string>
+    <string name="finding_closest_tide_stations">Finding closest tide stations…</string>
+    <string name="name">Name</string>
+    <string name="position">Position</string>
+    <string name="time_zone">Time Zone</string>
+    <string name="details">details</string>
+    <string name="level">Level</string>
+
+    <string name="feet">Feet</string>
+    <string name="meters">Meters</string>
+    <string name="knots">Knots</string>
+    <string name="kilometersPerHour">Kilometers Per Hour</string>
+    <string name="milesPerHour">Miles Per Hour</string>
+
+    <!--Measurement abbreviations -->
+    <string name="ft">ft</string>
+    <string name="mi">mi</string>
+    <string name="mt">m</string>
+    <string name="km">km</string>
+    <string name="kts">kts</string>
+    <string name="mph">mph</string>
+    <string name="kph">kph</string>
+    <string name="unknown">unknown</string>
+
+    <string name="distance">Distance</string>
+    <string name="station_time">Station Local Time</string>
+    <string name="launch">Launch</string>
+    <string name="title_globe">Tide Globe</string>
+    <string name="globe">Globe</string>
+    <string name="examples">examples</string>
+    <string name="lat_lng">Type in latitude, longitude coordinates:</string>
+    <string name="lat_lng_ex">47.0, -122.0</string>
+    <string name="address">Type in an address:</string>
+    <string name="address_ex">Seattle, WA</string>
+</resources>

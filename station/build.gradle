@@ -1,4 +1,4 @@
-apply plugin: "com.android.feature"
+apply plugin: "com.android.dynamic-feature"
 apply plugin: "kotlin-android"
 apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
@@ -10,12 +10,17 @@ android {
         targetSdkVersion sdk_version
         versionCode version_code
         versionName version_name
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        }
+    testOptions {
+        execution "ANDROIDX_TEST_ORCHESTRATOR"
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -23,19 +28,15 @@ dependencies {
     /**
      * Project
      */
-    implementation project(":base")
-    implementation deps.rx.binding
+    implementation project(":app")
+    implementation "com.jakewharton.rxbinding2:rxbinding:2.1.1"
 
     /**
      * Testing
      */
-    testImplementation deps.junit
-    androidTestImplementation deps.android.test.runner
-    androidTestImplementation deps.android.test.espresso.core
-
-    /**
-     * Android
-     */
-    kapt deps.android.arch.lifecycle_compiler
-
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:1.1.1"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test:runner:1.2.0"
+    androidTestUtil "androidx.test:orchestrator:1.2.0"
 }

@@ -1,7 +1,7 @@
 package com.mxmariner.mxtide.api
 
 import android.content.Context
-import android.support.annotation.RawRes
+import androidx.annotation.RawRes
 import java.io.File
 
 interface ITidesAndCurrents {
@@ -10,9 +10,9 @@ interface ITidesAndCurrents {
      * Add the stations from a harmonics file raw resource
      *
      * @param context the application [Context]
-     * @param resId the raw resource id of the harmonics file
+     * @param rawRes the raw resource id of the harmonics file
      */
-    fun addHarmonicsFile(context: Context, @RawRes resId: Int)
+    fun addHarmonicsFile(context: Context, rawRes: String)
 
     /**
      * Add the stations from a harmonics file
@@ -37,7 +37,7 @@ interface ITidesAndCurrents {
      * @param name the name of the tide or current station
      * @return the station of null if one with the supplied name does not exist
      */
-    fun findStationByName(name: String?): IStation?
+    fun findStationByName(name: String?, type: StationType?): IStation?
 
     /**
      * Find a station nearest to a position

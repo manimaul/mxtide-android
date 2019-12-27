@@ -14,4 +14,6 @@
 ![current station list](icon_src/currents_nearby.png)
 ![current station](icon_src/current_station.png)
 ![settings](icon_src/settings.png)
+![globe tides](icon_src/globe_tides.png)
+![globe currents](icon_src/globe_currents.png)
 

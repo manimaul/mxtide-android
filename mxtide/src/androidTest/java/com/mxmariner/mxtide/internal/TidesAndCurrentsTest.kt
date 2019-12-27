@@ -1,8 +1,7 @@
 package com.mxmariner.mxtide.internal
 
-import android.support.test.InstrumentationRegistry
-import android.support.test.runner.AndroidJUnit4
-import com.mxmariner.andxtidelib.R
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.mxmariner.mxtide.api.MXTideFactory.createTidesAndCurrents
 import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.mxtide.api.StationType
@@ -19,7 +18,7 @@ class TidesAndCurrentsTest {
   @Before
   fun beforeEach() {
     subject = createTidesAndCurrents() as TidesAndCurrents
-    subject.addHarmonicsFile(InstrumentationRegistry.getTargetContext(), R.raw.harmonics_dwf_20161231_free_tcd)
+    subject.addHarmonicsFile(InstrumentationRegistry.getInstrumentation().targetContext, "harmonics_dwf_20190620_free_tcd")
   }
 
   @Test
@@ -35,11 +34,19 @@ class TidesAndCurrentsTest {
 
   @Test
   fun findStationByName() {
-    subject.stationNames.map {
-      Pair(it, subject.findStationByName(it))
-    }.forEach {
-      assertNotNull("${it.first} was null", it.second)
-    }
+    val tideStation = subject.findStationByName("Seattle, Puget Sound, Washington", StationType.TIDES)
+    assertNotNull(tideStation)
+    assertEquals("Seattle, Puget Sound, Washington", tideStation?.name)
+    assertEquals(47.60264, tideStation?.latitude)
+    assertEquals(-122.33931, tideStation?.longitude)
+    assertEquals(tideStation?.type, StationType.TIDES)
+
+    val currentStation = subject.findStationByName("Harbor Island East (Depth 42.3ft), Washington Current", StationType.CURRENTS)
+    assertNotNull(currentStation)
+    assertEquals("Harbor Island East (Depth 42.3ft), Washington Current", currentStation?.name)
+    assertEquals(47.58845, currentStation?.latitude)
+    assertEquals(-122.34397, currentStation?.longitude)
+    assertEquals(currentStation?.type, StationType.CURRENTS)
   }
 
   @Test
@@ -47,15 +54,15 @@ class TidesAndCurrentsTest {
     val tideStation = subject.findNearestStation(47.603962, -122.33071, StationType.TIDES)
     assertNotNull(tideStation)
     assertEquals("Seattle, Puget Sound, Washington", tideStation?.name)
-    assertEquals(47.6026, tideStation?.latitude)
-    assertEquals(-122.3393, tideStation?.longitude)
+    assertEquals(47.60264, tideStation?.latitude)
+    assertEquals(-122.33931, tideStation?.longitude)
     assertEquals(tideStation?.type, StationType.TIDES)
 
     val currentStation = subject.findNearestStation(47.603962, -122.33071, StationType.CURRENTS)
     assertNotNull(currentStation)
-    assertEquals("Off Pleasant Beach, Rich Passage, Puget Sound, Washington Current", currentStation?.name)
-    assertEquals(47.58333, currentStation?.latitude)
-    assertEquals(-122.53333, currentStation?.longitude)
+    assertEquals("Harbor Island East (Depth 42.3ft), Washington Current", currentStation?.name)
+    assertEquals(47.58845, currentStation?.latitude)
+    assertEquals(-122.34397, currentStation?.longitude)
     assertEquals(currentStation?.type, StationType.CURRENTS)
   }
 

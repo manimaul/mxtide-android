@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -21,8 +21,8 @@
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_margin="@dimen/default_margin"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="@dimen/default_margin"
+        android:layout_marginEnd="@dimen/default_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/editTime"
         app:layout_constraintHorizontal_bias="0"
@@ -34,11 +34,12 @@
     <ImageView
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
+        android:focusable="true"
         android:id="@+id/editTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_margin="@dimen/default_margin"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="@dimen/default_margin"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -48,9 +49,10 @@
     <ImageView
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
+        android:focusable="true"
         android:id="@+id/editDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_marginTop="@dimen/default_margin"
         android:layout_marginBottom="@dimen/default_margin"
         android:layout_marginEnd="@dimen/double_margin"
@@ -121,4 +123,4 @@
         app:layout_constraintTop_toBottomOf="@id/distanceAndLevel"
         tools:background="@color/black" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

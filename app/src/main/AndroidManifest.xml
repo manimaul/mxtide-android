@@ -1,1 +1,59 @@
-<manifest package="com.mxmariner.tides.app" />
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:dist="http://schemas.android.com/apk/distribution"
+        package="com.mxmariner.tides">
+
+    <dist:module dist:instant="true" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application
+            android:name=".application.MxTidesApplication"
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
+        <activity
+                android:name="com.mxmariner.main.activity.MainActivity"
+                android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter
+                    android:autoVerify="true"
+                    android:order="1">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="mxmariner.com" />
+                <data android:path="/tides" />
+                <data android:pathPattern="/tides?.*" />
+            </intent-filter>
+            <meta-data
+                    android:name="default-url"
+                    android:value="https://mxmariner.com/tides" />
+        </activity>
+        <activity
+                android:name="com.mxmariner.main.activity.LocationSearchActivity"
+                android:theme="@style/TransparentTheme" >
+            <intent-filter
+                    android:autoVerify="true"
+                    android:order="4">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <data android:scheme="http" />
+            <data android:scheme="https" />
+            <data android:host="mxmariner.com" />
+            <data android:path="/tides/location_search" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

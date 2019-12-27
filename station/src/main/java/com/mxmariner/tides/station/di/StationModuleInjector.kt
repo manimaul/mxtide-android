@@ -1,6 +1,6 @@
 package com.mxmariner.tides.station.di
 
-import android.support.v4.app.FragmentActivity
+import androidx.fragment.app.FragmentActivity
 import com.github.salomonbrys.kodein.Kodein
 import com.mxmariner.tides.di.Injector
 

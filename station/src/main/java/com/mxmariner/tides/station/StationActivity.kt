@@ -4,12 +4,13 @@ import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.github.salomonbrys.kodein.instance
 import com.jakewharton.rxbinding2.view.RxView
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.ITidesAndCurrents
+import com.mxmariner.mxtide.api.StationType
+import com.mxmariner.mxtide.api.stationTypeFromString
 import com.mxmariner.tides.factory.StationPresentationFactory
 import com.mxmariner.tides.model.StationPresentation
 import com.mxmariner.tides.station.di.StationModuleInjector
@@ -38,15 +39,16 @@ class StationActivity : AppCompatActivity() {
     setContentView(R.layout.activity_station)
 
     //madrona://mxmariner.com/tides/station?stationName=NameUriEncoded
-    val name = intent.data.getQueryParameter("stationName")
-    getStationMessage(name)
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribeBy(
-            onSuccess = ::bindUi,
-            onComplete = ::bindUiError
-        )
+    val name = intent.data?.getQueryParameter("stationName")
+    val stationType = stationTypeFromString(intent.data?.getQueryParameter("stationType"))
 
     compositeDisposable.addAll(
+        getStationMessage(name, stationType)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(
+                        onSuccess = ::bindUi,
+                        onComplete = ::bindUiError
+                ),
 
         RxView.clicks(editTime)
             .withLatestFrom(stationDate, BiFunction<Any, DateTime, DateTime> { _, date ->
@@ -54,7 +56,7 @@ class StationActivity : AppCompatActivity() {
             }).flatMapMaybe {
               userTimePick(it)
             }.flatMapMaybe {
-              getStationMessage(name, it)
+              getStationMessage(name, stationType, it)
             }.subscribeBy(
                 onNext = this::bindUi
             ),
@@ -66,7 +68,7 @@ class StationActivity : AppCompatActivity() {
             .flatMapMaybe {
               userDatePick(it)
             }.flatMapMaybe {
-              getStationMessage(name, it)
+              getStationMessage(name, stationType, it)
             }.subscribeBy(
                 onNext = this::bindUi
             )
@@ -78,9 +80,9 @@ class StationActivity : AppCompatActivity() {
     compositeDisposable.clear()
   }
 
-  private fun getStationMessage(name: String?, dateTime: DateTime = DateTime.now()): Maybe<StationPresentation> {
+  private fun getStationMessage(name: String?, type: StationType?, dateTime: DateTime = DateTime.now()): Maybe<StationPresentation> {
     return Maybe.create<IStation> { emitter ->
-      tidesAndCurrents.findStationByName(name)?.let {
+      tidesAndCurrents.findStationByName(name, type)?.let {
         emitter.onSuccess(it)
       } ?: {
         emitter.onComplete()
@@ -101,8 +103,8 @@ class StationActivity : AppCompatActivity() {
 
     positionAndTimeZone.leftDesc = presentation.position
     positionAndTimeZone.rightDesc = presentation.timeZone.toTimeZone().displayName
-    editDate.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN)
-    editTime.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN)
+////    editDate.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN)
+////    editTime.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN)
 
     distanceAndLevel.leftDesc = presentation.distance
     distanceAndLevel.rightDesc = presentation.predictionNow

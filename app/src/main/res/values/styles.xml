@@ -1,0 +1,57 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
+
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+    </style>
+
+    <style name="TitleText">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextButton">
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:paddingTop">@dimen/default_margin</item>
+        <item name="android:paddingBottom">@dimen/default_margin</item>
+        <item name="android:paddingStart">@dimen/double_margin</item>
+        <item name="android:paddingEnd">@dimen/double_margin</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="TransparentTheme" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/white_semi_transparent</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="ToolbarStyle">
+        <item name="titleTextAppearance">@style/ToolbarStyle.TextAppearance</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlHighlight">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <style name="ToolbarStyle.TextAppearance">
+        <item name="android:textSize">@dimen/large</item>
+    </style>
+
+</resources>

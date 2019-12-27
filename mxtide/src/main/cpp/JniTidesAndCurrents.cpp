@@ -85,10 +85,12 @@ JNIEXPORT jlong JNICALL
 Java_com_mxmariner_mxtide_internal_TidesAndCurrents_findStationByName(JNIEnv *env,
                                                                       jclass clazz,
                                                                       jlong ptr,
-                                                                      jstring name) {
+                                                                      jstring name,
+                                                                      jstring type) {
     auto stationName = mdr::JniString::fromJni(env, name);
+    auto stationType = mdr::stationTypeFromJavaString(env, type);
     mdr::TidesAndCurrents *tidesAndCurrents = reinterpret_cast<mdr::TidesAndCurrents *>(ptr);
-    auto station = tidesAndCurrents->findStationByName(stationName.c_str());
+    auto station = tidesAndCurrents->findStationByName(stationName.c_str(), stationType);
     jlong retVal = 0;
     station.let([&retVal](mdr::Station &stn) {
         mdr::Station *s = new mdr::Station(stn);

@@ -57,13 +57,36 @@ internal class Station(private val nativePtr: Long) : IStation {
         return getPredictionRaw(nativePtr, date.unixTimeSeconds, duration.standardSeconds, measureUnit.toString())
     }
 
-    @Suppress("unused")
-    fun finalize() {
+    /**
+     * https://kotlinlang.org/docs/reference/java-interop.html#finalize
+     */
+    protected fun finalize() {
         deleteStation(nativePtr)
     }
 
     override fun toString(): String {
         return "Station: $name : $type - $latitude, $longitude $timeZone\n"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as Station
+        if (name != other.name) return false
+        if (type != other.type) return false
+        if (latitude != other.latitude) return false
+        if (longitude != other.longitude) return false
+        if (timeZone != other.timeZone) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + type.hashCode()
+        result = 31 * result + latitude.hashCode()
+        result = 31 * result + longitude.hashCode()
+        result = 31 * result + timeZone.hashCode()
+        return result
     }
 
 }

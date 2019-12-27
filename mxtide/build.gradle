@@ -1,5 +1,6 @@
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
+apply plugin: "kotlin-android-extensions"
 
 android {
     compileSdkVersion sdk_version
@@ -9,7 +10,7 @@ android {
         targetSdkVersion sdk_version
         versionCode version_code
         versionName version_name
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_STL=c++_shared",
@@ -22,6 +23,9 @@ android {
             abiFilters "x86", "x86_64", "armeabi-v7a", "arm64-v8a"
         }
     }
+    testOptions {
+        execution "ANDROIDX_TEST_ORCHESTRATOR"
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -33,34 +37,38 @@ android {
             path "CMakeLists.txt"
         }
     }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
     /**
      * Support libraries
      */
-    implementation deps.android.support.coreutils
+    implementation "androidx.annotation:annotation:1.1.0"
 
     /**
      * Kotlin
      */
-    implementation deps.kotlin.stdlib
-    testImplementation deps.kotlin.stdlib
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
     /**
      * Testing
      */
-    androidTestImplementation(deps.android.test.espresso.core, {
-        exclude group: "com.android.support", module: "support-annotations"
-    })
-
-    /**
-     * Unit Tests
-     */
-    testImplementation deps.junit
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:1.1.1"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test:runner:1.2.0"
+    androidTestUtil "androidx.test:orchestrator:1.2.0"
 
     /**
      * Joda Time
      */
-    api deps.jodatime
+    api "joda-time:joda-time:2.9.9"
 }

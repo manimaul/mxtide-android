@@ -1,7 +1,7 @@
 package com.mxmariner.mxtide.internal
 
 import android.content.Context
-import android.support.annotation.RawRes
+import androidx.annotation.RawRes
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.ITidesAndCurrents
 import com.mxmariner.mxtide.api.MeasureUnit
@@ -23,7 +23,8 @@ internal class TidesAndCurrents : ITidesAndCurrents {
         @JvmStatic external fun stationCount(ptr: Long): Int
         @JvmStatic external fun stationNames(ptr: Long): List<String>
         @JvmStatic external fun findStationByName(ptr: Long,
-                                                  name: String): Long
+                                                  name: String,
+                                                  type: String): Long
 
         @JvmStatic external fun findNearestStation(ptr: Long,
                                                    lat: Double,
@@ -52,8 +53,8 @@ internal class TidesAndCurrents : ITidesAndCurrents {
 
     private val nativePtr: Long = create()
 
-    override fun addHarmonicsFile(context: Context, @RawRes resId: Int) {
-        addHarmonicsFile(context.rawResourceAsCacheFile(resId))
+    override fun addHarmonicsFile(context: Context, rawRes: String) {
+        addHarmonicsFile(context.rawResourceAsCacheFile(rawRes))
     }
 
     override fun addHarmonicsFile(file: File) {
@@ -66,12 +67,14 @@ internal class TidesAndCurrents : ITidesAndCurrents {
     override val stationNames: List<String>
         get() = stationNames(nativePtr)
 
-    override fun findStationByName(name: String?): IStation? {
-        return name?.let {
-            findStationByName(nativePtr, it).takeIf {
-                it != 0L
-            }?.let {
-                Station(it)
+    override fun findStationByName(name: String?, type: StationType?): IStation? {
+        return type?.let { t ->
+            name?.let { n ->
+                findStationByName(nativePtr, n, t.nativeStringValue).takeIf {
+                    it != 0L
+                }?.let {
+                    Station(it)
+                }
             }
         }
     }
