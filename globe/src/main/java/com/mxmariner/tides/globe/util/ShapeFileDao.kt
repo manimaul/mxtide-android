@@ -6,6 +6,7 @@ import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
 import com.mousebird.maply.VectorInfo
 import com.mousebird.maply.VectorObject
+import com.mxmariner.tides.R
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import java.io.File
@@ -45,7 +46,7 @@ class ShapeFileDao(kodein: Kodein) {
             VectorObject().apply {
                 fromShapeFile(absPath)
             } to VectorInfo().apply {
-                setColor(Color.WHITE)
+                setColor(ctx.resources.getColor(R.color.colorPrimaryDark, null))
                 setLineWidth(1f)
                 setFilled(false)
             }
@@ -59,8 +60,8 @@ class ShapeFileDao(kodein: Kodein) {
             VectorObject().apply {
                 fromShapeFile(absPath)
             } to VectorInfo().apply {
-                setColor(Color.GREEN)
-                setLineWidth(1f)
+                setColor(ctx.resources.getColor(R.color.colorPrimaryDark, null))
+                setLineWidth(4f)
                 setFilled(false)
             }
         }
