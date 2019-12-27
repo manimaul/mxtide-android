@@ -10,10 +10,11 @@ import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
 import com.github.salomonbrys.kodein.instance
 import com.google.android.instantapps.InstantApps
-import com.mxmariner.main.activity.LocationSearchActivity
 import com.mxmariner.tides.R
 import com.mxmariner.main.di.MainModuleInjector
+import com.mxmariner.tides.routing.RouteLocationSearch
 import com.mxmariner.tides.routing.RouteSettings
+import com.mxmariner.tides.routing.Router
 import com.mxmariner.tides.util.RxActivityResult
 import com.mxmariner.tides.util.RxSharedPrefs
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,6 +29,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private lateinit var rxActivityResult: RxActivityResult
     private lateinit var ctx: Context
     private lateinit var locationPreference: ListPreference
+    private lateinit var router: Router
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +38,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             rxSharedPreferences = injector.instance()
             rxActivityResult = injector.instance()
             sharedPreferences = injector.instance()
+            router = injector.instance()
             ctx = injector.instance()
         }
         super.onCreate(savedInstanceState)
@@ -88,8 +91,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 
     private fun pickUserLocation() {
-        val intent = Intent(ctx, LocationSearchActivity::class.java)
-        compositeDisposable.add(rxActivityResult.startActivityForResultSingle(intent)
+        compositeDisposable.add(router.routeToForResult(RouteLocationSearch())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy { result ->
                     val addressKey = "address"
@@ -104,7 +106,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         val value = "${address.featureName}:${address.latitude}:${address.longitude}"
                         locationPreference.value = value
                     } ?: {
-                        val defaultValue = getString(com.mxmariner.tides.R.string.location_device)
+                        val defaultValue = getString(R.string.location_device)
                         locationPreference.value = defaultValue
                     }()
                 })

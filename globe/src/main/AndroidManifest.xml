@@ -21,7 +21,7 @@
                 android:theme="@style/AppTheme">
             <intent-filter
                     android:autoVerify="true"
-                    android:order="2">
+                    android:order="3">
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.BROWSABLE" />
