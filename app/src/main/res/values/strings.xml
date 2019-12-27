@@ -44,4 +44,9 @@
     <string name="launch">Launch</string>
     <string name="title_globe">Tide Globe</string>
     <string name="globe">Globe</string>
+    <string name="examples">examples</string>
+    <string name="lat_lng">Type in latitude, longitude coordinates:</string>
+    <string name="lat_lng_ex">47.0, -122.0</string>
+    <string name="address">Type in an address:</string>
+    <string name="address_ex">Seattle, WA</string>
 </resources>

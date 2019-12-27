@@ -1,40 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/coordinatorLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_above="@+id/navigation"
-    tools:context="com.mxmariner.main.activity.LocationSearchActivity">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/navigation"
+        tools:context="com.mxmariner.main.activity.LocationSearchActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingStart="@dimen/double_margin"
+                android:textAllCaps="true"
+                android:paddingTop="@dimen/double_margin"
+                android:paddingEnd="@dimen/double_margin"
+                android:paddingBottom="@dimen/double_margin"
+                android:text="@string/examples"
+                android:textStyle="bold" />
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingStart="@dimen/double_margin"
+                android:paddingTop="@dimen/double_margin"
+                android:paddingEnd="@dimen/double_margin"
+                android:text="@string/lat_lng" />
+
+        <TextView
+                android:id="@+id/ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingStart="@dimen/double_margin"
+                android:paddingTop="@dimen/default_margin"
+                android:paddingEnd="@dimen/double_margin"
+                android:text="@string/lat_lng_ex" />
+
+        <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingStart="@dimen/double_margin"
+                android:paddingTop="@dimen/double_margin"
+                android:paddingEnd="@dimen/double_margin"
+                android:text="@string/address" />
+
+        <TextView
+                android:id="@+id/address"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingStart="@dimen/double_margin"
+                android:paddingTop="@dimen/default_margin"
+                android:paddingEnd="@dimen/double_margin"
+                android:text="@string/address_ex" />
+
         <androidx.core.widget.ContentLoadingProgressBar
-            android:id="@+id/loadingProgress"
-            style="?android:attr/progressBarStyleLarge"
-            android:visibility="gone"
-            android:layout_gravity="center_horizontal|top"
-            android:layout_width="50dp"
-            android:layout_margin="@dimen/default_margin"
-            android:layout_height="50dp"/>
-    </FrameLayout>
+                android:id="@+id/loadingProgress"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/default_margin"
+                android:visibility="gone"
+                tools:visibility="visible" />
+    </LinearLayout>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -11,6 +11,8 @@ import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.text.HtmlCompat
+import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import com.github.salomonbrys.kodein.instance
 import com.mxmariner.tides.R
 import com.mxmariner.tides.extensions.evaluateNullables
@@ -40,6 +42,8 @@ class LocationSearchActivity : AppCompatActivity() {
         geocoder = injector.instance()
 
         setContentView(R.layout.activity_search_layout)
+        ll.text = HtmlCompat.fromHtml("&quot;${getString(R.string.lat_lng_ex)}&quot;", FROM_HTML_MODE_LEGACY)
+        address.text = HtmlCompat.fromHtml("&quot;${getString(R.string.address_ex)}&quot;", FROM_HTML_MODE_LEGACY)
         setSupportActionBar(toolbar)
     }
 
