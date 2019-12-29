@@ -88,8 +88,9 @@ class StationActivity : AppCompatActivity() {
         emitter.onComplete()
       }()
     }.map {
-      stationDate.onNext(dateTime)
-      stationPresentationFactory.createPresentation(it, hrs = 12, dateTime = dateTime)
+      val presentation = stationPresentationFactory.createPresentation(it, hrs = 12, dateTime = dateTime)
+      stationDate.onNext(presentation.now)
+      presentation
     }.subscribeOn(Schedulers.io())
   }
 
@@ -103,8 +104,6 @@ class StationActivity : AppCompatActivity() {
 
     positionAndTimeZone.leftDesc = presentation.position
     positionAndTimeZone.rightDesc = presentation.timeZone.toTimeZone().displayName
-////    editDate.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN)
-////    editTime.setColorFilter(ContextCompat.getColor(this, R.color.colorAccent), android.graphics.PorterDuff.Mode.SRC_IN)
 
     distanceAndLevel.leftDesc = presentation.distance
     distanceAndLevel.rightDesc = presentation.predictionNow

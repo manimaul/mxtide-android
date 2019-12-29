@@ -8,5 +8,7 @@ DONE * style globe to match app theme
 DONE * settings - set location instructional text
 DONE * remember tides or currents last globe setting
 ~~* draw tide and current markers via vector tiles~~
+DONE * fix prediction center graph graticule
+DONE * fix prediction non-device timezone
 * prediction view pager - prev / next 24hr period
-* fix prediction center graph graticule
+* tide direction indicator

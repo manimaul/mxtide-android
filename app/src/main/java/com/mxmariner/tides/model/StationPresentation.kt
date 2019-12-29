@@ -4,7 +4,6 @@ import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.mxmariner.mxtide.api.IStationPrediction
-import com.mxmariner.tides.extensions.inBetween
 import com.mxmariner.tides.extensions.minus
 import com.mxmariner.tides.extensions.unixTimeHours
 import org.joda.time.DateTime
@@ -68,6 +67,6 @@ class StationPresentation(
 
   val midDateTimeFormatted: String
     get() {
-      return formatDateTime.print(start.inBetween(end))
+      return formatDateTime.print(now)
     }
 }

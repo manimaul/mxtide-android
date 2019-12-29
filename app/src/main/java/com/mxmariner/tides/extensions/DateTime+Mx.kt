@@ -11,10 +11,8 @@ operator fun DateTime.minus(start: DateTime) : DateTime {
 }
 
 fun DateTime.inBetween(other: DateTime) : DateTime {
-    val mx = maxOf(other.millis, millis)
-    val mn = minOf(other.millis, millis)
-    val delta = mx - mn
-    return DateTime(mn + (delta / 2))
+    val delta = (maxOf(other.millis, millis) - minOf(other.millis, millis)) / 2
+    return if (other.millis > millis) this.plus(delta) else this.minus(delta)
 }
 
 
