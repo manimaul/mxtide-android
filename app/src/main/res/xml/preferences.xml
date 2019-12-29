@@ -46,4 +46,12 @@
             android:summary="@string/install_app"
             />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="@string/PREF_KEY_VERSION_CAT"
+        android:title="@string/version">
+        <Preference
+            android:key="@string/PREF_KEY_VERSION"
+            android:title=""/>
+    </PreferenceCategory>
 </PreferenceScreen>

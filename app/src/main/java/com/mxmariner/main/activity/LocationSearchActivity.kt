@@ -8,15 +8,16 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.annotation.Keep
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.text.HtmlCompat
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
 import com.github.salomonbrys.kodein.instance
+import com.mxmariner.main.di.MainModuleInjector
 import com.mxmariner.tides.R
 import com.mxmariner.tides.extensions.evaluateNullables
-import com.mxmariner.main.di.MainModuleInjector
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -26,6 +27,7 @@ import java.io.IOException
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
+@Keep
 class LocationSearchActivity : AppCompatActivity() {
 
     companion object {

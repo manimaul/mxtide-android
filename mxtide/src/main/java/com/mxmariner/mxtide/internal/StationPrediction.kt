@@ -2,10 +2,12 @@
 
 package com.mxmariner.mxtide.internal
 
+import androidx.annotation.Keep
 import com.mxmariner.mxtide.api.IStationPrediction
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 
+@Keep
 @Suppress("unused") //  JNI Function
 internal fun createPrediction(epoch: Long,
                               timeZoneId: String,
@@ -15,5 +17,6 @@ internal fun createPrediction(epoch: Long,
     return StationPrediction(date, data)
 }
 
+@Keep
 internal class StationPrediction<out T>(override val date: DateTime,
                                         override val value: T) : IStationPrediction<T>

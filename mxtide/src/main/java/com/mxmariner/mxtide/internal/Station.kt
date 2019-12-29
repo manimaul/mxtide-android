@@ -1,5 +1,6 @@
 package com.mxmariner.mxtide.internal
 
+import androidx.annotation.Keep
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.IStationPrediction
 import com.mxmariner.mxtide.api.MeasureUnit
@@ -9,6 +10,7 @@ import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.Duration
 
+@Keep
 internal class Station(private val nativePtr: Long) : IStation {
     companion object {
         init {

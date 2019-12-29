@@ -12,6 +12,7 @@ import com.github.salomonbrys.kodein.instance
 import com.google.android.instantapps.InstantApps
 import com.mxmariner.tides.R
 import com.mxmariner.main.di.MainModuleInjector
+import com.mxmariner.tides.BuildConfig
 import com.mxmariner.tides.routing.RouteLocationSearch
 import com.mxmariner.tides.routing.RouteSettings
 import com.mxmariner.tides.routing.Router
@@ -33,24 +34,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        activity?.let {
-            val injector = MainModuleInjector.activityScopeAssembly(it)
-            rxSharedPreferences = injector.instance()
-            rxActivityResult = injector.instance()
-            sharedPreferences = injector.instance()
-            router = injector.instance()
-            ctx = injector.instance()
-        }
+        val injector = MainModuleInjector.activityScopeAssembly(requireActivity())
+        rxSharedPreferences = injector.instance()
+        rxActivityResult = injector.instance()
+        sharedPreferences = injector.instance()
+        router = injector.instance()
+        ctx = injector.instance()
         super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val key = getString(com.mxmariner.tides.R.string.PREF_KEY_LOCATION)
+        val key = getString(R.string.PREF_KEY_LOCATION)
         compositeDisposable.add(rxSharedPreferences.observeChanges<String>(key)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    if (it == getString(com.mxmariner.tides.R.string.location_user)) {
+                    if (it == getString(R.string.location_user)) {
                         pickUserLocation()
                     } else {
                         updateLocationPrefSummary()
@@ -65,8 +64,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.preferences)
-        val key = getString(com.mxmariner.tides.R.string.PREF_KEY_LOCATION)
+        val key = getString(R.string.PREF_KEY_LOCATION)
         locationPreference = findPreference(key) as ListPreference
+        findPreference(getString(R.string.PREF_KEY_VERSION)).title = "${BuildConfig.VERSION_NAME} vc ${BuildConfig.VERSION_CODE} ${BuildConfig.BUILD_TYPE}"
 
         if (InstantApps.isInstantApp(ctx)) {
             findPreference(getString(R.string.PREF_KEY_INSTALL))?.setOnPreferenceClickListener {

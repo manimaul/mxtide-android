@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.annotation.IdRes
+import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import com.github.salomonbrys.kodein.instance
@@ -20,6 +21,7 @@ import com.mxmariner.tides.util.PerfTimer
 import kotlinx.android.synthetic.main.activity_main.*
 
 
+@Keep
 class MainActivity : AppCompatActivity() {
 
     private lateinit var fm: FragmentManager

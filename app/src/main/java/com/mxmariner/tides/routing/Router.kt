@@ -5,7 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.instance
+import com.mxmariner.globe.activity.GlobeActivity
+import com.mxmariner.main.activity.LocationSearchActivity
+import com.mxmariner.main.activity.MainActivity
 import com.mxmariner.mxtide.api.IStation
+import com.mxmariner.station.StationActivity
 import com.mxmariner.tides.BuildConfig
 import com.mxmariner.tides.extensions.addParams
 import com.mxmariner.tides.model.ActivityResult
@@ -34,18 +38,18 @@ abstract class Route(
 //class RouteNearbyCurrents : Route("/tides", mapOf("tab" to "nearby_currents"))
 class RouteSettings : Route(uriPath =  "/tides",
                             params = mapOf("tab" to "settings"),
-                            className = "com.mxmariner.main.activity.MainActivity")
+                            className = MainActivity::class.java.name)
 class RouteGlobe : Route(uriPath = "/tides/globe",
-                         className = "com.mxmariner.tides.globe.activity.GlobeActivity")
+                         className = GlobeActivity::class.java.name)
 //class RouteStation : Route("/tides/station", mapOf("stationName" to "Tacoma, Commencement Bay, Sitcum Waterway, Puget Sound, Washington"))
 
 class RouteStationDetails(station: IStation) : Route("/tides/station", mapOf(
         "stationName" to station.name,
         "stationType" to station.type.name
-), "com.mxmariner.tides.station.StationActivity")
+), StationActivity::class.java.name)
 
 class RouteLocationSearch : Route(uriPath = "/tides/location_search",
-        className = "com.mxmariner.main.activity.LocationSearchActivity")
+        className = LocationSearchActivity::class.java.name)
 
 class Router(kodein: Kodein) {
 

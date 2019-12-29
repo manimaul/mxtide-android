@@ -7,6 +7,8 @@
     <string name="instant_app">Instant App</string>
     <string name="PREF_KEY_INSTALL_CAT">PREF_KEY_INSTALL_CAT</string>
     <string name="PREF_KEY_INSTALL">PREF_KEY_INSTALL</string>
+    <string name="PREF_KEY_VERSION_CAT">PREF_KEY_VERSION_CAT</string>
+    <string name="PREF_KEY_VERSION">PREF_KEY_VERSION</string>
 
     <string name="app_name">MX Tides</string>
     <string name="title_tides">Tides</string>
@@ -49,4 +51,8 @@
     <string name="lat_lng_ex">47.0, -122.0</string>
     <string name="address">Type in an address:</string>
     <string name="address_ex">Seattle, WA</string>
+    <string name="version">Version</string>
+
+    <string name="hrs">hrs</string>
+    <string name="scale">Scale</string>
 </resources>

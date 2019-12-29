@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:dist="http://schemas.android.com/apk/distribution"
         package="com.mxmariner.tides">
-
-    <dist:module dist:instant="true" />
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
             android:name=".application.MxTidesApplication"
@@ -52,6 +51,43 @@
             <data android:scheme="https" />
             <data android:host="mxmariner.com" />
             <data android:path="/tides/location_search" />
+            </intent-filter>
+        </activity>
+        <activity
+                android:name="com.mxmariner.globe.activity.GlobeActivity"
+                android:parentActivityName="com.mxmariner.main.activity.MainActivity"
+                android:theme="@style/AppTheme">
+            <intent-filter
+                    android:autoVerify="true"
+                    android:order="3">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:host="mxmariner.com" />
+                <data android:scheme="https" />
+                <data android:scheme="http" />
+                <data android:path="/tides/globe" />
+            </intent-filter>
+        </activity>
+        <activity
+                android:parentActivityName="com.mxmariner.main.activity.MainActivity"
+                android:name="com.mxmariner.station.StationActivity"
+                android:theme="@style/AppTheme">
+            <intent-filter
+                    android:autoVerify="true"
+                    android:order="2">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:host="mxmariner.com" />
+                <data android:scheme="https" />
+                <data android:scheme="http" />
+                <data android:path="/tides/station" />
+                <data android:pathPattern="/tides/station?.*" />
             </intent-filter>
         </activity>
     </application>
