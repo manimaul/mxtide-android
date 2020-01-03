@@ -11,7 +11,7 @@
 * DONE fix prediction center graph graticule
 * DONE fix prediction non-device timezone
 * prediction graph time scale options 3hr,6hr,12hr,24hr,48hr
-* prediction graph x axis time granularity
+* DONE prediction graph x axis time granularity
 * prediction text option
 * prediction view pager - prev / next (24hr / time scale) period
 * tide and current direction indicator

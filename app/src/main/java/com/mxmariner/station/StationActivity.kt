@@ -14,6 +14,7 @@ import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.mxtide.api.stationTypeFromString
 import com.mxmariner.station.di.StationModuleInjector
 import com.mxmariner.tides.R
+import com.mxmariner.tides.extensions.formatDateTime
 import com.mxmariner.tides.factory.StationPresentationFactory
 import com.mxmariner.tides.model.StationPresentation
 import io.reactivex.Maybe
@@ -102,7 +103,7 @@ class StationActivity : AppCompatActivity() {
     icon.setImageResource(presentation.icon)
 
     nameAndTime.leftDesc = presentation.name
-    nameAndTime.rightDesc = "${presentation.midDateTimeFormatted}\n" +
+    nameAndTime.rightDesc = "${presentation.now.formatDateTime()}\n" +
         "${getString(R.string.scale)} ${presentation.scaleHours}${getString(R.string.hrs)}"
 
     positionAndTimeZone.leftDesc = presentation.position
