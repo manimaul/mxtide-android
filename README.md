@@ -17,11 +17,4 @@
 * [GPL LICENSE](gpl-3.0.md)
 * [Disclaimer](http://www.flaterco.com/xtide/disclaimer.html) "NOT FOR NAVIGATION," "ABSOLUTELY NO WARRANTY"
 
-![tide station list](icon_src/tides_nearby.png)
-![tide station](icon_src/tide_station.png)
-![current station list](icon_src/currents_nearby.png)
-![current station](icon_src/current_station.png)
-![settings](icon_src/settings.png)
-![globe tides](icon_src/globe_tides.png)
-![globe currents](icon_src/globe_currents.png)
-
+<img alt='tide station list' src='icon_src/tides_nearby.png' width='256'/> <img alt='tide station' src='icon_src/tide_station.png' width='256'/> <img alt='current station list' src='icon_src/currents_nearby.png' width='256'/> <img alt='current station' src='icon_src/current_station.png' width='256'/> <img alt='settings' src='icon_src/settings.png' width='256'/> <img alt='globe tides' src='icon_src/globe_tides.png' width='256'/> <img alt='globe currents' src='icon_src/globe_currents.png' width='256'/>
