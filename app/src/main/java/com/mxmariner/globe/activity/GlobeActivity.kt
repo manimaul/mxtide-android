@@ -4,22 +4,21 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatActivity
-import com.github.salomonbrys.kodein.instance
-import com.mxmariner.globe.di.GlobeModuleInjector
+import com.mxmariner.di.Injector
 import com.mxmariner.globe.fragment.GlobeFragment
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.tides.R
 import com.mxmariner.tides.util.RxLocation
 import kotlinx.android.synthetic.main.globe_layout.*
+import javax.inject.Inject
 
 @Keep
 class GlobeActivity : AppCompatActivity() {
 
-    lateinit var rxLocation: RxLocation
+    @Inject lateinit var rxLocation: RxLocation
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val injector = GlobeModuleInjector.activityScopeAssembly(this)
-        rxLocation = injector.instance()
+        Injector.activityInjector(this).inject(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.globe_layout)

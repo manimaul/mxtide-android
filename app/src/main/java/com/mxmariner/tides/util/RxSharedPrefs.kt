@@ -1,14 +1,16 @@
 package com.mxmariner.tides.util
 
 import android.content.SharedPreferences
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
+import com.mxmariner.di.AppScope
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import javax.inject.Inject
 
-class RxSharedPrefs(kodein: Kodein) : SharedPreferences.OnSharedPreferenceChangeListener {
+@AppScope
+class RxSharedPrefs @Inject constructor(
+    sharedPreferences: SharedPreferences
+) : SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private val sharedPreferences: SharedPreferences = kodein.instance()
     private val subject = PublishSubject.create<OptionalSignal>()
     private val observingKeys = mutableMapOf<String, ObservingKeyCounter>()
 

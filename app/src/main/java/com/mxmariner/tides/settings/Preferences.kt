@@ -2,15 +2,16 @@ package com.mxmariner.tides.settings
 
 import android.content.SharedPreferences
 import android.content.res.Resources
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
+import com.mxmariner.di.AppScope
 import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.tides.R
+import javax.inject.Inject
 
-class Preferences(kodein: Kodein) {
-
-    private val sharedPreferences: SharedPreferences = kodein.instance()
-    private val resources: Resources = kodein.instance()
+@AppScope
+class Preferences @Inject constructor(
+    private val sharedPreferences: SharedPreferences,
+    private val resources: Resources
+) {
 
     val predictionLevels: MeasureUnit
         get() = when (sharedPreferences.getString(resources.getString(R.string.PREF_KEY_TIDE_LEVEL), MeasureUnit.METRIC.name)) {

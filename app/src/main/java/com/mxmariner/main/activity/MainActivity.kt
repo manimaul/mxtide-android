@@ -9,8 +9,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
-import com.github.salomonbrys.kodein.instance
-import com.mxmariner.main.di.MainModuleInjector
+import com.mxmariner.di.Injector
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.tides.R
 import com.mxmariner.tides.fragment.SettingsFragment
@@ -19,13 +18,13 @@ import com.mxmariner.tides.routing.RouteGlobe
 import com.mxmariner.tides.routing.Router
 import com.mxmariner.tides.util.PerfTimer
 import kotlinx.android.synthetic.main.activity_main.*
-
+import javax.inject.Inject
 
 @Keep
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var fm: FragmentManager
-    private lateinit var router: Router
+    @Inject lateinit var fm: FragmentManager
+    @Inject lateinit var router: Router
 
 
     //region AppCompatActivity
@@ -34,9 +33,7 @@ class MainActivity : AppCompatActivity() {
         PerfTimer.markEventStop("Between")
         PerfTimer.markEventStart("MainActivity.onCreate()")
 
-        val injector = MainModuleInjector.activityScopeAssembly(this)
-        fm = injector.instance()
-        router = injector.instance()
+        Injector.activityInjector(this).inject(this);
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

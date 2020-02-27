@@ -6,13 +6,12 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatActivity
-import com.github.salomonbrys.kodein.instance
 import com.jakewharton.rxbinding2.view.RxView
+import com.mxmariner.di.Injector
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.ITidesAndCurrents
 import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.mxtide.api.stationTypeFromString
-import com.mxmariner.station.di.StationModuleInjector
 import com.mxmariner.tides.R
 import com.mxmariner.tides.extensions.formatDateTime
 import com.mxmariner.tides.factory.StationPresentationFactory
@@ -26,20 +25,19 @@ import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.activity_station.*
 import org.joda.time.DateTime
+import javax.inject.Inject
 
 @Keep
 class StationActivity : AppCompatActivity() {
 
-  private lateinit var tidesAndCurrents: ITidesAndCurrents
-  private lateinit var stationPresentationFactory: StationPresentationFactory
+  @Inject lateinit var tidesAndCurrents: ITidesAndCurrents
+  @Inject lateinit var stationPresentationFactory: StationPresentationFactory
   private val compositeDisposable = CompositeDisposable()
   private val stationDate = BehaviorSubject.create<DateTime>()
 
   override fun onCreate(savedInstanceState: Bundle?) {
-    val injector = StationModuleInjector.activityScopeAssembly(this)
     super.onCreate(savedInstanceState)
-    tidesAndCurrents = injector.instance()
-    stationPresentationFactory = injector.instance()
+    Injector.activityInjector(this).inject(this)
     setContentView(R.layout.activity_station)
 
     //madrona://mxmariner.com/tides/station?stationName=NameUriEncoded

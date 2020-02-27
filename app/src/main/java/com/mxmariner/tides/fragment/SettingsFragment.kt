@@ -8,11 +8,10 @@ import android.os.Bundle
 import android.view.View
 import androidx.preference.ListPreference
 import androidx.preference.PreferenceFragmentCompat
-import com.github.salomonbrys.kodein.instance
 import com.google.android.instantapps.InstantApps
-import com.mxmariner.tides.R
-import com.mxmariner.main.di.MainModuleInjector
+import com.mxmariner.di.Injector
 import com.mxmariner.tides.BuildConfig
+import com.mxmariner.tides.R
 import com.mxmariner.tides.routing.RouteLocationSearch
 import com.mxmariner.tides.routing.RouteSettings
 import com.mxmariner.tides.routing.Router
@@ -21,25 +20,22 @@ import com.mxmariner.tides.util.RxSharedPrefs
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-
+import javax.inject.Inject
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
-    private lateinit var rxSharedPreferences: RxSharedPrefs
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var rxActivityResult: RxActivityResult
-    private lateinit var ctx: Context
+    @Inject lateinit var rxSharedPreferences: RxSharedPrefs
+    @Inject lateinit var sharedPreferences: SharedPreferences
+    @Inject lateinit var rxActivityResult: RxActivityResult
+    @Inject lateinit var ctx: Context
+    @Inject lateinit var router: Router
     private lateinit var locationPreference: ListPreference
-    private lateinit var router: Router
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val injector = MainModuleInjector.activityScopeAssembly(requireActivity())
-        rxSharedPreferences = injector.instance()
-        rxActivityResult = injector.instance()
-        sharedPreferences = injector.instance()
-        router = injector.instance()
-        ctx = injector.instance()
+        requireActivity().let {
+            Injector.activityInjector(it).inject(this)
+        }
         super.onCreate(savedInstanceState)
     }
 

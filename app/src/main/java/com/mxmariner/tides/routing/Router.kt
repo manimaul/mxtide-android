@@ -3,8 +3,6 @@ package com.mxmariner.tides.routing
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
 import com.mxmariner.globe.activity.GlobeActivity
 import com.mxmariner.main.activity.LocationSearchActivity
 import com.mxmariner.main.activity.MainActivity
@@ -15,6 +13,7 @@ import com.mxmariner.tides.extensions.addParams
 import com.mxmariner.tides.model.ActivityResult
 import com.mxmariner.tides.util.RxActivityResult
 import io.reactivex.Single
+import javax.inject.Inject
 
 private const val authority = "mxmariner.com"
 private const val scheme = "https"
@@ -51,10 +50,10 @@ class RouteStationDetails(station: IStation) : Route("/tides/station", mapOf(
 class RouteLocationSearch : Route(uriPath = "/tides/location_search",
         className = LocationSearchActivity::class.java.name)
 
-class Router(kodein: Kodein) {
-
-    private val activity: Activity = kodein.instance()
-    private val rxActivityResult: RxActivityResult = kodein.instance()
+class Router @Inject constructor(
+  private val activity: Activity,
+  private val rxActivityResult: RxActivityResult
+) {
 
     private fun routeIntent(route: Route): Intent {
         return Intent().apply {

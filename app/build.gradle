@@ -31,9 +31,9 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
         debug {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            minifyEnabled false
+            shrinkResources false
+            //proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
 }
@@ -82,9 +82,10 @@ dependencies {
     androidTestUtil "androidx.test:orchestrator:1.2.0"
 
     /**
-     * Kodein
+     * Dagger
      */
-    api "com.github.salomonbrys.kodein:kodein:4.1.0"
+    api 'com.google.dagger:dagger:2.26'
+    kapt 'com.google.dagger:dagger-compiler:2.26'
 
     /**
      * Charts and Graphs

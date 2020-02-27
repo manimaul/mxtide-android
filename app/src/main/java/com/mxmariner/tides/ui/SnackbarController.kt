@@ -3,8 +3,6 @@ package com.mxmariner.tides.ui
 import android.content.res.Resources
 import android.view.View
 import androidx.fragment.app.FragmentActivity
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import com.mxmariner.tides.R
@@ -15,11 +13,13 @@ import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.ObservableTransformer
 import io.reactivex.android.schedulers.AndroidSchedulers
+import javax.inject.Inject
 
-class SnackbarController(kodein: Kodein) {
+class SnackbarController @Inject constructor(
+  private val resources: Resources,
+  private val activity: FragmentActivity
+) {
 
-    private val resources: Resources = kodein.instance()
-    private val activity: FragmentActivity = kodein.instance()
     private val rootView by lazy {
         activity.findViewById<View>(R.id.coordinatorLayout)
     }

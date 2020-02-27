@@ -7,20 +7,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
-import com.mxmariner.mxtide.api.StationType
-import com.mxmariner.tides.extensions.args
-import com.mxmariner.main.di.MainModuleInjector
+import com.mxmariner.di.Injector
 import com.mxmariner.main.model.TidesViewStateLoadingComplete
 import com.mxmariner.main.model.TidesViewStateLoadingStarted
 import com.mxmariner.main.viewmodel.TidesViewModel
 import com.mxmariner.main.viewmodel.TidesViewModelFactory
+import com.mxmariner.mxtide.api.StationType
 import com.mxmariner.tides.R
+import com.mxmariner.tides.extensions.args
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.layout_tides_fragment.*
+import javax.inject.Inject
 
 class TidesFragment : Fragment() {
 
@@ -34,19 +33,17 @@ class TidesFragment : Fragment() {
 
     private val stationType by lazy { args.getSerializable("type") as StationType }
 
-    private lateinit var kodein: Kodein
-    private lateinit var viewModelFactory: TidesViewModelFactory
-    private lateinit var viewModel: TidesViewModel
+    @Inject lateinit var viewModelFactory: TidesViewModelFactory
+    @Inject lateinit var viewModel: TidesViewModel
 
 
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.let {
-            kodein = MainModuleInjector.activityScopeAssembly(it)
-            viewModelFactory = kodein.instance()
-            viewModel = ViewModelProvider(this, viewModelFactory).get(TidesViewModel::class.java)
+        requireActivity().let {
+          Injector.activityInjector(it).inject(this)
+          viewModel = ViewModelProvider(this, viewModelFactory).get(TidesViewModel::class.java)
         }
     }
 

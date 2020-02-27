@@ -1,8 +1,6 @@
 package com.mxmariner.globe.util
 
 import android.content.Context
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
 import com.mousebird.maply.VectorInfo
 import com.mousebird.maply.VectorObject
 import com.mxmariner.tides.R
@@ -10,10 +8,11 @@ import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.io.FileOutputStream
+import javax.inject.Inject
 
-class ShapeFileDao(kodein: Kodein) {
-
-    private val ctx: Context = kodein.instance()
+class ShapeFileDao @Inject constructor(
+    private val ctx: Context
+) {
 
     private fun shapeFile(base_name: String): Single<File> {
         return Single.create<File> { emitter ->

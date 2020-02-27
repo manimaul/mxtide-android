@@ -4,14 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
 import com.mxmariner.tides.extensions.args
 import com.mxmariner.tides.model.ActivityResult
 import com.mxmariner.tides.util.ActivityResultBroker.Companion.KEY_OPTIONS
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
+import javax.inject.Inject
 
 interface RxActivityResult {
 
@@ -20,9 +19,9 @@ interface RxActivityResult {
 
 }
 
-internal class RxActivityResultImpl(kodein: Kodein) : RxActivityResult {
-
-    private val fragmentManager: FragmentManager = kodein.instance()
+class RxActivityResultImpl @Inject constructor(
+    private val fragmentManager: FragmentManager
+) : RxActivityResult {
 
     override fun startActivityForResultSingle(intent: Intent?,
                                               options: Bundle?): Single<ActivityResult> {

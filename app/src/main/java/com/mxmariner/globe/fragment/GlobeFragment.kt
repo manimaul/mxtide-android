@@ -7,10 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
-import com.mousebird.maply.*
-import com.mxmariner.globe.di.GlobeModuleInjector
+import com.mousebird.maply.GlobeMapFragment
+import com.mousebird.maply.Layer
+import com.mousebird.maply.Point2d
+import com.mousebird.maply.QuadImageTileLayer
+import com.mousebird.maply.RemoteTileInfo
+import com.mousebird.maply.RemoteTileSource
+import com.mousebird.maply.SphericalMercatorCoordSystem
+import com.mxmariner.di.Injector
 import com.mxmariner.globe.viewmodel.GlobeViewModel
 import com.mxmariner.globe.viewmodel.GlobeViewModelFactory
 import com.mxmariner.mxtide.api.StationType
@@ -20,25 +24,23 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import java.io.File
-
+import javax.inject.Inject
 
 private const val cacheDirName = "openstreetmap"
 private const val openStreetMapUrl = "https://a.tile.openstreetmap.org/{z}/{x}/{y}"
 
 class GlobeFragment : GlobeMapFragment() {
 
-    lateinit var kodein: Kodein
-    private lateinit var viewModelFactory: GlobeViewModelFactory
+    @Inject lateinit var viewModelFactory: GlobeViewModelFactory
+    @Inject lateinit var router: Router
     private lateinit var viewModel: GlobeViewModel
-    private lateinit var router: Router
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         requireActivity().let {
-            kodein = GlobeModuleInjector.activityScopeAssembly(it)
-            viewModelFactory = kodein.instance()
-            router = kodein.instance()
+            Injector.activityInjector(it).inject(this)
             viewModel = ViewModelProvider(this, viewModelFactory).get(GlobeViewModel::class.java)
         }
     }

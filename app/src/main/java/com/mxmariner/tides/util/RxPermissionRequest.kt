@@ -4,12 +4,11 @@ import android.os.Bundle
 import androidx.core.content.PermissionChecker
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.SingleSubject
 import java.util.concurrent.ThreadLocalRandom
+import javax.inject.Inject
 
 interface RxPermission {
 
@@ -21,9 +20,9 @@ interface RxPermission {
     fun requestPermissions(vararg permissions: String): Single<List<PermissionRequestResult>>
 }
 
-internal class RxPermissionImpl(kodein: Kodein) : RxPermission {
-
-    private val fragmentManager: FragmentManager = kodein.instance()
+class RxPermissionImpl @Inject constructor(
+    private val fragmentManager: FragmentManager
+) : RxPermission {
 
     override fun requestPermissions(vararg permissions: String): Single<List<PermissionRequestResult>> {
         return Single.defer {

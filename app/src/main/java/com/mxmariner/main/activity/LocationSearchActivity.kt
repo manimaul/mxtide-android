@@ -14,8 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.text.HtmlCompat
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
-import com.github.salomonbrys.kodein.instance
-import com.mxmariner.main.di.MainModuleInjector
+import com.mxmariner.di.Injector
 import com.mxmariner.tides.R
 import com.mxmariner.tides.extensions.evaluateNullables
 import io.reactivex.Maybe
@@ -24,8 +23,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_search_layout.*
 import java.io.IOException
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.inject.Inject
 
 @Keep
 class LocationSearchActivity : AppCompatActivity() {
@@ -34,14 +34,13 @@ class LocationSearchActivity : AppCompatActivity() {
         val TAG = LocationSearchActivity::class.java.simpleName
     }
 
-    private lateinit var geocoder: Geocoder
+    @Inject lateinit var geocoder: Geocoder
     private val compositeDisposable = CompositeDisposable()
     private val loading = AtomicBoolean(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val injector = MainModuleInjector.activityScopeAssembly(this)
-        geocoder = injector.instance()
+        Injector.activityInjector(this).inject(this)
 
         setContentView(R.layout.activity_search_layout)
         ll.text = HtmlCompat.fromHtml("&quot;${getString(R.string.lat_lng_ex)}&quot;", FROM_HTML_MODE_LEGACY)

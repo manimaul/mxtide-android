@@ -4,8 +4,6 @@ import android.content.Context
 import android.graphics.Color
 import android.location.Location
 import androidx.core.content.ContextCompat
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
 import com.mxmariner.mxtide.api.IStation
 import com.mxmariner.mxtide.api.MeasureUnit
 import com.mxmariner.mxtide.api.StationType
@@ -15,15 +13,16 @@ import com.mxmariner.tides.ui.UnitFormats
 import com.mxmariner.tides.util.RxLocation
 import org.joda.time.DateTime
 import org.joda.time.Duration
+import javax.inject.Inject
 
 private const val hours = 3
 
-class StationPresentationFactory(kodein: Kodein) {
-
-  private val preferences: Preferences = kodein.instance()
-  private val unitFormats: UnitFormats = kodein.instance()
-  private val context: Context = kodein.instance()
-  private val rxLocation: RxLocation = kodein.instance()
+class StationPresentationFactory @Inject constructor(
+  private val preferences: Preferences,
+  private val unitFormats: UnitFormats,
+  private val context: Context,
+  private val rxLocation: RxLocation
+) {
 
   fun createPresentation(station: IStation,
                          location: Location? = null,

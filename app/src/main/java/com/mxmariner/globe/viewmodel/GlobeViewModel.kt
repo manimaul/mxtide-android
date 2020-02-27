@@ -7,9 +7,14 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
-import com.mousebird.maply.*
+import com.mousebird.maply.ComponentObject
+import com.mousebird.maply.GlobeController
+import com.mousebird.maply.MaplyBaseController
+import com.mousebird.maply.MarkerInfo
+import com.mousebird.maply.Point2d
+import com.mousebird.maply.Point3d
+import com.mousebird.maply.ScreenMarker
+import com.mousebird.maply.SelectedObject
 import com.mxmariner.globe.data.GeoBox
 import com.mxmariner.globe.data.globeBox
 import com.mxmariner.globe.extensions.setPosition
@@ -27,24 +32,26 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
+import javax.inject.Inject
+import javax.inject.Provider
 
-class GlobeViewModelFactory(
-        private val kodein: Kodein
+class GlobeViewModelFactory @Inject constructor(
+        private val provider: Provider<GlobeViewModel>
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
-        return kodein.instance<GlobeViewModel>() as T
+        return provider.get() as T
     }
 }
 
 private const val markerSize = 48.0
 
-class GlobeViewModel(kodein: Kodein) : ViewModel(), GlobeController.GestureDelegate {
-
-    private val tidesAndCurrents: ITidesAndCurrents = kodein.instance()
-    private val context: Context = kodein.instance()
-    private val prefs: GlobePreferences = kodein.instance()
-    private val shapeFileDao: ShapeFileDao = kodein.instance()
+class GlobeViewModel @Inject constructor(
+    private val tidesAndCurrents: ITidesAndCurrents,
+    private val context: Context,
+    private val prefs: GlobePreferences,
+    private val shapeFileDao: ShapeFileDao
+) : ViewModel(), GlobeController.GestureDelegate {
 
     private val clickSubject = PublishSubject.create<IStation>()
     val stationClickObservable: Observable<IStation>

@@ -10,11 +10,10 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import androidx.core.content.PermissionChecker
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.instance
 import com.mxmariner.tides.R
 import com.mxmariner.tides.extensions.evaluateNullables
 import io.reactivex.Single
+import javax.inject.Inject
 
 sealed class LocationPermissionResult
 class LocationResultNoPermission : LocationPermissionResult()
@@ -29,12 +28,12 @@ interface RxLocation {
     val lastKnownLocation: Location?
 }
 
-class RxLocationImpl(kodein: Kodein) : RxLocation {
-
-    private val context: Context = kodein.instance()
-    private val locationManager: LocationManager = kodein.instance()
-    private val rxPermission: RxPermission = kodein.instance()
-    private val sharedPreferences: SharedPreferences = kodein.instance()
+class RxLocationImpl @Inject constructor(
+    private val context: Context,
+    private val locationManager: LocationManager,
+    private val rxPermission: RxPermission,
+    private val sharedPreferences: SharedPreferences
+) : RxLocation {
 
     override fun singleRecentLocationPermissionResult(): Single<LocationPermissionResult> {
         return prefLocation()?.let {
