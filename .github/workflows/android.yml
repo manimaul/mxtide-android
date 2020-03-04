@@ -11,10 +11,10 @@ jobs:
         with:
           submodules: true
       - name: Build
-        uses: manimaul/android-builder-action@android-29_ndk-21.0.6113669
+        uses: manimaul/android-builder-action@v1
         with:
           entrypoint: /github/workspace/gradlew
-          args: build
+          args: --no-daemon build
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         if: startsWith(github.ref, 'refs/tags')
