@@ -10,12 +10,18 @@ jobs:
         uses: actions/checkout@v1
         with:
           submodules: true
-      - name: Build
+      - name: Check
         uses: manimaul/android-builder-action@v1
         with:
           entrypoint: /github/workspace/gradlew
-          args: --no-daemon build
-      - name: Upload Artifact
+          args: --no-daemon check
+      - name: Release Build
+        uses: manimaul/android-builder-action@v1
+        if: startsWith(github.ref, 'refs/tags')
+        with:
+          entrypoint: /github/workspace/gradlew
+          args: --no-daemon assembleRelease
+      - name: Release APK Artifact
         uses: actions/upload-artifact@v1
         if: startsWith(github.ref, 'refs/tags')
         with:
