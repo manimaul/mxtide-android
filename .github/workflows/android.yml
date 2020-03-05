@@ -36,4 +36,4 @@ jobs:
           --header "Content-Type: application/vnd.android.package-archive" \
           --request POST \
           --data-binary "@$(pwd)/${FILE}" \
-          "https://uploads.github.com/repos/manimaul/mxtide-android/releases/${RELEASE_ID}/assets?name=$(basename $FILE)" | jq
+          "https://uploads.github.com/repos/manimaul/mxtide-android/releases/${RELEASE_ID}/assets?name=$(basename $FILE)"
