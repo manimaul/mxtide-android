@@ -22,8 +22,18 @@ jobs:
           entrypoint: /github/workspace/gradlew
           args: --no-daemon assembleRelease
       - name: Release APK Artifact
-        uses: actions/upload-artifact@v1
         if: startsWith(github.ref, 'refs/tags')
-        with:
-          name: apk
-          path: app/build/outputs/apk/release/app-release-unsigned.apk
+        run: |
+          TAG=$(echo ${{ github.ref }} | sed 's/refs\/tags\/s*//')
+          FILE=app/build/outputs/apk/release/app-release-unsigned.apk
+          RELEASE_ID=$(curl --fail --header "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          --header "Content-Type: application/json" \
+          --request POST \
+          --data "{\"tag_name\": \"${TAG}\", \"target_commitish\": \"master\", \"name\": \"${TAG}\", \"body\": \"\", \"draft\": false, \"prerelease\": false}" \
+           https://api.github.com/repos/manimaul/mxtide-android/releases | jq -r '.id')
+          curl --fail \
+          --header "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          --header "Content-Type: application/vnd.android.package-archive" \
+          --request POST \
+          --data-binary "@$(pwd)/${FILE}" \
+          "https://uploads.github.com/repos/manimaul/mxtide-android/releases/${RELEASE_ID}/assets?name=$(basename $FILE)" | jq
