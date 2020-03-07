@@ -11,7 +11,7 @@ where:
     -p  (required) the password
     -a  (required) keystore alias"
 
-while getopts ":g:a:h" opt; do
+while getopts ":p:a:h" opt; do
     case ${opt} in
         p) rel_password="$OPTARG"
         ;;
