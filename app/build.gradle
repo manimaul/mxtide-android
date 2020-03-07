@@ -5,6 +5,15 @@ apply plugin: "kotlin-kapt"
 
 android {
     compileSdkVersion sdk_version
+    def ks_path = System.getenv("KEYSTORE_PATH")
+    signingConfigs {
+        release {
+            storeFile ks_path != null ? file(System.getenv("KEYSTORE_PATH")) : null
+            storePassword System.getenv("KEYSTORE_PASS")
+            keyAlias System.getenv("KEYSTORE_ALIAS")
+            keyPassword System.getenv("KEYSTORE_ALIAS_PASS")
+        }
+    }
     defaultConfig {
         applicationId "com.mxmariner.tides"
         minSdkVersion min_sdk_version
@@ -13,7 +22,6 @@ android {
         versionName version_name
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     testOptions {
         execution "ANDROIDX_TEST_ORCHESTRATOR"
     }
@@ -29,6 +37,9 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            if (System.getenv("KEYSTORE_PATH") != null) {
+                signingConfig signingConfigs.release
+            }
         }
         debug {
             minifyEnabled false
