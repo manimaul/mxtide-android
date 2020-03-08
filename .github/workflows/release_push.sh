@@ -47,11 +47,12 @@ if [[ -z "$rel_tag" ]]
         exit 1
 fi
 
+rel_tag="$(echo ${rel_tag} | sed 's/refs\/tags\/s*//')"
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 base_dir=$(realpath "${dir}/../..")
 apk_file="${base_dir}/app/build/outputs/apk/release/app-release.apk"
 
-echo "creating Github release"
+echo "creating Github release from tag: ${rel_tag}"
 release_id=$(curl --fail --header "Authorization: token ${rel_github_token}" \
     --header "Content-Type: application/json" \
     --request POST \
