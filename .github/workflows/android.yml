@@ -11,19 +11,19 @@ jobs:
         with:
           submodules: true
       - name: Check
-        uses: manimaul/android-builder-action@v1
+        uses: manimaul/android-builder-action@v2
         with:
           entrypoint: /github/workspace/gradlew
           args: --no-daemon check
       - name: Release Build
-        uses: manimaul/android-builder-action@v1
+        uses: manimaul/android-builder-action@v2
 #        if: startsWith(github.ref, 'refs/tags')
         with:
           entrypoint: ./.github/workflows/release_assemble.sh
           args: -p ${{ secrets.KS_PASS }} -a ${{ secrets.KS_ALIAS }}
       - name: Release APK Artifact
+        uses: manimaul/android-builder-action@v2
         if: startsWith(github.ref, 'refs/tags')
-        run: |
-          ./.github/workflows/release_push.sh \
-          -g ${{ secrets.GITHUB_TOKEN }} \
-          -t $(echo ${{ github.ref }} | sed 's/refs\/tags\/s*//')
+        with:
+          entrypoint: ./.github/workflows/release_push.sh
+          args: -g ${{ secrets.GITHUB_TOKEN }} -t $(echo ${{ github.ref }} | sed 's/refs\/tags\/s*//')
