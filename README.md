@@ -18,3 +18,13 @@
 * [Disclaimer](http://www.flaterco.com/xtide/disclaimer.html) "NOT FOR NAVIGATION," "ABSOLUTELY NO WARRANTY"
 
 <img alt='tide station list' src='icon_src/tides_nearby.png' width='256'/> <img alt='tide station' src='icon_src/tide_station.png' width='256'/> <img alt='current station list' src='icon_src/currents_nearby.png' width='256'/> <img alt='current station' src='icon_src/current_station.png' width='256'/> <img alt='settings' src='icon_src/settings.png' width='256'/> <img alt='globe tides' src='icon_src/globe_tides.png' width='256'/> <img alt='globe currents' src='icon_src/globe_currents.png' width='256'/>
+
+
+Build With [My android-sdk Docker Container](https://hub.docker.com/repository/docker/manimaul/android-sdk)
+```bash
+mv local.properties local.properties.bak
+docker run -v $(pwd):/build -w /build \
+            manimaul/android-sdk:v2 \
+            ./gradlew --no-daemon assembleDebug
+mv local.properties.bak local.properties
+```
