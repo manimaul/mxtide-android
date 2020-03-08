@@ -61,8 +61,9 @@ function cleanup {
 trap cleanup EXIT
 
 export KEYSTORE_PATH="${base_dir}/fdroid.keystore"
+export KEYSTORE_PASS="${rel_password}"
 export KEYSTORE_ALIAS="${rel_alias}"
-export KEYSTORE_ALIAS_PASS="${rel_password}"
+export KEYSTORE_ALIAS_PASS="${rel_password}_${rel_password}"
 gpg --quiet --batch --yes --decrypt --passphrase="${rel_password}" --output "${KEYSTORE_PATH}" "${KEYSTORE_PATH}.asc"
 
 echo "assembling release apk"
